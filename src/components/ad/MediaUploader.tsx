@@ -1,3 +1,4 @@
+// src/components/ad/MediaUploader.tsx
 import { useState } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { useAdStore } from "../../store/adStore";

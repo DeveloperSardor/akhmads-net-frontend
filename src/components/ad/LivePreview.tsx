@@ -1,127 +1,135 @@
+// src/components/ad/LivePreview.tsx - FINAL VERSION
+import { useState } from "react";
+import { Eye, Smartphone, Monitor } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
-import { Smartphone } from "lucide-react";
+import { BUTTON_COLORS } from "./ButtonColorPicker";
 
 const LivePreview = () => {
   const { formData } = useAdStore();
+  const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
 
-  const currentTime = new Date().toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit',
-    hour12: false 
-  });
+  const getButtonColor = (color: string = 'blue') => {
+    const colorConfig = BUTTON_COLORS.find(c => c.value === color);
+    return colorConfig?.telegram || '#2196F3';
+  };
+
+  const formatText = (text: string) => {
+    if (!text) return '';
+    let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    formatted = formatted.replace(/\n/g, '<br />');
+    return formatted;
+  };
+
+  const hasContent = formData.text || formData.mediaUrl || (formData.buttons && formData.buttons.length > 0);
 
   return (
-    <div>
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <Smartphone className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">Live Preview</h3>
-          </div>
+    <div className="bg-card border border-border rounded-xl p-4 sticky top-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Eye className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Live Preview</h3>
         </div>
 
-        {/* Phone Mockup */}
-        <div className="p-6">
-          <div className="relative mx-auto" style={{ maxWidth: '320px' }}>
-            {/* Phone Frame */}
-            <div className="relative bg-[#1a1a1a] rounded-[2.75rem] p-2.5 shadow-2xl">
-              {/* Screen */}
-              <div className="relative bg-[#0e1621] rounded-[2.25rem] overflow-hidden">
-                {/* Status Bar */}
-                <div className="flex items-center justify-between px-6 py-2 bg-[#0a0e13]">
-                  <div className="text-white text-xs font-semibold">{currentTime}</div>
-                  <div className="flex items-center gap-1.5">
-                    <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
-                    </svg>
-                    <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/>
-                    </svg>
-                  </div>
+        <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
+          <button
+            onClick={() => setDevice('mobile')}
+            className={`p-1.5 rounded transition-all ${
+              device === 'mobile'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => setDevice('desktop')}
+            className={`p-1.5 rounded transition-all ${
+              device === 'desktop'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Monitor className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      <div className={`relative ${device === 'mobile' ? 'max-w-[320px]' : 'max-w-full'} mx-auto`}>
+        <div className="bg-[#0e1621] rounded-xl p-3 shadow-2xl">
+          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/10">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">AD</span>
+            </div>
+            <div>
+              <div className="text-white text-sm font-medium">Your Advertisement</div>
+              <div className="text-white/50 text-xs">Sponsored</div>
+            </div>
+          </div>
+
+          {hasContent ? (
+            <div className="space-y-3">
+              {formData.mediaUrl && (
+                <div className="rounded-lg overflow-hidden">
+                  <img 
+                    src={formData.mediaUrl} 
+                    alt="Ad preview" 
+                    className="w-full h-auto"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                 </div>
+              )}
 
-                {/* Telegram Header */}
-                <div className="flex items-center gap-3 px-4 py-2.5 bg-[#17212b] border-b border-[#0f1419]">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
-                    AD
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-white font-medium text-sm">Sponsored</div>
-                    <div className="text-xs text-gray-400">Advertisement</div>
-                  </div>
+              {formData.text && (
+                <div 
+                  className="text-white text-sm leading-relaxed whitespace-pre-wrap"
+                  dangerouslySetInnerHTML={{ __html: formatText(formData.text) }}
+                />
+              )}
+
+              {formData.buttons && formData.buttons.length > 0 && (
+                <div className="space-y-2">
+                  {formData.buttons.map((button, index) => (
+                    button.text && (
+                      <button
+                        key={index}
+                        className="w-full py-2.5 px-4 rounded-lg text-white text-sm font-medium transition-all hover:opacity-90"
+                        style={{ backgroundColor: getButtonColor(button.color) }}
+                      >
+                        {button.text}
+                      </button>
+                    )
+                  ))}
                 </div>
+              )}
+            </div>
+          ) : (
+            <div className="py-12 text-center">
+              <Eye className="w-10 h-10 text-white/20 mx-auto mb-3" />
+              <p className="text-white/40 text-sm">
+                Start creating your ad to see preview
+              </p>
+            </div>
+          )}
 
-                {/* Message Content */}
-                <div className="p-3.5 min-h-[360px]">
-                  <div className="max-w-[90%]">
-                    <div className="bg-[#182533] rounded-2xl rounded-tl-md overflow-hidden shadow-lg">
-                      {/* Media */}
-                      {formData.mediaUrl && formData.contentType === "MEDIA" && (
-                        <div className="relative">
-                          <img src={formData.mediaUrl} alt="Ad" className="w-full h-auto" />
-                          <div className="absolute top-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-sm rounded-full">
-                            <span className="text-white text-[10px] font-semibold">AD</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Text */}
-                      <div className="p-3.5">
-                        {formData.text ? (
-                          <div className="text-white text-sm leading-relaxed whitespace-pre-wrap break-words">
-                            {formData.text}
-                          </div>
-                        ) : (
-                          <div className="text-gray-500 text-sm italic">
-                            Your ad text will appear here...
-                          </div>
-                        )}
-                        <div className="flex items-center justify-end gap-1 mt-2 text-[11px] text-gray-500">
-                          <span>{currentTime}</span>
-                        </div>
-                      </div>
-
-                      {/* Buttons */}
-                      {formData.buttons && formData.buttons.length > 0 && (
-                        <div className="px-3 pb-3 space-y-2">
-                          {formData.buttons.map((button, index) => (
-                            <div
-                              key={index}
-                              className="py-2.5 px-4 bg-[#2b5278] rounded-lg text-white text-sm font-medium text-center"
-                            >
-                              {button.text || "Button text"}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Input Bar */}
-                <div className="bg-[#17212b] border-t border-[#0f1419] p-2.5 flex items-center gap-2">
-                  <div className="flex-1 bg-[#0f1419] rounded-full px-3.5 py-2 text-xs text-gray-500">
-                    Message...
-                  </div>
-                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-                    <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              {/* Home Indicator */}
-              <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-20 h-1 bg-white/30 rounded-full" />
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-white/40">Telegram Ad</span>
+              <span className="text-white/40">
+                {new Date().toLocaleDateString('en-US', { 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Footer Note */}
-        <div className="px-5 py-3 border-t border-border bg-muted/30">
-          <p className="text-xs text-muted-foreground text-center leading-relaxed">
-            Preview simulates Telegram appearance
+        <div className="mt-3 p-2 bg-muted/50 rounded-lg">
+          <p className="text-xs text-muted-foreground text-center">
+            This is how your ad will appear in Telegram
           </p>
         </div>
       </div>

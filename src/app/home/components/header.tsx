@@ -1,25 +1,83 @@
+// src/app/home/components/Header.tsx
 "use client";
 
 import { brandIcons } from "@/data/brandicons";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../store/authStore";
+import { useUserStore } from "../../../store/userStore";
+import { useEffect } from "react";
 
-const GAP = "w-24"; // bo'sh joy (xohlasangiz w-16, w-32)
+const GAP = "w-24";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuthStore();
+  const { profile, fetchProfile } = useUserStore();
+
+  // ✅ Fetch profile once on mount if authenticated
+  useEffect(() => {
+    if (isAuthenticated && !profile) {
+      fetchProfile();
+    }
+  }, [isAuthenticated]);
+
+  const handleCTAClick = () => {
+    if (isAuthenticated) {
+      navigate("/launch-ad");
+    } else {
+      navigate("/login");
+    }
+  };
 
   const handleProfileClick = () => {
-    navigate("/uz/profile");
+    if (isAuthenticated) {
+      navigate("/profile");
+    } else {
+      navigate("/login");
+    }
+  };
+
+  // ✅ Avatar URL - Priority: profile > user > fallback
+  const getAvatarUrl = () => {
+    const avatarUrl = profile?.avatarUrl || user?.avatarUrl;
+    if (avatarUrl) {
+      return avatarUrl;
+    }
+    
+    const name = profile?.firstName || user?.firstName || "U";
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=8b5cf6&color=fff&size=80&bold=true`;
   };
 
   return (
-    <header className="relative min-h-screen overflow-hidden flex items-center justify-center">
-      {/* Background */}
+    <header className="relative min-h-screen overflow-hidden flex items-center justify-center bg-black">
+      {/* ✅ Background - NO PINK GRADIENT, reduced opacity */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{ backgroundImage: "url('/src/assets/images/herobg.png')" }}
       />
-      <div className="absolute inset-0 bg-black/70" />
+
+      {/* ✅ Profile Avatar - Top Right (only if authenticated) */}
+      {isAuthenticated && (
+        <button
+          onClick={handleProfileClick}
+          className="absolute top-6 right-6 z-20 w-10 h-10 rounded-full overflow-hidden ring-2 ring-purple-500/50 hover:ring-purple-500 transition bg-gradient-to-br from-purple-500 to-pink-500"
+          title="Profile"
+        >
+          <img
+            src={getAvatarUrl()}
+            alt={profile?.firstName || user?.firstName || "User"}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const name = profile?.firstName || user?.firstName || "U";
+              e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                name
+              )}&background=8b5cf6&color=fff&size=80&bold=true`;
+            }}
+          />
+        </button>
+      )}
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center text-center px-4 w-full">
@@ -32,11 +90,11 @@ const Header = () => {
           ular ko'radigan joyda bo'lmasligi kerak?
         </p>
 
-        <button 
-          onClick={handleProfileClick}
+        <button
+          onClick={handleCTAClick}
           className="mt-8 px-7 py-3 rounded-full bg-white text-black text-sm font-medium hover:bg-white/90 transition cursor-pointer"
         >
-          Reklama berish
+          {isAuthenticated ? "Reklama berish" : "Boshlash"}
         </button>
 
         {/* === SEAMLESS MARQUEE WITH GAP === */}

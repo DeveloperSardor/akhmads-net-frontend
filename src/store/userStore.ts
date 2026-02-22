@@ -1,3 +1,7 @@
+// ========================================
+// 📁 userStore.ts - FIXED VERSION
+// ========================================
+
 import { create } from 'zustand';
 import type { User, Wallet, UserStats, Ad, Bot, RevenueData, CtrData } from '../types/user.types';
 import userService from '../services/user.service';
@@ -72,18 +76,20 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
 
   /**
    * 📊 Fetch Ads - E'lonlarni olish
+   * ✅ FIXED: response.data.ads instead of response.data
    */
   fetchAds: async (params) => {
     set({ isLoading: true, error: null });
     try {
       const response = await userService.getUserAds(params);
       set({
-        ads: response.data,
+        ads: response.data.ads || [], // ✅ Changed from response.data
         isLoading: false,
       });
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch ads',
+        ads: [], // ✅ Reset to empty array on error
         isLoading: false,
       });
     }
@@ -91,18 +97,31 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
 
   /**
    * 🤖 Fetch Bots - Botlarni olish
+   * ✅ FIXED: response.data.bots instead of response.data
    */
   fetchBots: async (params) => {
     set({ isLoading: true, error: null });
     try {
       const response = await userService.getUserBots(params);
+      
+      // ✅ Transform backend data to match frontend expectations
+      const transformedBots = (response.data.bots || []).map(bot => ({
+        ...bot,
+        subscribers: bot.totalMembers || 0,
+        earnings: typeof bot.totalEarnings === 'string' 
+          ? parseFloat(bot.totalEarnings) 
+          : bot.totalEarnings || 0,
+        impressionsServed: bot.impressionsServed || 0,
+      }));
+
       set({
-        bots: response.data,
+        bots: transformedBots, // ✅ Changed from response.data
         isLoading: false,
       });
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch bots',
+        bots: [], // ✅ Reset to empty array on error
         isLoading: false,
       });
     }
@@ -123,6 +142,8 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch analytics',
+        revenueData: [], // ✅ Reset on error
+        ctrData: [], // ✅ Reset on error
         isLoading: false,
       });
     }

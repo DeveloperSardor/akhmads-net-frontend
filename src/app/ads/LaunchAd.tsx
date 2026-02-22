@@ -1,3 +1,4 @@
+// src/app/ads/LaunchAd.tsx
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, AlertCircle, CheckCircle } from "lucide-react";

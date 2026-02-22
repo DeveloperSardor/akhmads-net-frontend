@@ -1,3 +1,4 @@
+//src/types.ad.types.ts
 // Ad Types
 export type AdContentType = 'TEXT' | 'HTML' | 'MARKDOWN' | 'MEDIA' | 'POLL';
 export type AdStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'RUNNING' | 'PAUSED' | 'COMPLETED';

@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   telegramId: string;
@@ -7,8 +8,8 @@ export interface User {
   email?: string;
   avatarUrl?: string;
   role: 'ADVERTISER' | 'BOT_OWNER' | 'ADMIN' | 'MODERATOR' | 'SUPER_ADMIN';
-  roles?: string[]; // ✅ NEW - Multi-role support
-  displayRole?: string; // ✅ NEW - Formatted role from backend
+  roles?: string[];
+  displayRole?: string;
   locale: string;
   isActive: boolean;
   isBanned: boolean;
@@ -43,8 +44,8 @@ export interface Ad {
   id: string;
   title: string;
   status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'RUNNING' | 'PAUSED' | 'COMPLETED' | 'REJECTED' | 'ARCHIVED';
-  deliveredImpressions: number; // ✅ Backend field name
-  impressions?: number; // Alias
+  deliveredImpressions?: number;
+  impressions: number;
   clicks: number;
   conversions: number;
   spent: number;
@@ -59,12 +60,13 @@ export interface Bot {
   username: string;
   firstName: string;
   status: 'PENDING' | 'ACTIVE' | 'REJECTED' | 'BANNED' | 'PAUSED';
-  totalMembers: number; // ✅ Backend field name
-  subscribers?: number; // Alias
-  impressionsServed?: number; // May not exist in backend
-  totalEarnings: number; // ✅ Backend field name
-  earnings?: number; // Alias
-  ctr?: number;
+  totalMembers: number;
+  subscribers: number;
+  impressionsServed: number;
+  totalEarnings: string | number;
+  earnings: number;
+  clicks: number;
+  ctr: number;
   category: string;
   language: string;
   createdAt: string;
@@ -80,6 +82,7 @@ export interface CtrData {
   ctr: number;
 }
 
+// ✅ FIXED - API Response Types
 export interface UserProfileResponse {
   success: boolean;
   data: {
@@ -87,28 +90,25 @@ export interface UserProfileResponse {
     wallet: Wallet;
     stats: UserStats;
   };
+  timestamp: string;
 }
 
 export interface UserAdsResponse {
   success: boolean;
-  data: Ad[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
+  message: string;
+  data: {
+    ads: Ad[]; // ✅ Changed: ads is nested inside data
   };
+  timestamp: string;
 }
 
 export interface UserBotsResponse {
   success: boolean;
-  data: Bot[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
+  message: string;
+  data: {
+    bots: Bot[]; // ✅ Changed: bots is nested inside data
   };
+  timestamp: string;
 }
 
 export interface AnalyticsResponse {
@@ -117,6 +117,7 @@ export interface AnalyticsResponse {
     revenue: RevenueData[];
     ctr: CtrData[];
   };
+  timestamp: string;
 }
 
 export interface UpdateProfileData {
