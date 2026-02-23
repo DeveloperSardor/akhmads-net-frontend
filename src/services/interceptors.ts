@@ -1,3 +1,4 @@
+//src/services/interceptors.ts
 import type{ AxiosError, InternalAxiosRequestConfig } from 'axios';
 import apiClient from '../api/api';
 import { useAuthStore } from '../store/authStore';

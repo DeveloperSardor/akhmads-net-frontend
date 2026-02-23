@@ -1,7 +1,17 @@
-//src/types.ad.types.ts
+// src/types/ad.types.ts - FIXED
 // Ad Types
 export type AdContentType = 'TEXT' | 'HTML' | 'MARKDOWN' | 'MEDIA' | 'POLL';
-export type AdStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'RUNNING' | 'PAUSED' | 'COMPLETED';
+export type AdStatus = 
+  | 'DRAFT' 
+  | 'PENDING_REVIEW'  // ✅ NEW
+  | 'SUBMITTED'       // ✅ LEGACY (same as PENDING_REVIEW)
+  | 'APPROVED' 
+  | 'REJECTED' 
+  | 'SCHEDULED'
+  | 'RUNNING' 
+  | 'PAUSED' 
+  | 'COMPLETED'
+  | 'ARCHIVED';       // ✅ NEW
 
 export interface Ad {
   id: string;
@@ -31,6 +41,7 @@ export interface Ad {
   specificBotIds?: string[];
   promoCodeUsed?: string;
   discount: number;
+  isSaved?: boolean;  // ✅ NEW - for frontend
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
@@ -39,6 +50,7 @@ export interface Ad {
 export interface AdButton {
   text: string;
   url: string;
+  color?: string;  // ✅ NEW - for button color
 }
 
 export interface AdPoll {

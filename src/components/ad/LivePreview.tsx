@@ -1,4 +1,4 @@
-// src/components/ad/LivePreview.tsx - FINAL VERSION
+// src/components/ad/LivePreview.tsx - NO STICKY
 import { useState } from "react";
 import { Eye, Smartphone, Monitor } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
@@ -24,7 +24,7 @@ const LivePreview = () => {
   const hasContent = formData.text || formData.mediaUrl || (formData.buttons && formData.buttons.length > 0);
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4 sticky top-6">
+    <div className="bg-card border border-border rounded-xl p-4"> {/* ✅ REMOVED STICKY */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Eye className="w-4 h-4 text-primary" />

@@ -39,13 +39,13 @@ const LaunchAd = () => {
 
   useEffect(() => {
     fetchTargetingOptions();
-  }, [fetchTargetingOptions]);
+  }, []);
 
   useEffect(() => {
     if (currentStep === 2) {
       fetchPricingEstimate();
     }
-  }, [currentStep, formData.targetImpressions, formData.targeting, fetchPricingEstimate]);
+  }, [currentStep, formData.targetImpressions, formData.targeting]);
 
   useEffect(() => {
     if (error) {

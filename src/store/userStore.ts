@@ -1,26 +1,16 @@
-// ========================================
-// 📁 userStore.ts - FIXED VERSION
-// ========================================
-
+// src/store/userStore.ts
 import { create } from 'zustand';
 import type { User, Wallet, UserStats, Ad, Bot, RevenueData, CtrData } from '../types/user.types';
 import userService from '../services/user.service';
 
 interface UserState {
-  // Profile data
   profile: User | null;
   wallet: Wallet | null;
   stats: UserStats | null;
-  
-  // Ads & Bots
   ads: Ad[];
   bots: Bot[];
-  
-  // Analytics
   revenueData: RevenueData[];
   ctrData: CtrData[];
-  
-  // UI State
   isLoading: boolean;
   error: string | null;
 }
@@ -32,17 +22,16 @@ interface UserActions {
   fetchAnalytics: (days?: number, type?: 'advertiser' | 'owner') => Promise<void>;
   deleteAd: (adId: string) => Promise<void>;
   deleteBot: (botId: string) => Promise<void>;
-  updateProfile: (data: { 
-    firstName?: string; 
-    lastName?: string; 
-    email?: string; 
+  updateProfile: (data: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
     locale?: string;
   }) => Promise<void>;
   clearError: () => void;
 }
 
-export const useUserStore = create<UserState & UserActions>((set, get) => ({
-  // Initial State
+export const useUserStore = create<UserState & UserActions>((set) => ({
   profile: null,
   wallet: null,
   stats: null,
@@ -53,9 +42,6 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
   isLoading: false,
   error: null,
 
-  /**
-   * 👤 Fetch Profile - User, wallet, stats
-   */
   fetchProfile: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -74,62 +60,59 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
     }
   },
 
-  /**
-   * 📊 Fetch Ads - E'lonlarni olish
-   * ✅ FIXED: response.data.ads instead of response.data
-   */
   fetchAds: async (params) => {
     set({ isLoading: true, error: null });
     try {
       const response = await userService.getUserAds(params);
-      set({
-        ads: response.data.ads || [], // ✅ Changed from response.data
-        isLoading: false,
-      });
+      // Response: { success, data: [...], pagination }
+      // Axios wraps it: response.data = { success, data: [...], pagination }
+      const ads = Array.isArray(response.data.data)
+        ? response.data.data
+        : Array.isArray(response.data)
+        ? response.data
+        : [];
+
+      set({ ads, isLoading: false });
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch ads',
-        ads: [], // ✅ Reset to empty array on error
+        ads: [],
         isLoading: false,
       });
     }
   },
 
-  /**
-   * 🤖 Fetch Bots - Botlarni olish
-   * ✅ FIXED: response.data.bots instead of response.data
-   */
   fetchBots: async (params) => {
     set({ isLoading: true, error: null });
     try {
       const response = await userService.getUserBots(params);
-      
-      // ✅ Transform backend data to match frontend expectations
-      const transformedBots = (response.data.bots || []).map(bot => ({
+      const rawBots = Array.isArray(response.data.data)
+        ? response.data.data
+        : Array.isArray(response.data.bots)
+        ? response.data.bots
+        : Array.isArray(response.data)
+        ? response.data
+        : [];
+
+      const bots = rawBots.map((bot: any) => ({
         ...bot,
         subscribers: bot.totalMembers || 0,
-        earnings: typeof bot.totalEarnings === 'string' 
-          ? parseFloat(bot.totalEarnings) 
+        earnings: typeof bot.totalEarnings === 'string'
+          ? parseFloat(bot.totalEarnings)
           : bot.totalEarnings || 0,
         impressionsServed: bot.impressionsServed || 0,
       }));
 
-      set({
-        bots: transformedBots, // ✅ Changed from response.data
-        isLoading: false,
-      });
+      set({ bots, isLoading: false });
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch bots',
-        bots: [], // ✅ Reset to empty array on error
+        bots: [],
         isLoading: false,
       });
     }
   },
 
-  /**
-   * 📈 Fetch Analytics - Revenue va CTR ma'lumotlari
-   */
   fetchAnalytics: async (days = 7, type = 'advertiser') => {
     set({ isLoading: true, error: null });
     try {
@@ -142,22 +125,17 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch analytics',
-        revenueData: [], // ✅ Reset on error
-        ctrData: [], // ✅ Reset on error
+        revenueData: [],
+        ctrData: [],
         isLoading: false,
       });
     }
   },
 
-  /**
-   * 🗑️ Delete Ad
-   */
   deleteAd: async (adId: string) => {
     set({ isLoading: true, error: null });
     try {
       await userService.deleteAd(adId);
-      
-      // Remove from local state
       set((state) => ({
         ads: state.ads.filter((ad) => ad.id !== adId),
         isLoading: false,
@@ -170,15 +148,10 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
     }
   },
 
-  /**
-   * 🗑️ Delete Bot
-   */
   deleteBot: async (botId: string) => {
     set({ isLoading: true, error: null });
     try {
       await userService.deleteBot(botId);
-      
-      // Remove from local state
       set((state) => ({
         bots: state.bots.filter((bot) => bot.id !== botId),
         isLoading: false,
@@ -191,9 +164,6 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
     }
   },
 
-  /**
-   * ✏️ Update Profile
-   */
   updateProfile: async (data) => {
     set({ isLoading: true, error: null });
     try {
@@ -207,12 +177,9 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
         error: error.response?.data?.message || 'Failed to update profile',
         isLoading: false,
       });
-      throw error; // Re-throw to handle in component
+      throw error;
     }
   },
 
-  /**
-   * 🧹 Clear Error
-   */
   clearError: () => set({ error: null }),
 }));

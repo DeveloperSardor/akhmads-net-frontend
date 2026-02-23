@@ -1,3 +1,4 @@
+// src/types/user.types.ts
 
 export interface User {
   id: string;
@@ -27,6 +28,7 @@ export interface Wallet {
   totalWithdrawn: string | number;
   totalEarned: string | number;
   totalSpent: string | number;
+  totalEarnings?: string | number;
   createdAt: string;
   updatedAt: string;
 }
@@ -42,17 +44,29 @@ export interface UserStats {
 
 export interface Ad {
   id: string;
+  advertiserId: string;
+  contentType: string;
   title: string;
+  text?: string;
+  mediaUrl?: string;
+  buttons?: string | any[];
   status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'RUNNING' | 'PAUSED' | 'COMPLETED' | 'REJECTED' | 'ARCHIVED';
-  deliveredImpressions?: number;
-  impressions: number;
+  deliveredImpressions: number;
+  uniqueViews: number;
   clicks: number;
   conversions: number;
-  spent: number;
-  ctr: number;
-  conversionRate?: number;
+  ctr: string | number;
+  totalCost?: string | number;
+  remainingBudget?: string | number;
+  targetImpressions?: number;
+  isArchived: boolean;
+  isSaved: boolean;
   createdAt: string;
   updatedAt: string;
+  // Legacy/computed fields for compatibility
+  impressions?: number;
+  spent?: number;
+  conversionRate?: number;
 }
 
 export interface Bot {
@@ -66,7 +80,7 @@ export interface Bot {
   totalEarnings: string | number;
   earnings: number;
   clicks: number;
-  ctr: number;
+  ctr: string | number;
   category: string;
   language: string;
   createdAt: string;
@@ -82,7 +96,8 @@ export interface CtrData {
   ctr: number;
 }
 
-// ✅ FIXED - API Response Types
+// API Response Types
+
 export interface UserProfileResponse {
   success: boolean;
   data: {
@@ -93,20 +108,33 @@ export interface UserProfileResponse {
   timestamp: string;
 }
 
+// Real response: { success, data: [...], pagination }
 export interface UserAdsResponse {
   success: boolean;
-  message: string;
-  data: {
-    ads: Ad[]; // ✅ Changed: ads is nested inside data
+  message?: string;
+  data: Ad[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
   };
   timestamp: string;
 }
 
 export interface UserBotsResponse {
   success: boolean;
-  message: string;
-  data: {
-    bots: Bot[]; // ✅ Changed: bots is nested inside data
+  message?: string;
+  data: Bot[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
   };
   timestamp: string;
 }

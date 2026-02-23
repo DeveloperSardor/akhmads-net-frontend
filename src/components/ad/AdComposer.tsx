@@ -1,10 +1,9 @@
-// src/components/ad/AdComposer.tsx - FINAL PROFESSIONAL VERSION
-import { useState, useEffect } from "react";
-import { FileText, Image as ImageIcon, Link2, Upload, X, Loader2, Sparkles, Wand2, Send } from "lucide-react";
+// src/components/ad/AdComposer.tsx
+import { useState } from "react";
+import { FileText, Link2, Upload, X, Loader2, Sparkles, Send } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
 import api from "../../api/api";
 import ButtonColorPicker from "./ButtonColorPicker";
-import AITextOptimizer from "./AITextOptimizer";
 import TelegramEmojiPicker from "./TelegramEmojiPicker";
 
 const AdComposer = () => {
@@ -14,37 +13,13 @@ const AdComposer = () => {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [sendingPreview, setSendingPreview] = useState(false);
-  const [hasPremium, setHasPremium] = useState(false);
-  const [checkingPremium, setCheckingPremium] = useState(true);
-
-  // Check Telegram Premium status on mount
-  useEffect(() => {
-    checkPremiumStatus();
-  }, []);
-
-  const checkPremiumStatus = async () => {
-    try {
-      const response = await api.get('/telegram/premium/check');
-      setHasPremium(response.data.data.hasPremium);
-    } catch (error) {
-      console.error('Failed to check Premium:', error);
-    } finally {
-      setCheckingPremium(false);
-    }
-  };
 
   const handleAddButton = () => {
     const newButton = { text: "", url: "", color: "blue" };
-    updateFormData({
-      buttons: [...(formData.buttons || []), newButton],
-    });
+    updateFormData({ buttons: [...(formData.buttons || []), newButton] });
   };
 
-  const handleUpdateButton = (
-    index: number,
-    field: "text" | "url" | "color",
-    value: string
-  ) => {
+  const handleUpdateButton = (index: number, field: "text" | "url" | "color", value: string) => {
     const updatedButtons = [...(formData.buttons || [])];
     updatedButtons[index] = { ...updatedButtons[index], [field]: value };
     updateFormData({ buttons: updatedButtons });
@@ -55,13 +30,11 @@ const AdComposer = () => {
     updateFormData({ buttons: updatedButtons });
   };
 
-  // ✅ REAL UPLOAD TO MINIO
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
+    if (file.size > 5 * 1024 * 1024) {
       setUploadError("File size must be less than 5MB");
       return;
     }
@@ -79,30 +52,19 @@ const AdComposer = () => {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const base64Data = e.target?.result as string;
-        
         try {
-          // Upload to backend (MinIO)
           const response = await api.post('/ads/upload-base64', { base64Data });
           const uploadedUrl = response.data.data.url;
-
-          // Set preview and form data
           setPreview(uploadedUrl);
-          updateFormData({ 
-            mediaUrl: uploadedUrl, 
-            mediaFile: file,
-            contentType: 'MEDIA' 
-          });
-
-          setUploading(false);
+          updateFormData({ mediaUrl: uploadedUrl, mediaFile: file, contentType: 'MEDIA' });
         } catch (error: any) {
-          console.error('Upload failed:', error);
           setUploadError(error.response?.data?.message || 'Upload failed');
+        } finally {
           setUploading(false);
         }
       };
       reader.readAsDataURL(file);
-
-    } catch (error: any) {
+    } catch {
       setUploadError('Upload failed');
       setUploading(false);
     }
@@ -114,33 +76,24 @@ const AdComposer = () => {
     updateFormData({ mediaUrl: undefined, mediaFile: undefined });
   };
 
-  // ✅ SEND LIVE TELEGRAM PREVIEW
   const handleSendPreview = async () => {
     if (!formData.text || formData.text.length < 10) {
       alert('Please write some ad text first (minimum 10 characters)');
       return;
     }
-
     setSendingPreview(true);
-
     try {
       await api.post('/telegram/preview', {
         text: formData.text,
         mediaUrl: formData.mediaUrl,
         buttons: formData.buttons,
       });
-
       alert('✅ Preview sent to your Telegram! Check your messages.');
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || 'Failed to send preview';
-      alert(`❌ ${errorMsg}`);
+      alert(`❌ ${error.response?.data?.message || 'Failed to send preview'}`);
     } finally {
       setSendingPreview(false);
     }
-  };
-
-  const handleApplyOptimized = (optimizedText: string) => {
-    updateFormData({ text: optimizedText });
   };
 
   const remainingChars = 1024 - (formData.text?.length || 0);
@@ -171,19 +124,14 @@ const AdComposer = () => {
             <div className="relative rounded-xl overflow-hidden border border-border">
               <img src={preview} alt="Preview" className="w-full h-auto" />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                <button
-                  onClick={handleRemoveMedia}
-                  className="p-3 bg-destructive hover:bg-destructive/90 rounded-xl transition-all"
-                >
+                <button onClick={handleRemoveMedia} className="p-3 bg-destructive hover:bg-destructive/90 rounded-xl transition-all">
                   <X className="w-5 h-5 text-white" />
                 </button>
               </div>
             </div>
             {formData.mediaFile && (
               <div className="mt-3 flex items-center justify-between px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-lg text-sm">
-                <span className="text-green-600 dark:text-green-500 font-medium">
-                  ✓ {formData.mediaFile.name}
-                </span>
+                <span className="text-green-600 dark:text-green-500 font-medium">✓ {formData.mediaFile.name}</span>
                 <span className="text-green-600/80 dark:text-green-500/80 text-xs ml-2">
                   {((formData.mediaFile.size || 0) / 1024).toFixed(1)} KB
                 </span>
@@ -193,17 +141,14 @@ const AdComposer = () => {
         ) : (
           <label className="block cursor-pointer">
             <div className="border-2 border-dashed border-border hover:border-primary/50 rounded-xl p-12 text-center transition-all bg-card/50">
-              {uploading ? (
-                <Loader2 className="w-10 h-10 text-primary mx-auto mb-3 animate-spin" />
-              ) : (
-                <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              )}
+              {uploading
+                ? <Loader2 className="w-10 h-10 text-primary mx-auto mb-3 animate-spin" />
+                : <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+              }
               <p className="text-sm font-medium text-foreground mb-1">
                 {uploading ? "Uploading..." : "Click to upload or drag and drop"}
               </p>
-              <p className="text-xs text-muted-foreground">
-                PNG, JPG, GIF, WEBP up to 5MB
-              </p>
+              <p className="text-xs text-muted-foreground">PNG, JPG, GIF, WEBP up to 5MB</p>
             </div>
             <input
               type="file"
@@ -229,8 +174,6 @@ const AdComposer = () => {
           <label className="text-sm font-semibold text-foreground">
             Advertisement Text <span className="text-destructive">*</span>
           </label>
-
-          {/* Emoji Button */}
           <button
             onClick={() => setShowEmojiPicker(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-xs font-semibold transition-all shadow-lg shadow-blue-500/25"
@@ -251,38 +194,22 @@ const AdComposer = () => {
 
         <div className="flex items-center justify-between mt-2 text-xs">
           <p className="text-muted-foreground">Supports emojis and markdown</p>
-          <p
-            className={`font-medium tabular-nums ${
-              remainingChars < 100 ? "text-yellow-500" : "text-muted-foreground"
-            }`}
-          >
+          <p className={`font-medium tabular-nums ${remainingChars < 100 ? "text-yellow-500" : "text-muted-foreground"}`}>
             {remainingChars} characters left
           </p>
         </div>
 
-        {/* AI Optimizer & Live Preview */}
-        <div className="mt-3 flex items-center gap-2">
-          <AITextOptimizer
-            text={formData.text || ""}
-            onApply={handleApplyOptimized}
-            language="uz"
-          />
-
+        {/* Send Preview */}
+        <div className="mt-3">
           <button
             onClick={handleSendPreview}
             disabled={sendingPreview || !formData.text || formData.text.length < 10}
             className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/25"
           >
             {sendingPreview ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Sending...
-              </>
+              <><Loader2 className="w-4 h-4 animate-spin" />Sending...</>
             ) : (
-              <>
-                <Send className="w-4 h-4" />
-                Send Preview
-              </>
+              <><Send className="w-4 h-4" />Send Preview</>
             )}
           </button>
         </div>
@@ -308,10 +235,7 @@ const AdComposer = () => {
         {formData.buttons && formData.buttons.length > 0 ? (
           <div className="space-y-3">
             {formData.buttons.map((button, index) => (
-              <div
-                key={index}
-                className="p-4 bg-card border border-border rounded-xl group hover:border-primary/30 transition-all space-y-3"
-              >
+              <div key={index} className="p-4 bg-card border border-border rounded-xl group hover:border-primary/30 transition-all space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="flex-1 space-y-3">
                     <input
@@ -333,10 +257,7 @@ const AdComposer = () => {
                       onChange={(color) => handleUpdateButton(index, "color", color)}
                     />
                   </div>
-                  <button
-                    onClick={() => handleRemoveButton(index)}
-                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                  >
+                  <button onClick={() => handleRemoveButton(index)} className="p-2 text-muted-foreground hover:text-destructive transition-colors">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -347,32 +268,12 @@ const AdComposer = () => {
           <div className="text-center py-8 border-2 border-dashed border-border rounded-xl bg-card/50">
             <Link2 className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
             <p className="text-sm text-muted-foreground mb-3">No buttons added yet</p>
-            <button
-              onClick={handleAddButton}
-              className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-lg transition-all"
-            >
+            <button onClick={handleAddButton} className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-lg transition-all">
               Add First Button
             </button>
           </div>
         )}
       </div>
-
-      {/* Premium Notice */}
-      {!checkingPremium && !hasPremium && (
-        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-          <div className="flex items-start gap-2">
-            <Sparkles className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                Telegram Premium Emojis
-              </p>
-              <p className="text-xs text-blue-600/80 dark:text-blue-400/80 mt-0.5">
-                Get Telegram Premium to use animated custom emojis in your ads
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Summary */}
       <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
@@ -386,7 +287,6 @@ const AdComposer = () => {
               {formData.buttons && formData.buttons.length > 0 && (
                 <li>✓ {formData.buttons.length} button{formData.buttons.length > 1 ? 's' : ''}</li>
               )}
-              {hasPremium && <li>✓ Telegram Premium available</li>}
             </ul>
           </div>
         </div>
@@ -396,8 +296,7 @@ const AdComposer = () => {
       {showEmojiPicker && (
         <TelegramEmojiPicker
           onSelect={(emoji) => {
-            const currentText = formData.text || "";
-            updateFormData({ text: currentText + emoji });
+            updateFormData({ text: (formData.text || "") + emoji });
             setShowEmojiPicker(false);
           }}
           onClose={() => setShowEmojiPicker(false)}

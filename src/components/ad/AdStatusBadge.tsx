@@ -1,13 +1,12 @@
-// src/components/ad/AdStatusBadge.tsx
+// src/components/ad/AdStatusBadge.tsx - FIXED
 import { 
   Clock, 
   CheckCircle, 
   XCircle, 
   Pause, 
   Play, 
-  AlertCircle,
+  Send,
   Archive,
-  Send 
 } from "lucide-react";
 
 interface AdStatusBadgeProps {
@@ -21,10 +20,15 @@ const AdStatusBadge = ({ status }: AdStatusBadgeProps) => {
       icon: Clock,
       className: "bg-gray-500/10 text-gray-400 border-gray-500/20",
     },
+    PENDING_REVIEW: {
+      label: "Pending Review",
+      icon: Send,
+      className: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+    },
     SUBMITTED: {
       label: "Pending Review",
       icon: Send,
-      className: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+      className: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
     },
     APPROVED: {
       label: "Approved",
@@ -44,17 +48,17 @@ const AdStatusBadge = ({ status }: AdStatusBadgeProps) => {
     RUNNING: {
       label: "Running",
       icon: Play,
-      className: "bg-green-500/10 text-green-400 border-green-500/20",
+      className: "bg-blue-500/10 text-blue-400 border-blue-500/20",
     },
     PAUSED: {
       label: "Paused",
       icon: Pause,
-      className: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+      className: "bg-orange-500/10 text-orange-400 border-orange-500/20",
     },
     COMPLETED: {
       label: "Completed",
       icon: CheckCircle,
-      className: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+      className: "bg-green-500/10 text-green-400 border-green-500/20",
     },
     ARCHIVED: {
       label: "Archived",

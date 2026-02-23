@@ -53,13 +53,13 @@ const Header = () => {
   return (
     <header className="relative min-h-screen overflow-hidden flex items-center justify-center bg-black">
       {/* ✅ Background - NO PINK GRADIENT, reduced opacity */}
-      <div
+      {/* <div
         className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{ backgroundImage: "url('/src/assets/images/herobg.png')" }}
-      />
+      /> */}
 
       {/* ✅ Profile Avatar - Top Right (only if authenticated) */}
-      {isAuthenticated && (
+      {/* {isAuthenticated && (
         <button
           onClick={handleProfileClick}
           className="absolute top-6 right-6 z-20 w-10 h-10 rounded-full overflow-hidden ring-2 ring-purple-500/50 hover:ring-purple-500 transition bg-gradient-to-br from-purple-500 to-pink-500"
@@ -77,7 +77,7 @@ const Header = () => {
             }}
           />
         </button>
-      )}
+      )} */}
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center text-center px-4 w-full">
