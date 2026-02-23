@@ -1,4 +1,4 @@
-// Bot related types
+// src/types/bot.types.ts - FIXED WITH ANALYTICS FIELDS
 
 export interface Bot {
   id: string;
@@ -12,6 +12,11 @@ export interface Bot {
   
   totalMembers: number;
   activeMembers: number;
+  
+  // ✅ ANALYTICS FIELDS
+  impressionsServed?: number;
+  clicks?: number;
+  ctr?: number;
   
   monetized: boolean;
   isPaused: boolean;
