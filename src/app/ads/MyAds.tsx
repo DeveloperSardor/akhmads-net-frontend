@@ -24,6 +24,7 @@ import AdStatusBadge from "../../components/ad/AdStatusBadge";
 import AdCardSkeleton from "../../components/ad/AdCardSkeleton";
 import ScheduleModal from "../../components/ad/ScheduleModal";
 import TestBotModal from "../../components/ad/TestBotModal";
+import { useTranslations } from "../../hooks/useTranslations";
 
 type TabType = "all" | "active" | "saved" | "archived" | "scheduled";
 type StatusFilter = "all" | "DRAFT" | "SUBMITTED" | "RUNNING" | "PAUSED" | "COMPLETED";
@@ -31,6 +32,9 @@ type StatusFilter = "all" | "DRAFT" | "SUBMITTED" | "RUNNING" | "PAUSED" | "COMP
 const MyAds = () => {
   const { lang } = useParams();
   const navigate = useNavigate();
+  const t = useTranslations();
+  const m = t.myAds;
+
   const {
     ads,
     isLoading,
@@ -56,7 +60,7 @@ const MyAds = () => {
 
   const loadAds = async () => {
     const params: any = {};
-    
+
     if (statusFilter !== "all") {
       params.status = statusFilter;
     }
@@ -79,8 +83,10 @@ const MyAds = () => {
 
   const filteredAds = ads.filter((ad) => {
     if (searchQuery) {
-      return ad.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             ad.text.toLowerCase().includes(searchQuery.toLowerCase());
+      return (
+        ad.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        ad.text.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
     return true;
   });
@@ -94,32 +100,31 @@ const MyAds = () => {
     loadAds();
   };
 
-  // ✅ FIXED - Navigate to launch-ad with pre-filled form
   const handleDuplicate = (ad: any) => {
-  // Reset form first
-  resetForm();
-  
-  // Pre-fill with ad data
-  updateFormData({
-    contentType: ad.contentType || 'TEXT',
-    title: `${ad.title} (Copy)`, // ✅ Add "(Copy)" to title
-    text: ad.text || '',
-    buttons: ad.buttons ? (typeof ad.buttons === 'string' ? JSON.parse(ad.buttons) : ad.buttons) : [],
-    mediaUrl: ad.mediaUrl || undefined,
-    targetImpressions: ad.targetImpressions || 1000,
-    targeting: ad.targeting ? (typeof ad.targeting === 'string' ? JSON.parse(ad.targeting) : ad.targeting) : {
-      languages: ['uz', 'ru', 'en'],
-      frequency: 'unique',
-    },
-    cpmBid: ad.cpmBid ? parseFloat(ad.cpmBid) : undefined,
-  });
-  
-  // Navigate to launch-ad
-  navigate(`/${lang}/launch-ad`);
-};
+    resetForm();
+    updateFormData({
+      contentType: ad.contentType || "TEXT",
+      title: `${ad.title} (Copy)`,
+      text: ad.text || "",
+      buttons: ad.buttons
+        ? typeof ad.buttons === "string"
+          ? JSON.parse(ad.buttons)
+          : ad.buttons
+        : [],
+      mediaUrl: ad.mediaUrl || undefined,
+      targetImpressions: ad.targetImpressions || 1000,
+      targeting: ad.targeting
+        ? typeof ad.targeting === "string"
+          ? JSON.parse(ad.targeting)
+          : ad.targeting
+        : { languages: ["uz", "ru", "en"], frequency: "unique" },
+      cpmBid: ad.cpmBid ? parseFloat(ad.cpmBid) : undefined,
+    });
+    navigate(`/${lang}/launch-ad`);
+  };
 
   const handleDelete = async (adId: string) => {
-    if (confirm("Are you sure you want to delete this ad?")) {
+    if (confirm(m?.deleteConfirm ?? "Are you sure you want to delete this ad?")) {
       await deleteAd(adId);
       loadAds();
     }
@@ -141,40 +146,43 @@ const MyAds = () => {
   };
 
   const tabs = [
-    { id: "all", label: "All Ads", icon: BarChart3 },
-    { id: "active", label: "Active", icon: TrendingUp },
-    { id: "saved", label: "Saved", icon: Heart },
-    { id: "scheduled", label: "Scheduled", icon: Clock },
-    { id: "archived", label: "Archived", icon: Archive },
+    { id: "all", label: m?.tabs.all ?? "All Ads", icon: BarChart3 },
+    { id: "active", label: m?.tabs.active ?? "Active", icon: TrendingUp },
+    { id: "saved", label: m?.tabs.saved ?? "Saved", icon: Heart },
+    { id: "scheduled", label: m?.tabs.scheduled ?? "Scheduled", icon: Clock },
+    { id: "archived", label: m?.tabs.archived ?? "Archived", icon: Archive },
   ];
 
   const statusFilters = [
-    { value: "all", label: "All Status" },
-    { value: "DRAFT", label: "Draft" },
-    { value: "SUBMITTED", label: "Pending" },
-    { value: "RUNNING", label: "Running" },
-    { value: "PAUSED", label: "Paused" },
-    { value: "COMPLETED", label: "Completed" },
+    { value: "all", label: m?.statusFilters.all ?? "All Status" },
+    { value: "DRAFT", label: m?.statusFilters.draft ?? "Draft" },
+    { value: "SUBMITTED", label: m?.statusFilters.submitted ?? "Pending" },
+    { value: "RUNNING", label: m?.statusFilters.running ?? "Running" },
+    { value: "PAUSED", label: m?.statusFilters.paused ?? "Paused" },
+    { value: "COMPLETED", label: m?.statusFilters.completed ?? "Completed" },
   ];
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto mt-20">
-        <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-background px-4 py-6 sm:px-6">
+      <div className="max-w-7xl mx-auto mt-16 sm:mt-20">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">My Advertisements</h1>
-            <p className="text-muted-foreground">Manage and track your ad campaigns</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+              {m?.pageTitle}
+            </h1>
+            <p className="text-sm text-muted-foreground">{m?.pageSubtitle}</p>
           </div>
           <button
             onClick={() => navigate(`/${lang}/launch-ad`)}
-            className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold transition-all shadow-lg shadow-primary/25"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold transition-all shadow-lg shadow-primary/25 w-full sm:w-auto"
           >
             <Plus className="w-5 h-5" />
-            Launch New Ad
+            {m?.launchNew}
           </button>
         </div>
 
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto">
+        {/* Tabs */}
+        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -182,11 +190,10 @@ const MyAds = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium whitespace-nowrap transition-all ${
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                    : "bg-card text-muted-foreground hover:text-foreground hover:bg-card/80 border border-border"
-                }`}
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium whitespace-nowrap shrink-0 transition-all text-sm ${isActive
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                  : "bg-card text-muted-foreground hover:text-foreground hover:bg-card/80 border border-border"
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 {tab.label}
@@ -195,24 +202,25 @@ const MyAds = () => {
           })}
         </div>
 
-        <div className="flex items-center gap-4 mb-6">
+        {/* Search & Filter */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search ads..."
-              className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+              placeholder={m?.searchPlaceholder}
+              className="w-full pl-9 sm:pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
             />
           </div>
 
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-              className="pl-10 pr-8 py-2.5 bg-card border border-border rounded-lg text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer"
+              className="w-full sm:w-auto pl-9 sm:pl-10 pr-8 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer"
             >
               {statusFilters.map((filter) => (
                 <option key={filter.value} value={filter.value}>
@@ -223,6 +231,7 @@ const MyAds = () => {
           </div>
         </div>
 
+        {/* Content */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -234,16 +243,18 @@ const MyAds = () => {
             <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
               <BarChart3 className="w-10 h-10 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">No ads found</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              {m?.noAdsFound}
+            </h3>
             <p className="text-muted-foreground mb-6">
-              {searchQuery ? "Try adjusting your search" : "Create your first ad campaign"}
+              {searchQuery ? m?.adjustSearch : m?.createFirst}
             </p>
             {!searchQuery && (
               <button
                 onClick={() => navigate(`/${lang}/launch-ad`)}
                 className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all"
               >
-                Launch New Ad
+                {m?.launchNew}
               </button>
             )}
           </div>
@@ -253,9 +264,11 @@ const MyAds = () => {
               <AdCard
                 key={ad.id}
                 ad={ad}
+                actions={m?.actions}
+                progressLabel={m?.progress}
                 onView={() => navigate(`/${lang}/ads/${ad.id}`)}
                 onPauseResume={() => handlePauseResume(ad)}
-                onDuplicate={() => handleDuplicate(ad)} 
+                onDuplicate={() => handleDuplicate(ad)}
                 onDelete={() => handleDelete(ad.id)}
                 onSchedule={() => handleSchedule(ad)}
                 onTest={() => handleTest(ad)}
@@ -290,31 +303,38 @@ const MyAds = () => {
   );
 };
 
-const AdCard = ({ ad, onView, onPauseResume, onDuplicate, onDelete, onSchedule, onTest, onToggleSave }: any) => {
+const AdCard = ({
+  ad,
+  actions,
+  progressLabel,
+  onView,
+  onPauseResume,
+  onDuplicate,
+  onDelete,
+  onSchedule,
+  onTest,
+  onToggleSave,
+}: any) => {
   const progress = (ad.deliveredImpressions / ad.targetImpressions) * 100;
   const [isSaved, setIsSaved] = useState(ad.isSaved || false);
 
-  // ✅ UPDATE STATE WHEN ad.isSaved CHANGES
   useEffect(() => {
     setIsSaved(ad.isSaved || false);
   }, [ad.isSaved]);
 
   const handleToggleSave = async () => {
     if (onToggleSave) {
-      // ✅ OPTIMISTIC UPDATE
       setIsSaved(!isSaved);
-      
       try {
         await onToggleSave(ad.id);
-      } catch (error) {
-        // Revert on error
+      } catch {
         setIsSaved(isSaved);
       }
     }
   };
 
   return (
-    <div className="bg-card border border-border rounded-xl p-5 hover:border-primary/50 transition-all group">
+    <div className="bg-card border border-border rounded-xl p-4 sm:p-5 hover:border-primary/50 transition-all group">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-foreground mb-1 line-clamp-2">
@@ -322,21 +342,19 @@ const AdCard = ({ ad, onView, onPauseResume, onDuplicate, onDelete, onSchedule, 
           </h3>
           <AdStatusBadge status={ad.status} />
         </div>
-        
-        {/* ✅ RED HEART WHEN SAVED */}
+
         <div className="flex items-center gap-2 ml-3">
           <button
             onClick={handleToggleSave}
-            className={`p-2 rounded-lg transition-all ${
-              isSaved
-                ? "bg-red-500/20 text-red-500 hover:bg-red-500/30"
-                : "bg-card hover:bg-muted border border-border text-muted-foreground hover:text-red-500"
-            }`}
-            title={isSaved ? "Unsave" : "Save"}
+            className={`p-2 rounded-lg transition-all ${isSaved
+              ? "bg-red-500/20 text-red-500 hover:bg-red-500/30"
+              : "bg-card hover:bg-muted border border-border text-muted-foreground hover:text-red-500"
+              }`}
+            title={isSaved ? (actions?.unsave ?? "Unsave") : (actions?.save ?? "Save")}
           >
             <Heart className={`w-5 h-5 transition-all ${isSaved ? "fill-red-500 text-red-500" : ""}`} />
           </button>
-          
+
           {ad.mediaUrl && (
             <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted">
               <img src={ad.mediaUrl} alt="" className="w-full h-full object-cover" />
@@ -369,7 +387,7 @@ const AdCard = ({ ad, onView, onPauseResume, onDuplicate, onDelete, onSchedule, 
       {ad.status === "RUNNING" && (
         <div className="mb-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-            <span>Progress</span>
+            <span>{progressLabel ?? "Progress"}</span>
             <span>{progress.toFixed(1)}%</span>
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -387,14 +405,14 @@ const AdCard = ({ ad, onView, onPauseResume, onDuplicate, onDelete, onSchedule, 
           className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-sm font-medium transition-all"
         >
           <BarChart3 className="w-4 h-4" />
-          View
+          {actions?.view ?? "View"}
         </button>
 
         {(ad.status === "RUNNING" || ad.status === "PAUSED") && (
           <button
             onClick={onPauseResume}
             className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
-            title={ad.status === "RUNNING" ? "Pause" : "Resume"}
+            title={ad.status === "RUNNING" ? (actions?.pause ?? "Pause") : (actions?.resume ?? "Resume")}
           >
             {ad.status === "RUNNING" ? (
               <Pause className="w-4 h-4 text-yellow-400" />
@@ -408,7 +426,7 @@ const AdCard = ({ ad, onView, onPauseResume, onDuplicate, onDelete, onSchedule, 
           <button
             onClick={onSchedule}
             className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
-            title="Schedule"
+            title={actions?.schedule ?? "Schedule"}
           >
             <Clock className="w-4 h-4 text-blue-400" />
           </button>
@@ -418,7 +436,7 @@ const AdCard = ({ ad, onView, onPauseResume, onDuplicate, onDelete, onSchedule, 
           <button
             onClick={onTest}
             className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
-            title="Test"
+            title={actions?.test ?? "Test"}
           >
             <Send className="w-4 h-4 text-purple-400" />
           </button>
@@ -427,7 +445,7 @@ const AdCard = ({ ad, onView, onPauseResume, onDuplicate, onDelete, onSchedule, 
         <button
           onClick={onDuplicate}
           className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
-          title="Duplicate"
+          title={actions?.duplicate ?? "Duplicate"}
         >
           <Copy className="w-4 h-4 text-muted-foreground" />
         </button>
@@ -436,7 +454,7 @@ const AdCard = ({ ad, onView, onPauseResume, onDuplicate, onDelete, onSchedule, 
           <button
             onClick={onDelete}
             className="px-3 py-2 bg-card hover:bg-destructive/10 border border-border hover:border-destructive/50 rounded-lg transition-all"
-            title="Delete"
+            title={actions?.delete ?? "Delete"}
           >
             <Trash2 className="w-4 h-4 text-destructive" />
           </button>

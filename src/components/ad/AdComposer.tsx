@@ -5,9 +5,13 @@ import { useAdStore } from "../../store/adStore";
 import api from "../../api/api";
 import ButtonColorPicker from "./ButtonColorPicker";
 import TelegramEmojiPicker from "./TelegramEmojiPicker";
+import { useTranslations } from "../../hooks/useTranslations";
 
 const AdComposer = () => {
   const { formData, updateFormData } = useAdStore();
+  const t = useTranslations();
+  const ac = t.adComposer;
+
   const [preview, setPreview] = useState<string | null>(formData.mediaUrl || null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -35,13 +39,13 @@ const AdComposer = () => {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError("File size must be less than 5MB");
+      setUploadError(ac?.fileSizeError ?? "File size must be less than 5MB");
       return;
     }
 
     const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     if (!validTypes.includes(file.type)) {
-      setUploadError("Only JPG, PNG, GIF, WEBP images are allowed");
+      setUploadError(ac?.fileTypeError ?? "Only JPG, PNG, GIF, WEBP images are allowed");
       return;
     }
 
@@ -58,14 +62,14 @@ const AdComposer = () => {
           setPreview(uploadedUrl);
           updateFormData({ mediaUrl: uploadedUrl, mediaFile: file, contentType: 'MEDIA' });
         } catch (error: any) {
-          setUploadError(error.response?.data?.message || 'Upload failed');
+          setUploadError(error.response?.data?.message || (ac?.uploadFailed ?? 'Upload failed'));
         } finally {
           setUploading(false);
         }
       };
       reader.readAsDataURL(file);
     } catch {
-      setUploadError('Upload failed');
+      setUploadError(ac?.uploadFailed ?? 'Upload failed');
       setUploading(false);
     }
   };
@@ -78,7 +82,7 @@ const AdComposer = () => {
 
   const handleSendPreview = async () => {
     if (!formData.text || formData.text.length < 10) {
-      alert('Please write some ad text first (minimum 10 characters)');
+      alert(ac?.sendPreviewAlert ?? 'Please write some ad text first (minimum 10 characters)');
       return;
     }
     setSendingPreview(true);
@@ -88,15 +92,16 @@ const AdComposer = () => {
         mediaUrl: formData.mediaUrl,
         buttons: formData.buttons,
       });
-      alert('✅ Preview sent to your Telegram! Check your messages.');
+      alert(ac?.sendPreviewSuccess ?? '✅ Preview sent to your Telegram! Check your messages.');
     } catch (error: any) {
-      alert(`❌ ${error.response?.data?.message || 'Failed to send preview'}`);
+      alert(`❌ ${error.response?.data?.message || (ac?.sendPreviewFail ?? 'Failed to send preview')}`);
     } finally {
       setSendingPreview(false);
     }
   };
 
   const remainingChars = 1024 - (formData.text?.length || 0);
+  const buttonCount = formData.buttons?.length || 0;
 
   return (
     <div className="space-y-6">
@@ -105,18 +110,20 @@ const AdComposer = () => {
         <div className="flex items-center gap-2 mb-2">
           <FileText className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-foreground">
-            {formData.mediaUrl ? 'Media Ad (Image + Text + Buttons)' : 'Text Ad (Text + Buttons)'}
+            {formData.mediaUrl
+              ? (ac?.contentTypeMedia ?? 'Media Ad (Image + Text + Buttons)')
+              : (ac?.contentTypeText ?? 'Text Ad (Text + Buttons)')}
           </span>
         </div>
         <p className="text-xs text-muted-foreground">
-          You can add text, image, and buttons together
+          {ac?.contentTypeHint ?? 'You can add text, image, and buttons together'}
         </p>
       </div>
 
       {/* Media Upload */}
       <div>
         <label className="block text-sm font-semibold text-foreground mb-3">
-          Upload Media (Optional)
+          {ac?.uploadLabel ?? 'Upload Media (Optional)'}
         </label>
 
         {preview ? (
@@ -146,9 +153,13 @@ const AdComposer = () => {
                 : <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
               }
               <p className="text-sm font-medium text-foreground mb-1">
-                {uploading ? "Uploading..." : "Click to upload or drag and drop"}
+                {uploading
+                  ? (ac?.uploading ?? "Uploading...")
+                  : (ac?.uploadPlaceholder ?? "Click to upload or drag and drop")}
               </p>
-              <p className="text-xs text-muted-foreground">PNG, JPG, GIF, WEBP up to 5MB</p>
+              <p className="text-xs text-muted-foreground">
+                {ac?.uploadFormats ?? "PNG, JPG, GIF, WEBP up to 5MB"}
+              </p>
             </div>
             <input
               type="file"
@@ -172,30 +183,30 @@ const AdComposer = () => {
       <div>
         <div className="flex items-center justify-between mb-3">
           <label className="text-sm font-semibold text-foreground">
-            Advertisement Text <span className="text-destructive">*</span>
+            {ac?.adTextLabel ?? 'Advertisement Text'} <span className="text-destructive">*</span>
           </label>
           <button
             onClick={() => setShowEmojiPicker(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-xs font-semibold transition-all shadow-lg shadow-blue-500/25"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Add Emoji
+            {ac?.addEmoji ?? 'Add Emoji'}
           </button>
         </div>
 
         <textarea
           value={formData.text || ""}
           onChange={(e) => updateFormData({ text: e.target.value })}
-          placeholder="Write your compelling advertisement text here...&#10;&#10;You can use:&#10;• Emojis 😊&#10;• Multiple lines&#10;• **Bold** text with markdown&#10;&#10;Example:&#10;🎉 Special Offer! Get 50% OFF&#10;✅ Limited time only&#10;👉 Order now!"
+          placeholder={ac?.adTextPlaceholder ?? "Write your compelling advertisement text here..."}
           maxLength={1024}
           rows={8}
           className="w-full px-4 py-3 bg-input border border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-foreground placeholder:text-muted-foreground resize-none transition-all outline-none font-mono text-sm"
         />
 
         <div className="flex items-center justify-between mt-2 text-xs">
-          <p className="text-muted-foreground">Supports emojis and markdown</p>
+          <p className="text-muted-foreground">{ac?.supportsMarkdown ?? 'Supports emojis and markdown'}</p>
           <p className={`font-medium tabular-nums ${remainingChars < 100 ? "text-yellow-500" : "text-muted-foreground"}`}>
-            {remainingChars} characters left
+            {remainingChars} {ac?.charsLeft ?? 'characters left'}
           </p>
         </div>
 
@@ -207,9 +218,9 @@ const AdComposer = () => {
             className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/25"
           >
             {sendingPreview ? (
-              <><Loader2 className="w-4 h-4 animate-spin" />Sending...</>
+              <><Loader2 className="w-4 h-4 animate-spin" />{ac?.sending ?? 'Sending...'}</>
             ) : (
-              <><Send className="w-4 h-4" />Send Preview</>
+              <><Send className="w-4 h-4" />{ac?.sendPreview ?? 'Send Preview'}</>
             )}
           </button>
         </div>
@@ -219,7 +230,7 @@ const AdComposer = () => {
       <div>
         <div className="flex items-center justify-between mb-3">
           <label className="text-sm font-semibold text-foreground">
-            Call-to-Action Buttons (Optional)
+            {ac?.buttonsLabel ?? 'Call-to-Action Buttons (Optional)'}
           </label>
           {(!formData.buttons || formData.buttons.length < 3) && (
             <button
@@ -227,7 +238,7 @@ const AdComposer = () => {
               className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-xs font-semibold transition-all"
             >
               <Link2 className="w-3.5 h-3.5" />
-              Add Button
+              {ac?.addButton ?? 'Add Button'}
             </button>
           )}
         </div>
@@ -242,7 +253,7 @@ const AdComposer = () => {
                       type="text"
                       value={button.text}
                       onChange={(e) => handleUpdateButton(index, "text", e.target.value)}
-                      placeholder="Button text (e.g. Visit Website)"
+                      placeholder={ac?.buttonTextPlaceholder ?? "Button text (e.g. Visit Website)"}
                       className="w-full px-3 py-2 bg-input border border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-lg text-sm text-foreground placeholder:text-muted-foreground transition-all outline-none"
                     />
                     <input
@@ -267,9 +278,9 @@ const AdComposer = () => {
         ) : (
           <div className="text-center py-8 border-2 border-dashed border-border rounded-xl bg-card/50">
             <Link2 className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground mb-3">No buttons added yet</p>
+            <p className="text-sm text-muted-foreground mb-3">{ac?.noButtons ?? 'No buttons added yet'}</p>
             <button onClick={handleAddButton} className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-lg transition-all">
-              Add First Button
+              {ac?.addFirstButton ?? 'Add First Button'}
             </button>
           </div>
         )}
@@ -280,12 +291,14 @@ const AdComposer = () => {
         <div className="flex items-start gap-2">
           <Sparkles className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-primary mb-1">Your Ad Includes:</p>
+            <p className="text-sm font-medium text-primary mb-1">
+              {ac?.summaryTitle ?? 'Your Ad Includes:'}
+            </p>
             <ul className="text-xs text-primary/80 space-y-0.5">
-              <li>✓ Advertisement text ({formData.text?.length || 0} characters)</li>
-              {preview && <li>✓ Media image uploaded</li>}
-              {formData.buttons && formData.buttons.length > 0 && (
-                <li>✓ {formData.buttons.length} button{formData.buttons.length > 1 ? 's' : ''}</li>
+              <li>✓ {formData.text?.length || 0} {ac?.summaryChars ?? 'characters'}</li>
+              {preview && <li>✓ {ac?.summaryMedia ?? 'Media image uploaded'}</li>}
+              {buttonCount > 0 && (
+                <li>✓ {buttonCount} {buttonCount > 1 ? (ac?.summaryButtons ?? 'buttons') : (ac?.summaryButton ?? 'button')}</li>
               )}
             </ul>
           </div>

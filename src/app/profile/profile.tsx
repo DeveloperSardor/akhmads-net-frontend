@@ -30,21 +30,20 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { useUserStore } from "../../store/userStore";
+import { useTranslations } from "../../hooks/useTranslations";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const t = useTranslations();
+  const p = t.profile;
+
   const [activeTab, setActiveTab] = useState<"my-ads" | "my-bots">("my-ads");
   const [showEditModal, setShowEditModal] = useState(false);
   const [copiedTelegramId, setCopiedTelegramId] = useState(false);
-  const [editForm, setEditForm] = useState({
-    firstName: "",
-    lastName: "",
-  });
+  const [editForm, setEditForm] = useState({ firstName: "", lastName: "" });
 
-  // Auth store
   const { user: authUser, logout } = useAuthStore();
 
-  // User store
   const {
     profile,
     wallet,
@@ -65,7 +64,6 @@ const Profile = () => {
     clearError,
   } = useUserStore();
 
-  // Fetch data on mount
   useEffect(() => {
     fetchProfile();
     fetchAds({ limit: 10 });
@@ -73,13 +71,9 @@ const Profile = () => {
     fetchAnalytics(7, "advertiser");
   }, []);
 
-  // Set edit form when profile loads
   useEffect(() => {
     if (profile) {
-      setEditForm({
-        firstName: profile.firstName || "",
-        lastName: profile.lastName || "",
-      });
+      setEditForm({ firstName: profile.firstName || "", lastName: profile.lastName || "" });
     }
   }, [profile]);
 
@@ -89,13 +83,13 @@ const Profile = () => {
   };
 
   const handleDeleteAd = async (adId: string) => {
-    if (window.confirm("Are you sure you want to delete this ad?")) {
+    if (window.confirm(p?.deleteAdConfirm ?? "Are you sure you want to delete this ad?")) {
       await deleteAd(adId);
     }
   };
 
   const handleDeleteBot = async (botId: string) => {
-    if (window.confirm("Are you sure you want to delete this bot?")) {
+    if (window.confirm(p?.deleteBotConfirm ?? "Are you sure you want to delete this bot?")) {
       await deleteBot(botId);
     }
   };
@@ -105,7 +99,6 @@ const Profile = () => {
     setShowEditModal(false);
   };
 
-  // ✅ Copy Telegram ID to clipboard
   const handleCopyTelegramId = async () => {
     if (profile?.telegramId) {
       await navigator.clipboard.writeText(profile.telegramId);
@@ -114,26 +107,22 @@ const Profile = () => {
     }
   };
 
-  // ✅ Calculate avatar URL - Telegram avatar or fallback
   const avatarUrl =
     profile?.avatarUrl ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.firstName || "User")}&background=8b5cf6&color=fff&size=200&bold=true`;
 
-  // Format currency - fixed type handling
   const formatCurrency = (amount?: number | string | null): string => {
-    const numAmount = typeof amount === 'number' ? amount : Number(amount) || 0;
+    const numAmount = typeof amount === "number" ? amount : Number(amount) || 0;
     return `$${numAmount.toFixed(2)}`;
   };
 
-  // Format number - fixed type handling
   const formatNumber = (num?: number | string | null): string => {
-    const numValue = typeof num === 'number' ? num : Number(num) || 0;
+    const numValue = typeof num === "number" ? num : Number(num) || 0;
     return numValue.toLocaleString();
   };
 
-  // Format percentage - fixed type handling
   const formatPercent = (num?: number | string | null): string => {
-    const numValue = typeof num === 'number' ? num : Number(num) || 0;
+    const numValue = typeof num === "number" ? num : Number(num) || 0;
     return `${numValue.toFixed(1)}%`;
   };
 
@@ -168,16 +157,15 @@ const Profile = () => {
             className="flex items-center gap-1.5 text-white/50 hover:text-white transition text-xs mb-3"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Back to home
+            {p?.backToHome}
           </button>
-          <h1 className="text-2xl font-bold">Profile</h1>
+          <h1 className="text-2xl font-bold">{p?.pageTitle}</h1>
         </div>
 
         {/* Profile Card */}
         <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 mt-5 mb-4">
           <div className="flex items-start justify-between mb-5">
             <div className="flex items-center gap-3">
-              {/* ✅ Telegram Avatar */}
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 overflow-hidden ring-2 ring-purple-500/20">
                 <img
                   src={avatarUrl}
@@ -192,18 +180,13 @@ const Profile = () => {
                 <h2 className="text-lg font-semibold mb-0.5">
                   {profile?.firstName} {profile?.lastName}
                 </h2>
-                <p className="text-xs text-white/50 mb-1.5">
-                  @{profile?.username || 'user'}
-                </p>
-                {/* ✅ Telegram ID with Copy */}
+                <p className="text-xs text-white/50 mb-1.5">@{profile?.username || "user"}</p>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-white/40">
-                    ID: {profile?.telegramId}
-                  </span>
+                  <span className="text-xs text-white/40">ID: {profile?.telegramId}</span>
                   <button
                     onClick={handleCopyTelegramId}
                     className="p-1 hover:bg-white/10 rounded transition"
-                    title="Copy Telegram ID"
+                    title={p?.copyTelegramId}
                   >
                     {copiedTelegramId ? (
                       <Check className="w-3 h-3 text-green-400" />
@@ -221,14 +204,14 @@ const Profile = () => {
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition text-sm"
               >
                 <Edit className="w-3.5 h-3.5" />
-                Edit
+                {p?.edit}
               </button>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition text-sm"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                Log Out
+                {p?.logOut}
               </button>
             </div>
           </div>
@@ -240,11 +223,9 @@ const Profile = () => {
                 <div className="w-7 h-7 rounded-lg bg-red-500/20 flex items-center justify-center">
                   <TrendingUp className="w-3.5 h-3.5 text-red-400" />
                 </div>
-                <span className="text-xs text-white/60">Total Spent</span>
+                <span className="text-xs text-white/60">{p?.totalSpent}</span>
               </div>
-              <p className="text-2xl font-bold">
-                {formatCurrency(stats?.totalSpent ?? wallet?.totalSpent)}
-              </p>
+              <p className="text-2xl font-bold">{formatCurrency(stats?.totalSpent ?? wallet?.totalSpent)}</p>
             </div>
 
             <div className="bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 rounded-lg p-4">
@@ -252,11 +233,9 @@ const Profile = () => {
                 <div className="w-7 h-7 rounded-lg bg-green-500/20 flex items-center justify-center">
                   <DollarSign className="w-3.5 h-3.5 text-green-400" />
                 </div>
-                <span className="text-xs text-white/60">Total Earned</span>
+                <span className="text-xs text-white/60">{p?.totalEarned}</span>
               </div>
-              <p className="text-2xl font-bold">
-                {formatCurrency(stats?.totalEarned ?? wallet?.totalEarnings)}
-              </p>
+              <p className="text-2xl font-bold">{formatCurrency(stats?.totalEarned ?? wallet?.totalEarnings)}</p>
             </div>
           </div>
         </div>
@@ -268,12 +247,10 @@ const Profile = () => {
               <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center">
                 <Eye className="w-3.5 h-3.5 text-purple-400" />
               </div>
-              <span className="text-xs text-white/60">Impressions</span>
+              <span className="text-xs text-white/60">{p?.impressions}</span>
             </div>
-            <p className="text-xl font-bold mb-0.5">
-              {formatNumber(stats?.totalImpressions)}
-            </p>
-            <p className="text-xs text-white/40">Total views</p>
+            <p className="text-xl font-bold mb-0.5">{formatNumber(stats?.totalImpressions)}</p>
+            <p className="text-xs text-white/40">{p?.totalViews}</p>
           </div>
 
           <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
@@ -281,12 +258,10 @@ const Profile = () => {
               <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center">
                 <MousePointerClick className="w-3.5 h-3.5 text-purple-400" />
               </div>
-              <span className="text-xs text-white/60">CTR</span>
+              <span className="text-xs text-white/60">{p?.ctr}</span>
             </div>
-            <p className="text-xl font-bold mb-0.5">
-              {formatPercent(stats?.averageCtr)}
-            </p>
-            <p className="text-xs text-white/40">Average click-through rate</p>
+            <p className="text-xl font-bold mb-0.5">{formatPercent(stats?.averageCtr)}</p>
+            <p className="text-xs text-white/40">{p?.avgCtr}</p>
           </div>
 
           <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
@@ -294,12 +269,10 @@ const Profile = () => {
               <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center">
                 <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
               </div>
-              <span className="text-xs text-white/60">Conversions</span>
+              <span className="text-xs text-white/60">{p?.conversions}</span>
             </div>
-            <p className="text-xl font-bold mb-0.5">
-              {formatCurrency(stats?.totalClicks)}
-            </p>
-            <p className="text-xs text-white/40">Total conversions</p>
+            <p className="text-xl font-bold mb-0.5">{formatCurrency(stats?.totalClicks)}</p>
+            <p className="text-xs text-white/40">{p?.totalConversions}</p>
           </div>
         </div>
 
@@ -308,31 +281,22 @@ const Profile = () => {
           {/* Revenue Trend */}
           <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold">Revenue trend</h3>
+              <h3 className="text-sm font-semibold">{p?.revenueTrend}</h3>
               <div className="flex items-center gap-2">
                 <button className="p-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition">
                   <Calendar className="w-3.5 h-3.5" />
                 </button>
                 <button className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition text-xs">
-                  Export CSV
+                  {p?.exportCsv}
                 </button>
               </div>
             </div>
-
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={revenueData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
                 <XAxis dataKey="date" stroke="#ffffff30" fontSize={10} />
                 <YAxis stroke="#ffffff30" fontSize={10} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#0a0a0a",
-                    border: "1px solid #ffffff20",
-                    borderRadius: "6px",
-                    fontSize: "11px",
-                  }}
-                  cursor={{ fill: "#ffffff08" }}
-                />
+                <Tooltip contentStyle={{ backgroundColor: "#0a0a0a", border: "1px solid #ffffff20", borderRadius: "6px", fontSize: "11px" }} cursor={{ fill: "#ffffff08" }} />
                 <Bar dataKey="earnings" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -341,39 +305,23 @@ const Profile = () => {
           {/* CTR Indicator */}
           <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold">CTR indicator</h3>
+              <h3 className="text-sm font-semibold">{p?.ctrIndicator}</h3>
               <div className="flex items-center gap-2">
                 <button className="p-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition">
                   <Calendar className="w-3.5 h-3.5" />
                 </button>
                 <button className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition text-xs">
-                  Export CSV
+                  {p?.exportCsv}
                 </button>
               </div>
             </div>
-
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={ctrData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
                 <XAxis dataKey="date" stroke="#ffffff30" fontSize={10} />
                 <YAxis stroke="#ffffff30" fontSize={10} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#0a0a0a",
-                    border: "1px solid #ffffff20",
-                    borderRadius: "6px",
-                    fontSize: "11px",
-                  }}
-                  cursor={{ stroke: "#ffffff20" }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="ctr"
-                  stroke="#8b5cf6"
-                  strokeWidth={2}
-                  dot={{ fill: "#8b5cf6", r: 3 }}
-                  activeDot={{ r: 5 }}
-                />
+                <Tooltip contentStyle={{ backgroundColor: "#0a0a0a", border: "1px solid #ffffff20", borderRadius: "6px", fontSize: "11px" }} cursor={{ stroke: "#ffffff20" }} />
+                <Line type="monotone" dataKey="ctr" stroke="#8b5cf6" strokeWidth={2} dot={{ fill: "#8b5cf6", r: 3 }} activeDot={{ r: 5 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -382,27 +330,19 @@ const Profile = () => {
         {/* Information Table */}
         <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold">Information</h3>
+            <h3 className="text-sm font-semibold">{p?.information}</h3>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setActiveTab("my-ads")}
-                className={`px-3 py-1.5 rounded-lg font-medium transition text-sm ${
-                  activeTab === "my-ads"
-                    ? "bg-purple-600 text-white"
-                    : "bg-white/5 text-white/60 hover:bg-white/10"
-                }`}
+                className={`px-3 py-1.5 rounded-lg font-medium transition text-sm ${activeTab === "my-ads" ? "bg-purple-600 text-white" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
               >
-                My Ads
+                {p?.myAds}
               </button>
               <button
                 onClick={() => setActiveTab("my-bots")}
-                className={`px-3 py-1.5 rounded-lg font-medium transition text-sm ${
-                  activeTab === "my-bots"
-                    ? "bg-purple-600 text-white"
-                    : "bg-white/5 text-white/60 hover:bg-white/10"
-                }`}
+                className={`px-3 py-1.5 rounded-lg font-medium transition text-sm ${activeTab === "my-bots" ? "bg-purple-600 text-white" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
               >
-                My Bots
+                {p?.myBots}
               </button>
             </div>
           </div>
@@ -413,78 +353,42 @@ const Profile = () => {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Ad Title
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Impressions
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      CTR
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Conversions
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Spent
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Status
-                    </th>
-                    <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">
-                      Actions
-                    </th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.title}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.impressions}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.ctr}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.conversions}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.spent}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.status}</th>
+                    <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.actions}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {ads.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="text-center py-10 text-white/40 text-sm">
-                        No ads found
-                      </td>
+                      <td colSpan={7} className="text-center py-10 text-white/40 text-sm">{p?.noAds}</td>
                     </tr>
                   ) : (
                     ads.map((ad) => (
-                      <tr
-                        key={ad.id}
-                        className="border-b border-white/5 hover:bg-white/[0.02] transition"
-                      >
+                      <tr key={ad.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
                         <td className="py-3 px-3">{ad.title}</td>
                         <td className="py-3 px-3">{formatNumber(ad.impressions)}</td>
                         <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
                         <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
-                        <td className="py-3 px-3 text-red-400">
-                          {formatCurrency(ad.spent)}
-                        </td>
+                        <td className="py-3 px-3 text-red-400">{formatCurrency(ad.spent)}</td>
                         <td className="py-3 px-3">
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                              ad.status === "RUNNING"
-                                ? "bg-green-500/20 text-green-400"
-                                : ad.status === "PAUSED"
-                                ? "bg-yellow-500/20 text-yellow-400"
-                                : "bg-gray-500/20 text-gray-400"
-                            }`}
-                          >
-                            {ad.status === "RUNNING"
-                              ? "Active"
-                              : ad.status === "PAUSED"
-                              ? "Pending"
-                              : ad.status}
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
+                              ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
+                                "bg-gray-500/20 text-gray-400"
+                            }`}>
+                            {ad.status === "RUNNING" ? p?.statusActive : ad.status === "PAUSED" ? p?.statusPending : ad.status}
                           </span>
                         </td>
                         <td className="py-3 px-3">
                           <div className="flex items-center justify-end gap-1">
-                            <button
-                              onClick={() => navigate(`/ads/${ad.id}`)}
-                              className="p-1.5 hover:bg-white/10 rounded-lg transition"
-                            >
+                            <button onClick={() => navigate(`/ads/${ad.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
                               <Eye className="w-3.5 h-3.5" />
                             </button>
-                            <button
-                              onClick={() => handleDeleteAd(ad.id)}
-                              className="p-1.5 hover:bg-white/10 rounded-lg transition"
-                            >
+                            <button onClick={() => handleDeleteAd(ad.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
                               <Trash2 className="w-3.5 h-3.5 text-red-400" />
                             </button>
                           </div>
@@ -503,76 +407,40 @@ const Profile = () => {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Bot Name
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Subscribers
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Impressions
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Earnings
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
-                      Status
-                    </th>
-                    <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">
-                      Actions
-                    </th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.name}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.subscribers}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.impressions}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.earnings}</th>
+                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.status}</th>
+                    <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.actions}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {bots.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="text-center py-10 text-white/40 text-sm">
-                        No bots found
-                      </td>
+                      <td colSpan={6} className="text-center py-10 text-white/40 text-sm">{p?.noBots}</td>
                     </tr>
                   ) : (
                     bots.map((bot) => (
-                      <tr
-                        key={bot.id}
-                        className="border-b border-white/5 hover:bg-white/[0.02] transition"
-                      >
+                      <tr key={bot.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
                         <td className="py-3 px-3">@{bot.username}</td>
                         <td className="py-3 px-3">{formatNumber(bot.subscribers)}</td>
+                        <td className="py-3 px-3">{formatNumber(bot.impressionsServed)}</td>
+                        <td className="py-3 px-3 text-green-400">{formatCurrency(bot.earnings)}</td>
                         <td className="py-3 px-3">
-                          {formatNumber(bot.impressionsServed)}
-                        </td>
-                        <td className="py-3 px-3 text-green-400">
-                          {formatCurrency(bot.earnings)}
-                        </td>
-                        <td className="py-3 px-3">
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                              bot.status === "ACTIVE"
-                                ? "bg-green-500/20 text-green-400"
-                                : bot.status === "PENDING"
-                                ? "bg-yellow-500/20 text-yellow-400"
-                                : "bg-red-500/20 text-red-400"
-                            }`}
-                          >
-                            {bot.status === "ACTIVE"
-                              ? "Active"
-                              : bot.status === "PENDING"
-                              ? "Pending"
-                              : bot.status}
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bot.status === "ACTIVE" ? "bg-green-500/20 text-green-400" :
+                              bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
+                                "bg-red-500/20 text-red-400"
+                            }`}>
+                            {bot.status === "ACTIVE" ? p?.statusActive : bot.status === "PENDING" ? p?.statusPending : bot.status}
                           </span>
                         </td>
                         <td className="py-3 px-3">
                           <div className="flex items-center justify-end gap-1">
-                            <button
-                              onClick={() => navigate(`/bots/${bot.id}`)}
-                              className="p-1.5 hover:bg-white/10 rounded-lg transition"
-                            >
+                            <button onClick={() => navigate(`/bots/${bot.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
                               <Eye className="w-3.5 h-3.5" />
                             </button>
-                            <button
-                              onClick={() => handleDeleteBot(bot.id)}
-                              className="p-1.5 hover:bg-white/10 rounded-lg transition"
-                            >
+                            <button onClick={() => handleDeleteBot(bot.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
                               <Trash2 className="w-3.5 h-3.5 text-red-400" />
                             </button>
                           </div>
@@ -592,24 +460,19 @@ const Profile = () => {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 w-full max-w-md">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold">Edit User Information</h2>
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="text-white/60 hover:text-white transition"
-              >
+              <h2 className="text-lg font-semibold">{p?.editModal.title}</h2>
+              <button onClick={() => setShowEditModal(false)} className="text-white/60 hover:text-white transition">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-3.5">
               <div>
-                <label className="block text-xs text-white/60 mb-2">Name</label>
+                <label className="block text-xs text-white/60 mb-2">{p?.editModal.nameLabel}</label>
                 <input
                   type="text"
                   value={editForm.firstName}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, firstName: e.target.value })
-                  }
+                  onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
                   className="w-full px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
                   placeholder="Ahmad"
                   required
@@ -617,13 +480,11 @@ const Profile = () => {
               </div>
 
               <div>
-                <label className="block text-xs text-white/60 mb-2">Surname</label>
+                <label className="block text-xs text-white/60 mb-2">{p?.editModal.surnameLabel}</label>
                 <input
                   type="text"
                   value={editForm.lastName}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, lastName: e.target.value })
-                  }
+                  onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
                   className="w-full px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
                   placeholder="Karimov"
                 />
@@ -635,13 +496,13 @@ const Profile = () => {
                 onClick={() => setShowEditModal(false)}
                 className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition font-medium text-sm"
               >
-                Cancel
+                {p?.editModal.cancel}
               </button>
               <button
                 onClick={handleSaveProfile}
                 className="flex-1 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg transition font-medium text-sm"
               >
-                Save changes
+                {p?.editModal.save}
               </button>
             </div>
           </div>

@@ -1,41 +1,26 @@
 import { Megaphone, Layers, Sparkles } from "lucide-react";
+import { useTranslations } from "../../../hooks/useTranslations";
 
-const features = [
-  {
-    icon: Megaphone,
-    title: "Samarali Tarqatish",
-    description: "AI yordamida eng mos auditoriyaga reklamani yetkazamiz",
-  },
-  {
-    icon: Layers,
-    title: "Keng Qamrov",
-    description: "Minglab faol foydalanuvchilar va botlar tarmog‘i",
-  },
-  {
-    icon: Sparkles,
-    title: "AI Tavsiyalar",
-    description: "Real vaqt rejimida CTR oshirish bo‘yicha maslahatlar",
-  },
-];
+const icons = [Megaphone, Layers, Sparkles];
 
 const WhyUs = () => {
+  const t = useTranslations();
+  const features: { title: string; description: string }[] = t.homeWhyUs?.features ?? [];
+
   return (
     <section className="main-container my-24">
       {/* Title */}
       <div className="text-center mb-14">
         <h2 className="text-2xl md:text-3xl font-semibold text-white">
-          Biz sizning reklamangizni minglab <br />
-          foydalanuvchilarga yetkazamiz
+          {t.homeWhyUs?.title}
         </h2>
-        <p className="mt-2 text-sm text-white/60">
-          Reklama beruvchilar uchun qulay platforma
-        </p>
+        <p className="mt-2 text-sm text-white/60">{t.homeWhyUs?.subtitle}</p>
       </div>
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {features.map((item, index) => {
-          const Icon = item.icon;
+        {features.map((item: { title: string; description: string }, index: number) => {
+          const Icon = icons[index] ?? Sparkles;
           return (
             <div
               key={index}

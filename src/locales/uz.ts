@@ -1,282 +1,518 @@
 export const uz = {
-	// Navbar
-	navbar: {
-		input: "Universitetlar yoki ta'lim sohalarini qidiring",
-		contact: "Aloqa",
-		contactUs: "Biz bilan bog'lanish",
-		links: {
-			aboutUs: "Biz haqimizda",
-			universities: "Universitetlar",
-			studentServices: "Talabalar uchun xizmatlar",
-			media: "Media",
-			apply: "Qanday ariza topshiriladi?",
-		},
-		notFound: "Ma'lumot topilmadi",
-	},
-
-	// Toast
-	toast: {
-		error: "Habar yuborishda xatolik ketdi, iltimos qayta urinib ko'ring!",
-	},
-
-	// General
-	general: {
-		loading: "Yuklanmoqda...",
-	},
-
-  // Not found
-  notFound: {
-    university: "Universitet topilmadi",
-    page: "Sahifa topilmadi",
+  // Navbar
+  navbar: {
+    home: "Bosh sahifa",
+    addBot: "Bot qo'shish",
+    wallet: "Hamyon",
+    faq: "FAQ",
+    myAds: "Reklamalarim",
+    logIn: "Kirish",
+    launchAd: "Reklama berish",
+    profile: "Profil",
+    logout: "Chiqish",
   },
 
-  /* -------------------------------- Home Page ------------------------------- */
-  // Home Ancestors
-  homeAncestors: {
-    title1: "Bizning",
-    title2: "Ajdodlarimiz",
+  // Home Header
+  homeHeader: {
+    title: "Telegramda reklama berish yanada tez va oson",
+    subtitle:
+      "Telegram — 13 mlrd aktiv foydalanuvchiga ega. Nega sizning reklamangiz ular ko'radigan joyda bo'lmasligi kerak?",
+    ctaStart: "Boshlash",
+    ctaLaunch: "Reklama berish",
   },
 
-	// Home About
-	homeAbout: {
-		title: "World Study Academy haqida",
-	},
+  // Home WhyUs
+  homeWhyUs: {
+    title: "Biz sizning reklamangizni minglab foydalanuvchilarga yetkazamiz",
+    subtitle: "Reklama beruvchilar uchun qulay platforma",
+    features: [
+      {
+        title: "Samarali Tarqatish",
+        description: "AI yordamida eng mos auditoriyaga reklamani yetkazamiz",
+      },
+      {
+        title: "Keng Qamrov",
+        description: "Minglab faol foydalanuvchilar va botlar tarmog'i",
+      },
+      {
+        title: "AI Tavsiyalar",
+        description: "Real vaqt rejimida CTR oshirish bo'yicha maslahatlar",
+      },
+    ],
+  },
 
-	// Home Universities
-	homeUniversities: {
-		title1: "Top",
-		title2: "Universitetlar",
-	},
+  // Home HowItWorks
+  homeHowItWorks: {
+    title: "Qanday ishlaydi?",
+    subtitle: "3 oddiy qadam bilan reklama boshlang",
+    steps: [
+      {
+        step: "01",
+        title: "Reklama yarating",
+        description:
+          "Matn, media va CTA tugmani kiriting, o'z reklamangizni qisqa muddatda tayyorlang",
+      },
+      {
+        step: "02",
+        title: "AI tahlil qiladi",
+        description:
+          "Matn, media va CTA tugmani kiritgach darhol AI sizning postingizni tahlil qiladi",
+      },
+      {
+        step: "03",
+        title: "Botlar orqali tarqatiladi",
+        description:
+          "Reklama tasdiqlangach, botlar tarmog'i orqali maqsadli auditoriyaga yetkaziladi",
+      },
+    ],
+  },
 
-	// Home Student life
-	homeStudetLife: {
-		title: "O'zbekistonda talaba hayoti",
-	},
+  // Home Bots
+  homeBots: {
+    title: "Platformamizga ulangan botlar",
+    subtitle: "Har kuni o'sib borayotgan tarmoq",
+  },
 
-	// Home Student Stories
-	homeStudentStories: {
-		title: "Ijtimoiy tarmoqlardagi talaba hikoyalari",
-	},
+  // Footer
+  footer: {
+    brandDesc: "Telegram botlari uchun reklama va monetizatsiya platformasi.",
+    platformTitle: "Platforma",
+    supportTitle: "Yordam",
+    links: {
+      home: "Bosh sahifa",
+      launchAd: "Reklama berish",
+      addBot: "Bot qo'shish",
+      wallet: "Hamyon",
+      faq: "FAQ",
+      support: "Yordam",
+    },
+    copyright: "AKHMADS.NET — Botlar. Reklamalar. Avtomatlashtirish.",
+  },
 
-	// Home Contacts
-	homeContacts: {
-		placeholder: {
-			name: "Ism",
-			number: "Telefon raqami",
-			email: "Elektron pochta",
-			country: "Hudud",
-		},
-		submit: "Jo'natish",
-		submitSuccess:
-			"Ma'lumotlaringiz qabul qilindi. Tez orada siz bilan bog‘lanamiz",
-	},
+  // FAQ
+  faq: {
+    pageTitle: "FAQ va Yordam",
+    pageSubtitle: "Ko'p So'raladigan Savollar va Yordam Markazi",
+    contactTitle: "Biz bilan bog'laning",
+    contactSubtitle: "Javob topa olmadingizmi? Bizga xabar yuboring.",
+    sendMessage: "Xabar yuborish",
+    namePlaceholder: "Ism",
+    emailPlaceholder: "Email",
+    messagePlaceholder: "Xabaringizni yozing...",
+    minChars: "Kamida 20 ta belgi",
+    sendBtn: "Yuborish",
+    sending: "Yuborilmoqda...",
+    successMsg: "Xabar muvaffaqiyatli yuborildi! Tez orada javob beramiz.",
+    fillAllFields: "Iltimos, barcha maydonlarni to'ldiring",
+    minCharsError: "Xabar kamida 20 ta belgidan iborat bo'lishi kerak",
+    failedMsg: "Xabar yuborishda xatolik yuz berdi",
+    sections: [
+      {
+        section: "Umumiy",
+        items: [
+          {
+            q: "AKHMAD NET qanday ishlaydi?",
+            a: "Platformamiz reklama beruvchilar va bot egalari o'rtasida ko'prik vazifasini bajaradi. Reklamalar AI yordamida mos auditoriyaga tarqatiladi.",
+          },
+          {
+            q: "Ro'yxatdan o'tish bepulmi?",
+            a: "Ha, ro'yxatdan o'tish mutlaqo bepul.",
+          },
+          {
+            q: "Qaysi mamlakatlarda faoliyat yuritasiz?",
+            a: "Biz butun dunyo bo'ylab faoliyat yuritamiz.",
+          },
+          {
+            q: "Qaysi valyutalarda ishlaysiz?",
+            a: "USD, EUR va USDT.",
+          },
+        ],
+      },
+      {
+        section: "Reklama",
+        items: [
+          {
+            q: "Reklama qachon ko'rsatila boshlaydi?",
+            a: "Moderatsiya tasdig'idan so'ng.",
+          },
+          {
+            q: "Minimal byudjet qancha bo'lishi kerak?",
+            a: "Minimal byudjet $10.",
+          },
+          {
+            q: "Reklamani to'xtatish mumkinmi?",
+            a: "Ha, istalgan vaqt boshqaruv panelingi orqali.",
+          },
+        ],
+      },
+      {
+        section: "Bot",
+        items: [
+          {
+            q: "Botim tasdiqlanmasa nima qilaman?",
+            a: "Qo'llanmani tekshiring va qayta yuboring.",
+          },
+          {
+            q: "Bir nechta bot qo'sha olamanmi?",
+            a: "Ha, cheksiz bot qo'sha olasiz.",
+          },
+          {
+            q: "Bot egalari qancha daromad oladi?",
+            a: "Daromad trafik va reklamalarga bog'liq.",
+          },
+        ],
+      },
+      {
+        section: "To'lov",
+        items: [
+          {
+            q: "To'lovlar qanday amalga oshiriladi?",
+            a: "To'lovlar avtomatik ravishda amalga oshiriladi.",
+          },
+          {
+            q: "Pulni qaytarib olish mumkinmi?",
+            a: "Qaytarish har bir holat bo'yicha ko'rib chiqiladi.",
+          },
+          {
+            q: "Qaysi to'lov usullarini qabul qilasiz?",
+            a: "Visa, Mastercard, USDT.",
+          },
+        ],
+      },
+    ],
+  },
 
-	// Regions
-	regions: {
-		qoraqalpogiston: "Qoraqalpogʻiston",
-		andijon: "Andijon",
-		buxoro: "Buxoro",
-		fargona: "Fargʻona",
-		jizzax: "Jizzax",
-		namangan: "Namangan",
-		navoiy: "Navoiy",
-		qashqadaryo: "Qashqadaryo",
-		samarqand: "Samarqand",
-		surxondaryo: "Surxondaryo",
-		sirdaryo: "Sirdaryo",
-		toshkent: "Toshkent viloyati",
-		xorazm: "Xorazm",
-		toshkent_shahar: "Toshkent shahri",
-	},
+  // My Ads
+  myAds: {
+    pageTitle: "Mening reklamalarim",
+    pageSubtitle: "Reklama kampaniyalaringizni boshqaring va kuzating",
+    launchNew: "Yangi reklama",
+    searchPlaceholder: "Reklamalarni qidiring...",
+    noAdsFound: "Reklamalar topilmadi",
+    adjustSearch: "Qidirishni o'zgartiring",
+    createFirst: "Birinchi reklama kampaniyangizni yarating",
+    progress: "Jarayon",
+    deleteConfirm: "Bu reklamani o'chirmoqchimisiz?",
+    tabs: {
+      all: "Barcha reklamalar",
+      active: "Faol",
+      saved: "Saqlangan",
+      scheduled: "Rejalashtirilgan",
+      archived: "Arxiv",
+    },
+    statusFilters: {
+      all: "Barcha holat",
+      draft: "Qoralama",
+      submitted: "Kutilmoqda",
+      running: "Faol",
+      paused: "To'xtatilgan",
+      completed: "Tugagan",
+    },
+    actions: {
+      view: "Ko'rish",
+      pause: "To'xtatish",
+      resume: "Davom ettirish",
+      schedule: "Rejalashtirish",
+      test: "Sinash",
+      duplicate: "Nusxa olish",
+      delete: "O'chirish",
+      save: "Saqlash",
+      unsave: "Saqlamash",
+    },
+  },
 
-	// Validations
-	validations: {
-		home: {
-			nameMin: "Ism kamida 3 ta belgidan iborat boʻlishi kerak",
-      nameMax: "Ism ko'pi bilan 20 ta belgidan iborat bo'lishi kerak",
-      phoneEmpty: "Telefon raqamini kiriting",
-      phoneInvalid: "Iltimos, to'g'ri telefon raqamini kiriting",
-      email: "Emailni to'g'ri kiriting",
-      country: "Hudud tanlamadingiz",
-		},
-		apply: {
-			step1: {
-				nameMin: "Ism kamida 3 ta belgidan iborat boʻlishi kerak",
-				nameMax: "Ism ko'pi bilan 20 ta belgidan iborat bo'lishi kerak",
-				phone: "Raqam kamida 9 ta belgidan iborat boʻlishi kerak",
-				email: "Emailni to'g'ri kiriting",
-				birth: "Tu'g'ilgan sanangizni kiriting",
-				gender: "Jinsingizni tanlang",
-				phoneRegex: "Telefon raqam faqat raqamlardan iborat bo‘lishi kerak",
-			},
-			step2: {
-				lastSchool: "Tugatgan ta'lim muassangizni kiriting",
-				gradYear: "Tugatgan yilingizni to'g'ri kriting",
-				gradOverYear: "Bitirgan yil hozirgi yildan katta bo'lishi mumkin emas",
-				gpaRegex: "Max 5",
-				gpaInvalid: "GPA'ni to'g'ri kiriting",
-				certificateInvalid: "Sertifikat/yutuqlaringizni kiriting",
-			},
-			step3: {
-				emptyField: "Iltimos, qiymat tanlang",
-			},
-			step4: {
-				emptyFile: "Fayl bo'sh bo'lishi mumkin emas",
-			},
-			fileSize: "Fayl hajmi 3MB dan oshmasligi kerak",
-		},
-	},
+  // Add Bot
+  addBot: {
+    pageTitle: "Botingizni qo'shing",
+    botInfo: "Bot ma'lumotlari",
+    botToken: "Bot Token",
+    tokenPlaceholder: "Token bo'sh bo'lmasin",
+    tokenHint: "Bot tokeningizni",
+    tokenHintFrom: "dan oling. Uni hech kimga bermang.",
+    verifying: "Tekshirilmoqda...",
+    verified: "Tasdiqlandi",
+    verifyBtn: "Botni tekshirish",
+    tokenVerifiedMsg: "Bot token muvaffaqiyatli tasdiqlandi!",
+    shortDesc: "Qisqa tavsif",
+    shortDescPlaceholder: "Botingiz haqida qisqacha...",
+    category: "Kategoriya",
+    categoryPlaceholder: "Kategoriyani tanlang",
+    language: "Til",
+    monetization: "Monetizatsiyani yoqish",
+    monetizationDesc: "Reklamalar ushbu bot orqali tarqatiladi va siz daromad olasiz.",
+    registering: "Ro'yxatdan o'tkazilmoqda...",
+    registerBtn: "Botni ro'yxatdan o'tkazish",
+    tokenEmptyAlert: "Bot tokenini kiriting",
+    tokenInvalidAlert: "Bot token formati noto'g'ri",
+    fillFieldsAlert: "Barcha majburiy maydonlarni to'ldiring",
+    apiKeyModal: {
+      title: "🎉 Bot ro'yxatdan o'tdi!",
+      subtitle: "Botingiz muvaffaqiyatli ro'yxatdan o'tdi. Mana sizning API kalitingiz:",
+      apiKeyLabel: "API Kalit (saqlang!):",
+      warning: "⚠️ Bu API kalitni xavfsiz joyda saqlang. Uni qayta ko'ra olmaysiz!",
+      gotIt: "Tushundim!",
+    },
+    steps: {
+      title: "Bot qanday qo'shiladi",
+      helpfulLinks: "Foydali havolalar",
+      items: [
+        { title: "Bot yaratish", description: "Telegramda @BotFather ni oching va /newbot buyrug'i bilan yangi bot yarating" },
+        { title: "Tokenni oling", description: "BotFather bergan bot tokenini nusxalang" },
+        { title: "Tasdiqlang", description: "Tokenni bu yerga joylashtiring va 'Botni tekshirish' tugmasini bosing" },
+        { title: "Sozlang", description: "Bot ma'lumotlarini to'ldiring va monetizatsiyani yoqing" },
+        { title: "Ro'yxatdan o'tkazing", description: "'Botni ro'yxatdan o'tkazish' tugmasini bosing" },
+      ],
+    },
+    bots: {
+      title: "Mening botlarim",
+      botRegistered: "bot ro'yxatdan o'tgan",
+      botsRegistered: "ta bot ro'yxatdan o'tgan",
+      refresh: "Yangilash",
+      noBots: "Hali hech qanday bot yo'q",
+      noBotsDesc: "Daromad olishni boshlash uchun yuqoridagi forma orqali birinchi botingizni qo'shing",
+      tableHeaders: {
+        bot: "Bot",
+        performance: "Ko'rsatkichlar",
+        members: "A'zolar",
+        earnings: "Daromad",
+        status: "Holat",
+        actions: "Amallar",
+      },
+      views: "ko'rishlar",
+      active: "faol",
+      pending: "kutilmoqda",
+      monetized: "Monetizatsiya",
+      settings: "Sozlamalar",
+      viewDetails: "Batafsil",
+      totalBots: "Jami botlar",
+      totalEarnings: "Jami daromad",
+      totalMembers: "Jami a'zolar",
+      deleteConfirm: "Siz rostan @{{username}} ni o'chirmoqchimisiz?",
+    },
+  },
+  // Wallet
+  wallet: {
+    pageTitle: "Hamyon",
+    pageSubtitle: "Balans va tranzaksiyalaringizni boshqaring",
+    retry: "Qayta urinish",
+    availableBalance: "Mavjud balans",
+    addFunds: "Mablag' qo'shish",
+    reserved: "Zahirada",
+    reservedHint: "Kutilayotgan kampaniyalar uchun",
+    totalDeposited: "Jami kiritilgan",
+    totalDepositedHint: "Barcha vaqt davomida",
+    totalSpent: "Jami sarflangan",
+    totalEarned: "Jami topilgan",
+    withdrawn: "Olib chiqilgan",
+    pending: "Kutilmoqda",
+    recentTransactions: "So'nggi tranzaksiyalar",
+    noTransactions: "Hali tranzaksiyalar yo'q",
+    noTransactionsHint: "Boshlash uchun mablag' qo'shing",
+    txTableHeaders: {
+      type: "Tur",
+      description: "Tavsif",
+      date: "Sana",
+      amount: "Miqdor",
+    },
+    depositModal: {
+      title: "Mablag' qo'shish",
+      amountLabel: "Miqdor (USD)",
+      amountPlaceholder: "Minimum: $5",
+      minAlert: "Minimum to'lov: $5",
+      cryptoTitle: "Kripto (USDT)",
+      cryptoDesc: "CryptoBot orqali to'lang",
+      opening: "Ochilmoqda...",
+      continue: "To'lovga o'tish",
+      successMsg: "✅ To'lov sahifasi ochildi! To'lovni amalga oshiring, so'ng sahifani yangilang.",
+      failMsg: "To'lov amalga oshmadi",
+    },
+  },
 
-	// Footer
-	footer: {
-		privacy: "Maxfiylik siyosati",
-		rights: "Barcha huquqlar himoyalangan",
-	},
+  // Profile
+  profile: {
+    pageTitle: "Profil",
+    backToHome: "Bosh sahifaga qaytish",
+    copyTelegramId: "Telegram ID nusxalash",
+    edit: "Tahrirlash",
+    logOut: "Chiqish",
+    totalSpent: "Jami sarflangan",
+    totalEarned: "Jami topilgan",
+    impressions: "Ko'rishlar",
+    totalViews: "Jami ko'rishlar",
+    ctr: "CTR",
+    avgCtr: "O'rtacha bosish darajasi",
+    conversions: "Konversiyalar",
+    totalConversions: "Jami konversiyalar",
+    revenueTrend: "Daromad tendensiyasi",
+    ctrIndicator: "CTR ko'rsatkichi",
+    exportCsv: "CSV yuklash",
+    information: "Ma'lumotlar",
+    myAds: "Mening reklamalarim",
+    myBots: "Mening botlarim",
+    deleteAdConfirm: "Bu reklamani o'chirmoqchimisiz?",
+    deleteBotConfirm: "Bu botni o'chirmoqchimisiz?",
+    noAds: "Reklamalar topilmadi",
+    noBots: "Botlar topilmadi",
+    statusActive: "Faol",
+    statusPending: "Kutilmoqda",
+    adsTableHeaders: {
+      title: "Reklama nomi",
+      impressions: "Ko'rishlar",
+      ctr: "CTR",
+      conversions: "Konversiyalar",
+      spent: "Sarflangan",
+      status: "Holat",
+      actions: "Amallar",
+    },
+    botsTableHeaders: {
+      name: "Bot nomi",
+      subscribers: "Obunachillar",
+      impressions: "Ko'rishlar",
+      earnings: "Daromad",
+      status: "Holat",
+      actions: "Amallar",
+    },
+    editModal: {
+      title: "Foydalanuvchi ma'lumotlarini tahrirlash",
+      nameLabel: "Ism",
+      surnameLabel: "Familiya",
+      cancel: "Bekor qilish",
+      save: "Saqlash",
+    },
+  },
 
-	// Apply
-	apply: {
-		stepBar: {
-			personal: "Shaxsiy ma'lumotlar",
-			academic: "Akademik ma'lumotlar",
-			program: "Dastur tanlovi",
-			documents: "Qo'shimcha hujjatlar",
-		},
-		step1: {
-			fullName: "To'liq ismi *",
-			email: "Elektron pochta manzili *",
-			phone: "Telefon raqami *",
-			birth: "Tug'ilgan sana *",
-			gender: "Jinsi *",
-			placeholders: {
-				fullNamePlaceholder: "F.I.SH",
-				emailPlaceholder: "sizningelektronpochtangiz@gmail.com",
-				genderPlaceholder: "Jinsingizni kiriting",
-			},
-			selectValues: {
-				gender: {
-					male: "Erkak",
-					female: "Ayol",
-				},
-			},
-		},
-		step2: {
-			lastSchool: "Oxirgi o‘qigan maktab/kollej *",
-			graduationYear: "Bitirgan yil *",
-			gpa: "GPA / O‘rtacha ball *",
-			transcriptFileUpload: "Baholar jadvalini yuklash",
-			certificates: "Erishgan yutuqlar yoki sertifikatlar *",
-			placeholdersStep2: {
-				lastSchoolPlaceholder: "Oxirgi o‘qigan maktab/kollej",
-				graduationYearPlaceholder: "Bitirgan yil",
-				gpaPlaceholder: "GPA / O‘rtacha ball",
-			},
-		},
-		step3: {
-			university: "Universitet *",
-			degreeType: "Daraja turi *",
-			facultyDepartment: "Fakultet/Bo'lim *",
-			preferredMajor: "Afzal ko'rilgan mutaxassislik *",
-			modeOfStudy: "O'qish shakli *",
-			intakePeriod: "Qabul davri *",
-			placeholdersStep3: {
-				universityPlaceholder: "Universitet",
-				degreeTypePlaceholder: "Daraja turi",
-				facultyDepartmentPlaceholder: "Fakultet/Bo'lim",
-				preferredMajorPlaceholder: "Afzal ko'rilgan mutaxassislik",
-				modeOfStudyPlaceholder: "O'qish shakli",
-				intakePeriodPlaceholder: "Qabul davri",
-			},
-			notFound: "Ma'lumot topilmadi",
-			bachelor: "Bakalavr",
-			masters: "Magistratura",
-		},
-		step4: {
-			passportScan: "Passport skaneri *",
-			diplomaAttestat: "Diplom/Attestat",
-			transcript: "Transkript",
-			motivationLetter: "Motivatsiya xati *",
-			recommendationLetters: "Tavsiyanoma xatlari *",
-			cvResume: "Rezyume *",
-			photo: "Rasm *",
-		},
-		defaultFileChoosenPlaceholder:
-			"Faylni tanlang (.pdf, .doc, .docx, .jpeg, .jpg, .png)",
-		nextButton: "Keyingisi",
-		prevButton: "Oldingisi",
-		submitButton: "Yuborish",
-		successSubmit: "Ariza muvaffaqiyatli yuborildi!",
-		errorSubmit: "Yuborishda xatolik yuz berdi!",
-		stepChangeError: "Iltimos, oldingi bosqichlarni to‘ldiring!",
-	},
+  // Launch Ad
+  launchAd: {
+    back: "Orqaga",
+    pageTitle: "Kampaniya yaratish",
+    pageSubtitle: "3 oddiy qadam bilan boshlang",
+    errorLabel: "Xatolik",
+    successLabel: "Muvaffaqiyat",
+    cancel: "Bekor qilish",
+    previous: "\u2190 Oldingi",
+    continue: "Davom etish \u2192",
+    steps: [
+      { name: "Yaratish", description: "Reklamani loyihalang" },
+      { name: "Maqsad", description: "Auditoriyani tanlang" },
+      { name: "Boshlash", description: "Byudjetni belgilang" },
+    ],
+  },
 
-	// Buttons
-	buttons: {
-		applyNow: "Hoziroq ariza topshiring",
-		aboutUz: "O'zbekiston haqida",
-		watchOurTeam: "Jamoamizni tomosha qiling",
-		seeMore: "Batafsil ko'rish",
-		whyStudy: "Nega O'zbekistonda o'qish kerak?",
-		learnMore: "Batafsil ma'lumot",
-		moreCostStudy: "O'zbekistonda o'qish narxlari haqida",
-		getToKnow: "Bilib oling",
-		contactUs: "Biz bilan bog'laning",
-		next: "Keyingi",
-		back: "Orqaga",
-		readMore: "Ko'proq o'qing",
-		viewGallery: "Galereyani ko'rish",
-	},
+  // Ad Composer
+  adComposer: {
+    contentTypeText: "Matnli reklama (Matn + Tugmalar)",
+    contentTypeMedia: "Mediали reklama (Rasm + Matn + Tugmalar)",
+    contentTypeHint: "Matn, rasm va tugmalarni birga qo'shishingiz mumkin",
+    uploadLabel: "Media yuklash (Ixtiyoriy)",
+    uploading: "Yuklanmoqda...",
+    uploadPlaceholder: "Yuklash uchun bosing yoki sudrab tashlang",
+    uploadFormats: "PNG, JPG, GIF, WEBP — 5MB gacha",
+    fileSizeError: "Fayl hajmi 5MB dan kichik bo'lishi kerak",
+    fileTypeError: "Faqat JPG, PNG, GIF, WEBP rasmlarga ruxsat",
+    uploadFailed: "Yuklash muvaffaqiyatsiz",
+    adTextLabel: "Reklama matni",
+    addEmoji: "Emoji qo'shish",
+    adTextPlaceholder: "Reklama matnini yozing...\n\nFoydalanishingiz mumkin:\n• Emojilar 😊\n• Ko'p qatorli\n• **Qalin** matn markdown bilan\n\nMisol:\n🎉 Maxsus taklif! 50% chegirma\n✅ Faqat cheklangan vaqt\n👉 Hozir buyurtma bering!",
+    supportsMarkdown: "Emoji va markdown qo'llab-quvvatlanadi",
+    charsLeft: "belgi qoldi",
+    sendPreview: "Ko'rib chiqish yuborish",
+    sending: "Yuborilmoqda...",
+    sendPreviewAlert: "Avval reklama matni kiriting (kamida 10 belgi)",
+    sendPreviewSuccess: "✅ Ko'rib chiqish Telegramga yuborildi! Xabarlaringizni tekshiring.",
+    sendPreviewFail: "Ko'rib chiqishni yuborishda xato",
+    buttonsLabel: "CTA Tugmalar (Ixtiyoriy)",
+    addButton: "Tugma qo'shish",
+    addFirstButton: "Birinchi tugma qo'shish",
+    noButtons: "Hali tugmalar yo'q",
+    buttonTextPlaceholder: "Tugma matni (masalan: Saytga o'tish)",
+    summaryTitle: "Reklamangizda bor:",
+    summaryChars: "belgi",
+    summaryMedia: "Rasm yuklangan",
+    summaryButton: "tugma",
+    summaryButtons: "ta tugma",
+  },
 
-	// facultets
-	facultets: {
-		facultetsHeader: "Ta'lim dasturi haqida ma'lumot",
-		facultetsDescr:
-			"Ta'lim dasturi haqida ma'lumot mavjud o'quv dasturlari haqida umumiy ma'lumot beradi, kurs tafsilotlari, natijalar va martaba yo'llarini tavsiflaydi.",
-		facultetsField: "O'quv sohasi",
-		facultetsMode: "O`quv rejimi",
-		facultetsDuration: "Davomiyligi",
-		facultetsFee: "Yillik o'quv to'lovi",
-		facultiesAt: "fakultetlari",
-		partnerUnivers:
-			"Bizning hamkor universtitetlarimizO‘zbekistondagi hamkor universitetlarimiz",
-		rank: "Universitetlar reytingi",
-		students: "Xalqaro studentlar soni",
-		rate: "Qabul qilish darajasi",
-		master: "Magistratura",
-		bachelor: "Bakalavr",
-		fieldOfStudy: "Taʼlim yoʻnalishi:",
-		studyPeriod: "Oʻqish muddati:",
-		duration: "Davomiyligi:",
-		annualTuitionFee: "Yillik kontrakt toʻlovi:"
-	},
-	/* -------------------------------- About Page ------------------------------- */
-	// About About
-	aboutAbout: {
-		title1: "Kompaniyamiz ",
-		title2: "haqida",
-	},
-	why_us: {
-		title: "Nega aynan biz?",
-	},
-	team: {
-		title: "Jamoamiz bilan tanishing",
-	},
-	founder: {
-		title: "Tasischi",
-	},
+  // Live Preview
+  livePreview: {
+    title: "Jonli ko'rinish",
+    adLabel: "Sizning reklamangiz",
+    sponsored: "Reklama",
+    telegramAd: "Telegram Reklama",
+    emptyHint: "Ko'rib chiqish uchun reklama yaratishni boshlang",
+    appearHint: "Reklamangiz Telegramda shunday ko'rinadi",
+  },
 
-	// student service
-	student_service: {
-		food: "Oziq-ovqat va ovqatlanish xarajatlari",
-		transportTitle: "Toshkentda jamoat transporti narxi",
-	},
-
-	//about-uz photo section
-	aboutUzPhotoSection: {
-		description: "Eksklyuziv fotosuratlar O'zbekiston bo'ylab",
-	},
-	media: {
-		title1: "Haqiqiy talabalarning haqiqiy hikoyalari",
-		title2: "Muhim bo'lgan talaba lahzalari",
-		title3: "Talabalar fikrlari",
-	},
+  // Bot Settings
+  botSettings: {
+    backToBots: "Botlarga qaytish",
+    pageTitle: "Bot Sozlamalari",
+    botNotFound: "Bot topilmadi",
+    allowedCategories: "Ruxsat etilgan kategoriyalar",
+    highRate: "(x2 tarif)",
+    statistics: "Statistika",
+    impressions: "Ko'rishlar",
+    clicks: "Bosishlar",
+    ctr: "CTR",
+    earnings: "Daromad",
+    adFormatTitle: "Reklama formati - Ko'rishlar",
+    adFormatDesc: "Bu shuni anglatadiki, foydalanuvchilar reklamalarni faqat botingiz bilan muloqot qilganда ko'rishadi. Bu foydalanuvchilarning reklamalarni ko'rishini deyarli kafolatlaydi. Ommaviy jo'natmalar qat'iyan taqiqlanadi.",
+    adFormatWarning: "Bot faqat foydalanuvchi uchun foydali ishni bajarganidan so'ng reklama ko'rsatishi kerak — \"bajarilgan vazifa → reklama ko'rsatish\" tamoyiliga amal qiling.",
+    acceptRules: "QOIDALARNI QABUL QILISH VA KO'RSATMALAR OLISH",
+    resultCodes: "Natija kodlari",
+    frequencyTitle: "Chastotani cheklash: har bir foydalanuvchiga 5 daqiqada 1 ta reklama",
+    frequencyHint: "Minimal qiymatda qoldiring va so'rovlarni o'zingiz nazorat qiling.",
+    save: "SAQLASH",
+    saving: "Saqlanmoqda...",
+    postFilterTitle: "Bu bot qaysi postlarni chiqara oladi?",
+    postFilterAll: "Barcha postlar",
+    postFilterNotMine: "O'zimdan tashqari barcha postlar",
+    postFilterOnlyMine: "Faqat mening postlarim",
+    integrationCode: "Integratsiya kodi",
+    copy: "Nusxalash",
+    copied: "Nusxalandi!",
+    updateToken: "Kirish tokenini yangilash",
+    updateTokenDesc: "Agar BotFather orqali bot tokeningizni o'zgartirgan bo'lsangiz, bu yerda ham yangilang.",
+    newTokenPlaceholder: "BotFather'dan yangi bot tokeni",
+    invalidTokenAlert: "Iltimos, to'g'ri token kiriting",
+    tokenUpdateSoon: "Token yangilash tez orada!",
+    releasedAds: "Chiqarilgan reklamalar",
+    exceptions: "Istisnolar",
+    noReleasedAds: "Hali chiqarilgan reklamalar yo'q",
+    noExceptions: "Istisnolar sozlanmagan",
+    rulesModal: {
+      title: "API Integratsiya Ko'rsatmalari",
+      apiTokenLabel: "Sizning API Tokeningiz",
+      loading: "Yuklanmoqda...",
+      tokenWarning: "\u26a0\ufe0f Bu tokenni sir saqlang! Uni ommaga oshkor qilmang.",
+      quickStart: "Tez Boshlash",
+      quickStartSteps: [
+        "1. Yuqoridagi API tokenini nusxalang",
+        "2. Integratsiya kodi bo'limidan dasturlash tilini tanlang",
+        "3. Berilgan kodni botingizga integratsiya qiling",
+        "4. Foydalanuvchi uchun foydali ishdan so'ng reklama funksiyasini chaqiring",
+      ],
+      importantRules: "Muhim Qoidalar",
+      rules: [
+        "Reklamani faqat foydali vazifadan so'ng ko'rsating",
+        "\"Bajarilgan vazifa \u2192 reklama ko'rsatish\" tamoyiliga rioya qiling",
+        "Ommaviy jo'natmalar qat'iyan taqiqlanadi",
+        "Qoidabuzarlik hisob bloklanishiga olib kelishi mumkin",
+      ],
+      gotIt: "Tushundim!",
+    },
+    resultCodesModal: {
+      title: "Natija Kodlari",
+      desc: "So'rov natijasi quyidagi qiymatlarni o'z ichiga olishi mumkin, bunda \"1\" mos reklama muvaffaqiyatli tanlangan va foydalanuvchiga yetkazilganligini bildiradi:",
+      exampleTitle: "Namuna Javob (200 OK)",
+      allCodesTitle: "Barcha Natija Kodlari",
+      close: "Yopish",
+    },
+  },
 };
+
+
+
+
+
+
+

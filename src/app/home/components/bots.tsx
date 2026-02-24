@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslations } from "../../../hooks/useTranslations";
 
 const bots = [
   { title: "Tech News Bot", users: "45.2K users" },
@@ -12,6 +13,7 @@ const bots = [
 const ConnectedBots = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isHovering = useRef(false);
+  const t = useTranslations();
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -45,11 +47,9 @@ const ConnectedBots = () => {
       {/* Title */}
       <div className="mb-12 text-center">
         <h2 className="text-2xl md:text-3xl font-semibold text-white">
-          Platformamizga ulangan botlar
+          {t.homeBots?.title}
         </h2>
-        <p className="mt-2 text-sm text-white/50">
-          Har kuni o‘sib borayotgan tarmoq
-        </p>
+        <p className="mt-2 text-sm text-white/50">{t.homeBots?.subtitle}</p>
       </div>
 
       {/* Slider */}

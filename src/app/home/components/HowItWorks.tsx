@@ -1,40 +1,22 @@
-const steps = [
-  {
-    step: "01",
-    title: "Reklama yarating",
-    description:
-      "Matn, media va CTA tugmani kiriting, o‘z reklamangizni qisqa muddatda tayyorlang",
-  },
-  {
-    step: "02",
-    title: "AI tahlil qiladi",
-    description:
-      "Matn, media va CTA tugmani kiritgach darhol AI sizning postingizni tahlil qiladi",
-  },
-  {
-    step: "03",
-    title: "Botlar orqali tarqatiladi",
-    description:
-      "Matn, media va CTA tugmani kiritgach darhol AI sizning postingizni tahlil qiladi",
-  },
-];
+import { useTranslations } from "../../../hooks/useTranslations";
 
 const HowItWorks = () => {
+  const t = useTranslations();
+  const steps: { step: string; title: string; description: string }[] = t.homeHowItWorks?.steps ?? [];
+
   return (
     <section className="main-container my-24">
       {/* Title */}
       <div className="mb-14 text-center">
         <h2 className="text-2xl md:text-3xl font-semibold text-white">
-          Qanday ishlaydi?
+          {t.homeHowItWorks?.title}
         </h2>
-        <p className="mt-2 text-sm text-white/50">
-          3 oddiy qadam bilan reklama boshlang
-        </p>
+        <p className="mt-2 text-sm text-white/50">{t.homeHowItWorks?.subtitle}</p>
       </div>
 
       {/* Cards */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {steps.map((item, index) => (
+        {steps.map((item: { step: string; title: string; description: string }, index: number) => (
           <div
             key={index}
             className="
