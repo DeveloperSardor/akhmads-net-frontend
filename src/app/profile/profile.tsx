@@ -136,22 +136,23 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+
         {/* Error Alert */}
         {error && (
           <div className="mb-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-400" />
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
               <p className="text-xs text-red-400">{error}</p>
             </div>
-            <button onClick={clearError} className="text-red-400 hover:text-red-300">
+            <button onClick={clearError} className="text-red-400 hover:text-red-300 ml-2 shrink-0">
               <X className="w-4 h-4" />
             </button>
           </div>
         )}
 
         {/* Back Button & Title */}
-        <div className="mt-15">
+        <div className="mt-16 pt-2">
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-1.5 text-white/50 hover:text-white transition text-xs mb-3"
@@ -159,14 +160,16 @@ const Profile = () => {
             <ArrowLeft className="w-3.5 h-3.5" />
             {p?.backToHome}
           </button>
-          <h1 className="text-2xl font-bold">{p?.pageTitle}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">{p?.pageTitle}</h1>
         </div>
 
         {/* Profile Card */}
-        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 mt-5 mb-4">
-          <div className="flex items-start justify-between mb-5">
+        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-4 sm:p-5 mt-5 mb-4">
+          {/* Profile header — stack on mobile, row on sm+ */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
+            {/* Avatar + info */}
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 overflow-hidden ring-2 ring-purple-500/20">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 overflow-hidden ring-2 ring-purple-500/20 shrink-0">
                 <img
                   src={avatarUrl}
                   alt={profile?.firstName}
@@ -176,16 +179,16 @@ const Profile = () => {
                   }}
                 />
               </div>
-              <div>
-                <h2 className="text-lg font-semibold mb-0.5">
+              <div className="min-w-0">
+                <h2 className="text-base sm:text-lg font-semibold mb-0.5 truncate">
                   {profile?.firstName} {profile?.lastName}
                 </h2>
-                <p className="text-xs text-white/50 mb-1.5">@{profile?.username || "user"}</p>
+                <p className="text-xs text-white/50 mb-1.5 truncate">@{profile?.username || "user"}</p>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-white/40">ID: {profile?.telegramId}</span>
+                  <span className="text-xs text-white/40 truncate">ID: {profile?.telegramId}</span>
                   <button
                     onClick={handleCopyTelegramId}
-                    className="p-1 hover:bg-white/10 rounded transition"
+                    className="p-1 hover:bg-white/10 rounded transition shrink-0"
                     title={p?.copyTelegramId}
                   >
                     {copiedTelegramId ? (
@@ -198,53 +201,54 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Action buttons */}
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setShowEditModal(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition text-sm"
               >
                 <Edit className="w-3.5 h-3.5" />
-                {p?.edit}
+                <span className="hidden xs:inline">{p?.edit}</span>
               </button>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition text-sm"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                {p?.logOut}
+                <span className="hidden xs:inline">{p?.logOut}</span>
               </button>
             </div>
           </div>
 
-          {/* Financial Stats */}
+          {/* Financial Stats — always 2 cols */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gradient-to-br from-red-500/10 to-transparent border border-red-500/20 rounded-lg p-4">
+            <div className="bg-gradient-to-br from-red-500/10 to-transparent border border-red-500/20 rounded-lg p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-7 h-7 rounded-lg bg-red-500/20 flex items-center justify-center">
-                  <TrendingUp className="w-3.5 h-3.5 text-red-400" />
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0">
+                  <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-400" />
                 </div>
-                <span className="text-xs text-white/60">{p?.totalSpent}</span>
+                <span className="text-xs text-white/60 truncate">{p?.totalSpent}</span>
               </div>
-              <p className="text-2xl font-bold">{formatCurrency(stats?.totalSpent ?? wallet?.totalSpent)}</p>
+              <p className="text-xl sm:text-2xl font-bold">{formatCurrency(stats?.totalSpent ?? wallet?.totalSpent)}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 rounded-lg p-4">
+            <div className="bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 rounded-lg p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-7 h-7 rounded-lg bg-green-500/20 flex items-center justify-center">
-                  <DollarSign className="w-3.5 h-3.5 text-green-400" />
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
+                  <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-400" />
                 </div>
-                <span className="text-xs text-white/60">{p?.totalEarned}</span>
+                <span className="text-xs text-white/60 truncate">{p?.totalEarned}</span>
               </div>
-              <p className="text-2xl font-bold">{formatCurrency(stats?.totalEarned ?? wallet?.totalEarnings)}</p>
+              <p className="text-xl sm:text-2xl font-bold">{formatCurrency(stats?.totalEarned ?? wallet?.totalEarnings)}</p>
             </div>
           </div>
         </div>
 
-        {/* Performance Metrics */}
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        {/* Performance Metrics — 1 col mobile, 3 col sm+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
                 <Eye className="w-3.5 h-3.5 text-purple-400" />
               </div>
               <span className="text-xs text-white/60">{p?.impressions}</span>
@@ -255,7 +259,7 @@ const Profile = () => {
 
           <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
                 <MousePointerClick className="w-3.5 h-3.5 text-purple-400" />
               </div>
               <span className="text-xs text-white/60">{p?.ctr}</span>
@@ -266,7 +270,7 @@ const Profile = () => {
 
           <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
                 <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
               </div>
               <span className="text-xs text-white/60">{p?.conversions}</span>
@@ -329,7 +333,8 @@ const Profile = () => {
 
         {/* Information Table */}
         <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-4">
+          {/* Tab header */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <h3 className="text-sm font-semibold">{p?.information}</h3>
             <div className="flex items-center gap-2">
               <button
@@ -349,108 +354,200 @@ const Profile = () => {
 
           {/* Ads Table */}
           {activeTab === "my-ads" && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.title}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.impressions}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.ctr}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.conversions}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.spent}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.status}</th>
-                    <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.actions}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ads.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="text-center py-10 text-white/40 text-sm">{p?.noAds}</td>
+            <>
+              {/* Desktop table */}
+              <div className="hidden sm:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.title}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.impressions}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.ctr}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.conversions}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.spent}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.status}</th>
+                      <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">{p?.adsTableHeaders.actions}</th>
                     </tr>
-                  ) : (
-                    ads.map((ad) => (
-                      <tr key={ad.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
-                        <td className="py-3 px-3">{ad.title}</td>
-                        <td className="py-3 px-3">{formatNumber(ad.impressions)}</td>
-                        <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
-                        <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
-                        <td className="py-3 px-3 text-red-400">{formatCurrency(ad.spent)}</td>
-                        <td className="py-3 px-3">
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
-                              ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
-                                "bg-gray-500/20 text-gray-400"
-                            }`}>
-                            {ad.status === "RUNNING" ? p?.statusActive : ad.status === "PAUSED" ? p?.statusPending : ad.status}
-                          </span>
-                        </td>
-                        <td className="py-3 px-3">
-                          <div className="flex items-center justify-end gap-1">
-                            <button onClick={() => navigate(`/ads/${ad.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
-                              <Eye className="w-3.5 h-3.5" />
-                            </button>
-                            <button onClick={() => handleDeleteAd(ad.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
-                              <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                            </button>
-                          </div>
-                        </td>
+                  </thead>
+                  <tbody>
+                    {ads.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="text-center py-10 text-white/40 text-sm">{p?.noAds}</td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    ) : (
+                      ads.map((ad) => (
+                        <tr key={ad.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
+                          <td className="py-3 px-3 max-w-[160px] truncate">{ad.title}</td>
+                          <td className="py-3 px-3">{formatNumber(ad.impressions)}</td>
+                          <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
+                          <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
+                          <td className="py-3 px-3 text-red-400">{formatCurrency(ad.spent)}</td>
+                          <td className="py-3 px-3">
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
+                                ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
+                                  "bg-gray-500/20 text-gray-400"
+                              }`}>
+                              {ad.status === "RUNNING" ? p?.statusActive : ad.status === "PAUSED" ? p?.statusPending : ad.status}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3">
+                            <div className="flex items-center justify-end gap-1">
+                              <button onClick={() => navigate(`/ads/${ad.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+                                <Eye className="w-3.5 h-3.5" />
+                              </button>
+                              <button onClick={() => handleDeleteAd(ad.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+                                <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile card view */}
+              <div className="sm:hidden space-y-3">
+                {ads.length === 0 ? (
+                  <p className="text-center py-10 text-white/40 text-sm">{p?.noAds}</p>
+                ) : (
+                  ads.map((ad) => (
+                    <div key={ad.id} className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <p className="text-sm font-medium truncate">{ad.title}</p>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
+                            ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
+                              "bg-gray-500/20 text-gray-400"
+                          }`}>
+                          {ad.status === "RUNNING" ? p?.statusActive : ad.status === "PAUSED" ? p?.statusPending : ad.status}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs text-white/50 mb-3">
+                        <div>
+                          <p className="text-white/30 mb-0.5">{p?.adsTableHeaders.impressions}</p>
+                          <p className="text-white/70">{formatNumber(ad.impressions)}</p>
+                        </div>
+                        <div>
+                          <p className="text-white/30 mb-0.5">{p?.adsTableHeaders.ctr}</p>
+                          <p className="text-white/70">{formatPercent(ad.ctr)}</p>
+                        </div>
+                        <div>
+                          <p className="text-white/30 mb-0.5">{p?.adsTableHeaders.spent}</p>
+                          <p className="text-red-400">{formatCurrency(ad.spent)}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 justify-end">
+                        <button onClick={() => navigate(`/ads/${ad.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => handleDeleteAd(ad.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+                          <Trash2 className="w-4 h-4 text-red-400" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
           )}
 
           {/* Bots Table */}
           {activeTab === "my-bots" && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.name}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.subscribers}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.impressions}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.earnings}</th>
-                    <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.status}</th>
-                    <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.actions}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bots.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="text-center py-10 text-white/40 text-sm">{p?.noBots}</td>
+            <>
+              {/* Desktop table */}
+              <div className="hidden sm:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.name}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.subscribers}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.impressions}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.earnings}</th>
+                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.status}</th>
+                      <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">{p?.botsTableHeaders.actions}</th>
                     </tr>
-                  ) : (
-                    bots.map((bot) => (
-                      <tr key={bot.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
-                        <td className="py-3 px-3">@{bot.username}</td>
-                        <td className="py-3 px-3">{formatNumber(bot.subscribers)}</td>
-                        <td className="py-3 px-3">{formatNumber(bot.impressionsServed)}</td>
-                        <td className="py-3 px-3 text-green-400">{formatCurrency(bot.earnings)}</td>
-                        <td className="py-3 px-3">
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bot.status === "ACTIVE" ? "bg-green-500/20 text-green-400" :
-                              bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
-                                "bg-red-500/20 text-red-400"
-                            }`}>
-                            {bot.status === "ACTIVE" ? p?.statusActive : bot.status === "PENDING" ? p?.statusPending : bot.status}
-                          </span>
-                        </td>
-                        <td className="py-3 px-3">
-                          <div className="flex items-center justify-end gap-1">
-                            <button onClick={() => navigate(`/bots/${bot.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
-                              <Eye className="w-3.5 h-3.5" />
-                            </button>
-                            <button onClick={() => handleDeleteBot(bot.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
-                              <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                            </button>
-                          </div>
-                        </td>
+                  </thead>
+                  <tbody>
+                    {bots.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="text-center py-10 text-white/40 text-sm">{p?.noBots}</td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    ) : (
+                      bots.map((bot) => (
+                        <tr key={bot.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
+                          <td className="py-3 px-3">@{bot.username}</td>
+                          <td className="py-3 px-3">{formatNumber(bot.subscribers)}</td>
+                          <td className="py-3 px-3">{formatNumber(bot.impressionsServed)}</td>
+                          <td className="py-3 px-3 text-green-400">{formatCurrency(bot.earnings)}</td>
+                          <td className="py-3 px-3">
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bot.status === "ACTIVE" ? "bg-green-500/20 text-green-400" :
+                                bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
+                                  "bg-red-500/20 text-red-400"
+                              }`}>
+                              {bot.status === "ACTIVE" ? p?.statusActive : bot.status === "PENDING" ? p?.statusPending : bot.status}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3">
+                            <div className="flex items-center justify-end gap-1">
+                              <button onClick={() => navigate(`/bots/${bot.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+                                <Eye className="w-3.5 h-3.5" />
+                              </button>
+                              <button onClick={() => handleDeleteBot(bot.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+                                <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile card view */}
+              <div className="sm:hidden space-y-3">
+                {bots.length === 0 ? (
+                  <p className="text-center py-10 text-white/40 text-sm">{p?.noBots}</p>
+                ) : (
+                  bots.map((bot) => (
+                    <div key={bot.id} className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <p className="text-sm font-medium">@{bot.username}</p>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${bot.status === "ACTIVE" ? "bg-green-500/20 text-green-400" :
+                            bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
+                              "bg-red-500/20 text-red-400"
+                          }`}>
+                          {bot.status === "ACTIVE" ? p?.statusActive : bot.status === "PENDING" ? p?.statusPending : bot.status}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs mb-3">
+                        <div>
+                          <p className="text-white/30 mb-0.5">{p?.botsTableHeaders.subscribers}</p>
+                          <p className="text-white/70">{formatNumber(bot.subscribers)}</p>
+                        </div>
+                        <div>
+                          <p className="text-white/30 mb-0.5">{p?.botsTableHeaders.impressions}</p>
+                          <p className="text-white/70">{formatNumber(bot.impressionsServed)}</p>
+                        </div>
+                        <div>
+                          <p className="text-white/30 mb-0.5">{p?.botsTableHeaders.earnings}</p>
+                          <p className="text-green-400">{formatCurrency(bot.earnings)}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 justify-end">
+                        <button onClick={() => navigate(`/bots/${bot.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => handleDeleteBot(bot.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+                          <Trash2 className="w-4 h-4 text-red-400" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -458,7 +555,7 @@ const Profile = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 w-full max-w-md">
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-md">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold">{p?.editModal.title}</h2>
               <button onClick={() => setShowEditModal(false)} className="text-white/60 hover:text-white transition">
