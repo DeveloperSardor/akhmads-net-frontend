@@ -272,8 +272,8 @@ async Task<bool> ShowAd(long chatId) {
                   key={category.id}
                   onClick={() => handleCategoryToggle(category.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${isAllowed
-                      ? "bg-green-500/20 border-green-500/50 text-green-400"
-                      : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
+                    ? "bg-green-500/20 border-green-500/50 text-green-400"
+                    : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
                     }`}
                 >
                   {isAllowed ? (
@@ -427,8 +427,8 @@ async Task<bool> ShowAd(long chatId) {
                 key={lang}
                 onClick={() => setActiveCodeTab(lang)}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors shrink-0 ${activeCodeTab === lang
-                    ? "bg-purple-600 text-white"
-                    : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                  ? "bg-purple-600 text-white"
+                  : "bg-gray-800 text-gray-400 hover:bg-gray-700"
                   }`}
               >
                 {lang === "csharp" ? "C#" : lang}
@@ -524,7 +524,7 @@ async Task<bool> ShowAd(long chatId) {
                   "2. Choose your programming language from the Integration Code section",
                   "3. Use the provided code to integrate ad requests into your bot",
                   "4. Call the ad function after completing useful tasks for users",
-                ]).map((step, i) => <p key={i}>{step}</p>)}
+                ]).map((step: string, i: number) => <p key={i}>{step}</p>)}
               </div>
             </div>
 
@@ -536,7 +536,7 @@ async Task<bool> ShowAd(long chatId) {
                   "Follow the \"completed task → display ad\" principle",
                   "Mass mailings are strictly prohibited",
                   "Violation may result in account ban",
-                ]).map((rule, i) => (
+                ]).map((rule: string, i: number) => (
                   <li key={i} className="flex gap-2">
                     <span className={i === 3 ? "text-red-400" : "text-yellow-400"}>•</span>
                     <span className={i === 3 ? "text-red-400" : ""}>{rule}</span>

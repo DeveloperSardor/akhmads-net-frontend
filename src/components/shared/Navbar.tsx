@@ -25,10 +25,12 @@ const Navbar = () => {
     ? (urlLang as Lang)
     : "uz";
 
-  const [langOpen, setLangOpen] = useState(false);
+  const [desktopLangOpen, setDesktopLangOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const langDropdownRef = useRef<HTMLDivElement>(null);
+  const desktopLangRef = useRef<HTMLDivElement>(null);
+  const mobileLangRef = useRef<HTMLDivElement>(null);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   // ✅ Fetch profile when authenticated
@@ -41,16 +43,13 @@ const Navbar = () => {
   /* 🔒 Tashqariga bosilganda yopish */
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (
-        langDropdownRef.current &&
-        !langDropdownRef.current.contains(e.target as Node)
-      ) {
-        setLangOpen(false);
+      if (desktopLangRef.current && !desktopLangRef.current.contains(e.target as Node)) {
+        setDesktopLangOpen(false);
       }
-      if (
-        profileDropdownRef.current &&
-        !profileDropdownRef.current.contains(e.target as Node)
-      ) {
+      if (mobileLangRef.current && !mobileLangRef.current.contains(e.target as Node)) {
+        setMobileLangOpen(false);
+      }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(e.target as Node)) {
         setProfileOpen(false);
       }
     };
@@ -61,7 +60,8 @@ const Navbar = () => {
 
   /* 🔁 Route o'zgarganda dropdown va mobile menu yopilsin */
   useEffect(() => {
-    setLangOpen(false);
+    setDesktopLangOpen(false);
+    setMobileLangOpen(false);
     setProfileOpen(false);
     setMobileOpen(false);
   }, [location.pathname]);
@@ -152,20 +152,20 @@ const Navbar = () => {
             {/* 🔹 Right side — desktop */}
             <div className="hidden md:flex items-center gap-4">
               {/* 🌍 Language switcher */}
-              <div ref={langDropdownRef} className="relative">
+              <div ref={desktopLangRef} className="relative">
                 <button
-                  onClick={() => setLangOpen((p) => !p)}
+                  onClick={() => setDesktopLangOpen((p) => !p)}
                   aria-haspopup="listbox"
-                  aria-expanded={langOpen}
+                  aria-expanded={desktopLangOpen}
                   className="text-sm border border-white/10 rounded-full px-4 py-2 bg-white/5 text-white/70 hover:text-white transition"
                 >
                   {lang.toUpperCase()}
                 </button>
 
-                {langOpen && (
+                {desktopLangOpen && (
                   <div
                     role="listbox"
-                    className="absolute right-0 mt-2 min-w-[80px] rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg"
+                    className="absolute right-0 mt-2 min-w-[80px] rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg z-50"
                   >
                     {languages
                       .filter((l) => l !== lang)
@@ -173,7 +173,7 @@ const Navbar = () => {
                         <button
                           key={l}
                           role="option"
-                          onClick={() => changeLang(l)}
+                          onClick={() => { changeLang(l); setDesktopLangOpen(false); }}
                           className="block w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/10 transition"
                         >
                           {l.toUpperCase()}
@@ -285,19 +285,19 @@ const Navbar = () => {
             {/* 🍔 Mobile right side — lang + hamburger */}
             <div className="flex md:hidden items-center gap-2">
               {/* 🌍 Language switcher - mobile */}
-              <div ref={langDropdownRef} className="relative">
+              <div ref={mobileLangRef} className="relative">
                 <button
-                  onClick={() => setLangOpen((p) => !p)}
+                  onClick={() => setMobileLangOpen((p) => !p)}
                   className="text-xs border border-white/10 rounded-full px-3 py-1.5 bg-white/5 text-white/70 hover:text-white transition"
                 >
                   {lang.toUpperCase()}
                 </button>
-                {langOpen && (
+                {mobileLangOpen && (
                   <div className="absolute right-0 mt-2 min-w-[70px] rounded-xl bg-[#1a1a1a] border border-white/10 shadow-lg z-50">
                     {languages.filter((l) => l !== lang).map((l) => (
                       <button
                         key={l}
-                        onClick={() => changeLang(l)}
+                        onClick={() => { changeLang(l); setMobileLangOpen(false); }}
                         className="block w-full px-3 py-2 text-left text-xs text-white/70 hover:text-white hover:bg-white/10 transition"
                       >
                         {l.toUpperCase()}
