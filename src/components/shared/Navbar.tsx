@@ -123,10 +123,73 @@ const Navbar = () => {
             {/* 🔹 Logo */}
             <Link
               to={`/${lang}`}
-              className="text-lg font-semibold text-white hover:opacity-90 transition shrink-0"
+              className="flex items-center gap-2 hover:opacity-90 transition shrink-0"
             >
-              Akhmads net
+              {/* Logo: rotating rings + X mark */}
+              <div className="relative w-10 h-10">
+                {/* Outer ring */}
+                <svg
+                  className="absolute inset-0 w-full h-full animate-spin"
+                  style={{ animationDuration: "6s" }}
+                  viewBox="0 0 32 32"
+                  fill="none"
+                >
+                  <circle
+                    cx="16" cy="16" r="14"
+                    stroke="url(#ring1)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeDasharray="22 66"
+                  />
+                  <defs>
+                    <linearGradient id="ring1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#8f2fff" />
+                      <stop offset="100%" stopColor="#4b00ff" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                {/* Inner ring (reverse) */}
+                <svg
+                  className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)]"
+                  style={{
+                    animation: "spin 6s linear infinite reverse",
+                  }}
+                  viewBox="0 0 26 26"
+                  fill="none"
+                >
+                  <circle
+                    cx="13" cy="13" r="11"
+                    stroke="url(#ring2)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeDasharray="17 52"
+                  />
+                  <defs>
+                    <linearGradient id="ring2" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#4b00ff" />
+                      <stop offset="100%" stopColor="#8f2fff" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                {/* X mark */}
+                <svg
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                >
+                  <line x1="10" y1="10" x2="22" y2="22" stroke="url(#xgrad)" strokeWidth="2.5" strokeLinecap="round" />
+                  <line x1="22" y1="10" x2="10" y2="22" stroke="url(#xgrad)" strokeWidth="2.5" strokeLinecap="round" />
+                  <defs>
+                    <linearGradient id="xgrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#6a00ff" />
+                      <stop offset="100%" stopColor="#b84dff" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-white tracking-wide">Akhmads net</span>
             </Link>
+
 
             {/* 🔹 Center links — desktop only */}
             <div className="hidden md:flex border border-white/10 px-4 py-2 rounded-[40px] items-center gap-2 text-sm">
@@ -337,7 +400,26 @@ const Navbar = () => {
       >
         {/* Drawer header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 h-[70px]">
-          <span className="text-white font-semibold">Akhmads net</span>
+          <div className="flex items-center gap-2">
+            {/* Logo */}
+            <div className="relative w-9 h-9">
+              <svg className="absolute inset-0 w-full h-full animate-spin" style={{ animationDuration: "6s" }} viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="14" stroke="url(#dring1)" strokeWidth="2" strokeLinecap="round" strokeDasharray="22 66" />
+                <defs><linearGradient id="dring1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#8f2fff" /><stop offset="100%" stopColor="#4b00ff" /></linearGradient></defs>
+              </svg>
+              <svg className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)]" style={{ animation: "spin 6s linear infinite reverse" }} viewBox="0 0 26 26" fill="none">
+                <circle cx="13" cy="13" r="11" stroke="url(#dring2)" strokeWidth="2" strokeLinecap="round" strokeDasharray="17 52" />
+                <defs><linearGradient id="dring2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4b00ff" /><stop offset="100%" stopColor="#8f2fff" /></linearGradient></defs>
+              </svg>
+              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 32 32" fill="none">
+                <line x1="10" y1="10" x2="22" y2="22" stroke="url(#dxgrad)" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="22" y1="10" x2="10" y2="22" stroke="url(#dxgrad)" strokeWidth="2.5" strokeLinecap="round" />
+                <defs><linearGradient id="dxgrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6a00ff" /><stop offset="100%" stopColor="#b84dff" /></linearGradient></defs>
+              </svg>
+            </div>
+            <span className="text-white font-semibold text-sm">Akhmads net</span>
+          </div>
+
           <button
             onClick={() => setMobileOpen(false)}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 transition text-white/60 hover:text-white"
