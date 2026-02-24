@@ -189,4 +189,10 @@
   100% {
     transform: translateX(-50%);
   }
-} 
+}
+
+/* Logo text fade-in (matches public/index.html .hud animation) */
+@keyframes logoFadeIn {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

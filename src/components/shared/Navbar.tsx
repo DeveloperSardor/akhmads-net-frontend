@@ -123,72 +123,58 @@ const Navbar = () => {
             {/* 🔹 Logo */}
             <Link
               to={`/${lang}`}
-              className="flex items-center gap-2 hover:opacity-90 transition shrink-0"
+              className="flex items-center gap-3 hover:opacity-90 transition shrink-0"
             >
-              {/* Logo: rotating rings + X mark */}
-              <div className="relative w-10 h-10">
-                {/* Outer ring */}
-                <svg
-                  className="absolute inset-0 w-full h-full animate-spin"
-                  style={{ animationDuration: "6s" }}
-                  viewBox="0 0 32 32"
-                  fill="none"
-                >
-                  <circle
-                    cx="16" cy="16" r="14"
-                    stroke="url(#ring1)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeDasharray="22 66"
-                  />
-                  <defs>
-                    <linearGradient id="ring1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#8f2fff" />
-                      <stop offset="100%" stopColor="#4b00ff" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                {/* Inner ring (reverse) */}
-                <svg
-                  className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)]"
+              {/* Logo — matches public/index.html */}
+              <div
+                className="relative w-11 h-11 rounded-full flex items-center justify-center"
+                style={{
+                  background: "radial-gradient(circle at center, #0f0f2a 40%, #070715 100%)",
+                  boxShadow: "0 0 18px rgba(120,0,255,0.35), inset 0 0 24px rgba(100,0,255,0.3)",
+                }}
+              >
+                {/* Outer rotating ring */}
+                <div
+                  className="absolute inset-0 rounded-full"
                   style={{
+                    border: "2px solid transparent",
+                    borderTopColor: "#8f2fff",
+                    borderBottomColor: "#4b00ff",
+                    animation: "spin 6s linear infinite",
+                  }}
+                />
+                {/* Inner rotating ring (reverse) */}
+                <div
+                  className="absolute inset-[4px] rounded-full"
+                  style={{
+                    border: "2px solid transparent",
+                    borderTopColor: "#4b00ff",
+                    borderBottomColor: "#8f2fff",
                     animation: "spin 6s linear infinite reverse",
                   }}
-                  viewBox="0 0 26 26"
-                  fill="none"
-                >
-                  <circle
-                    cx="13" cy="13" r="11"
-                    stroke="url(#ring2)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeDasharray="17 52"
-                  />
-                  <defs>
-                    <linearGradient id="ring2" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#4b00ff" />
-                      <stop offset="100%" stopColor="#8f2fff" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+                />
                 {/* X mark */}
-                <svg
-                  className="absolute inset-0 w-full h-full"
-                  viewBox="0 0 32 32"
-                  fill="none"
-                >
-                  <line x1="10" y1="10" x2="22" y2="22" stroke="url(#xgrad)" strokeWidth="2.5" strokeLinecap="round" />
-                  <line x1="22" y1="10" x2="10" y2="22" stroke="url(#xgrad)" strokeWidth="2.5" strokeLinecap="round" />
+                <svg className="w-5 h-5 relative z-10" viewBox="0 0 20 20" fill="none">
+                  <line x1="4" y1="4" x2="16" y2="16" stroke="url(#xg)" strokeWidth="2.5" strokeLinecap="round" />
+                  <line x1="16" y1="4" x2="4" y2="16" stroke="url(#xg)" strokeWidth="2.5" strokeLinecap="round" />
                   <defs>
-                    <linearGradient id="xgrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id="xg" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stopColor="#6a00ff" />
                       <stop offset="100%" stopColor="#b84dff" />
                     </linearGradient>
                   </defs>
                 </svg>
               </div>
-              <span className="text-sm font-semibold text-white tracking-wide">Akhmads net</span>
+              {/* Text */}
+              <div
+                className="flex flex-col leading-tight"
+                style={{ animation: "logoFadeIn 3s ease forwards", opacity: 0 }}
+              >
+                <span className="text-sm font-bold text-white tracking-widest uppercase">Akhmads</span>
+                <span className="text-[9px] text-purple-400 tracking-[0.15em] uppercase">◆ Digital Advertising</span>
+              </div>
             </Link>
+
 
 
             {/* 🔹 Center links — desktop only */}
@@ -402,22 +388,28 @@ const Navbar = () => {
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 h-[70px]">
           <div className="flex items-center gap-2">
             {/* Logo */}
-            <div className="relative w-9 h-9">
-              <svg className="absolute inset-0 w-full h-full animate-spin" style={{ animationDuration: "6s" }} viewBox="0 0 32 32" fill="none">
-                <circle cx="16" cy="16" r="14" stroke="url(#dring1)" strokeWidth="2" strokeLinecap="round" strokeDasharray="22 66" />
-                <defs><linearGradient id="dring1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#8f2fff" /><stop offset="100%" stopColor="#4b00ff" /></linearGradient></defs>
-              </svg>
-              <svg className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)]" style={{ animation: "spin 6s linear infinite reverse" }} viewBox="0 0 26 26" fill="none">
-                <circle cx="13" cy="13" r="11" stroke="url(#dring2)" strokeWidth="2" strokeLinecap="round" strokeDasharray="17 52" />
-                <defs><linearGradient id="dring2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4b00ff" /><stop offset="100%" stopColor="#8f2fff" /></linearGradient></defs>
-              </svg>
-              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 32 32" fill="none">
-                <line x1="10" y1="10" x2="22" y2="22" stroke="url(#dxgrad)" strokeWidth="2.5" strokeLinecap="round" />
-                <line x1="22" y1="10" x2="10" y2="22" stroke="url(#dxgrad)" strokeWidth="2.5" strokeLinecap="round" />
-                <defs><linearGradient id="dxgrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6a00ff" /><stop offset="100%" stopColor="#b84dff" /></linearGradient></defs>
+            <div
+              className="relative w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+              style={{
+                background: "radial-gradient(circle at center, #0f0f2a 40%, #070715 100%)",
+                boxShadow: "0 0 14px rgba(120,0,255,0.35), inset 0 0 18px rgba(100,0,255,0.3)",
+              }}
+            >
+              <div className="absolute inset-0 rounded-full" style={{ border: "2px solid transparent", borderTopColor: "#8f2fff", borderBottomColor: "#4b00ff", animation: "spin 6s linear infinite" }} />
+              <div className="absolute inset-[3px] rounded-full" style={{ border: "2px solid transparent", borderTopColor: "#4b00ff", borderBottomColor: "#8f2fff", animation: "spin 6s linear infinite reverse" }} />
+              <svg className="w-4 h-4 relative z-10" viewBox="0 0 20 20" fill="none">
+                <line x1="4" y1="4" x2="16" y2="16" stroke="url(#dxg)" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="16" y1="4" x2="4" y2="16" stroke="url(#dxg)" strokeWidth="2.5" strokeLinecap="round" />
+                <defs><linearGradient id="dxg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6a00ff" /><stop offset="100%" stopColor="#b84dff" /></linearGradient></defs>
               </svg>
             </div>
-            <span className="text-white font-semibold text-sm">Akhmads net</span>
+            <div
+              className="flex flex-col leading-tight"
+              style={{ animation: "logoFadeIn 3s ease forwards", opacity: 0 }}
+            >
+              <span className="text-white font-bold text-sm tracking-widest uppercase">Akhmads</span>
+              <span className="text-[9px] text-purple-400 tracking-[0.12em] uppercase">◆ Digital Advertising</span>
+            </div>
           </div>
 
           <button
