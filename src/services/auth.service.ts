@@ -1,5 +1,5 @@
 import apiClient from '../api/api';
-import type{
+import type {
   LoginInitiateResponse,
   LoginStatusResponse,
   RefreshTokenResponse,
@@ -51,6 +51,14 @@ class AuthService {
    */
   async logout(): Promise<void> {
     await apiClient.post('/auth/logout');
+  }
+
+  /**
+   * 🤖 Telegram Widget Login - Bot URL button orqali avtomatik login
+   */
+  async telegramWidgetLogin(params: Record<string, string>) {
+    const response = await apiClient.post('/auth/telegram-widget', params);
+    return response.data;
   }
 
   /**
