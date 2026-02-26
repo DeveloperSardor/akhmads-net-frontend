@@ -169,7 +169,7 @@ const Profile = () => {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
             {/* Avatar + info */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 overflow-hidden ring-2 ring-purple-500/20 shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border border-white/10 shrink-0">
                 <img
                   src={avatarUrl}
                   alt={profile?.firstName}

@@ -266,7 +266,7 @@ const Navbar = () => {
                       <div ref={profileDropdownRef} className="relative">
                         <button
                           onClick={() => setProfileOpen((p) => !p)}
-                          className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-purple-500/30 hover:ring-purple-500/50 transition bg-gradient-to-br from-purple-500 to-pink-500"
+                          className="w-10 h-10 rounded-full overflow-hidden border border-white/10 hover:border-white/30 transition"
                           title={nav?.profile ?? "Profile"}
                         >
                           <img
