@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { Loader2, CheckCircle, Copy, AlertCircle, X } from "lucide-react";
+import { Loader2, CheckCircle, Copy, AlertCircle, X, ShieldCheck } from "lucide-react";
 import { useBotStore } from "../../store/botStore";
+import botService from "../../services/bot.service";
 import { BOT_CATEGORIES, BOT_LANGUAGES } from "../../types/bot.types";
 import Steps from "./steps";
 import Bots from "./bots";
 import { useTranslations } from "../../hooks/useTranslations";
+import { API_BASE_URL } from "../../api/api";
 
 const AddBot = () => {
   const t = useTranslations();
@@ -19,7 +21,7 @@ const AddBot = () => {
   });
 
   const [isVerifying, setIsVerifying] = useState(false);
-  const [verified, setVerified] = useState(false);
+  const [verifiedBot, setVerifiedBot] = useState<any>(null);
   const [apiKey, setApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [copiedApiKey, setCopiedApiKey] = useState(false);
@@ -57,17 +59,22 @@ const AddBot = () => {
         return;
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setVerified(true);
+      const res = await botService.verifyBotToken(formData.token);
+      if (res.success && res.data) {
+        setVerifiedBot(res.data);
+      } else {
+        alert(ab?.tokenInvalidAlert ?? "Token verification failed");
+      }
       setIsVerifying(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Verification failed:", error);
+      alert(error.response?.data?.message || "Token verification failed");
       setIsVerifying(false);
     }
   };
 
   const handleSubmit = async () => {
-    if (!formData.token || !formData.category || !formData.language) {
+    if (!formData.token || !formData.category || !formData.language || !verifiedBot) {
       alert(ab?.fillFieldsAlert ?? "Please fill all required fields");
       return;
     }
@@ -84,7 +91,7 @@ const AddBot = () => {
       setApiKey(result.apiKey);
       setShowApiKey(true);
       setFormData({ token: "", shortDescription: "", category: "", language: "uz", monetized: true });
-      setVerified(false);
+      setVerifiedBot(null);
     }
   };
 
@@ -169,22 +176,25 @@ const AddBot = () => {
             <input
               type="password"
               value={formData.token}
-              onChange={(e) => setFormData({ ...formData, token: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, token: e.target.value });
+                setVerifiedBot(null); // reset on change
+              }}
               placeholder={ab?.tokenPlaceholder}
-              disabled={verified}
+              disabled={!!verifiedBot}
               className="w-140 rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm outline-none transition focus:border-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
             />
 
             <button
               onClick={handleVerifyBot}
-              disabled={isVerifying || verified}
-              className={`flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium transition ${isVerifying || verified ? "cursor-not-allowed bg-purple-400" : "bg-purple-600 hover:bg-purple-700"
+              disabled={isVerifying || !!verifiedBot}
+              className={`flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium transition ${isVerifying || !!verifiedBot ? "cursor-not-allowed bg-purple-400" : "bg-purple-600 hover:bg-purple-700"
                 }`}
             >
               {isVerifying && <Loader2 className="h-4 w-4 animate-spin" />}
-              {verified && <CheckCircle className="h-4 w-4" />}
+              {!!verifiedBot && <CheckCircle className="h-4 w-4" />}
               <span>
-                {isVerifying ? ab?.verifying : verified ? ab?.verified : ab?.verifyBtn}
+                {isVerifying ? ab?.verifying : !!verifiedBot ? ab?.verified : ab?.verifyBtn}
               </span>
             </button>
           </div>
@@ -197,14 +207,33 @@ const AddBot = () => {
             {ab?.tokenHintFrom}
           </p>
 
-          {verified && (
-            <div className="mt-4 flex items-center gap-2 text-sm text-green-400">
-              <CheckCircle className="h-4 w-4" />
-              {ab?.tokenVerifiedMsg}
+          {verifiedBot && (
+            <div className="mt-6">
+              <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 relative overflow-hidden">
+                <img 
+                  src={`${API_BASE_URL}/bots/avatar/${verifiedBot.username}`} 
+                  alt={verifiedBot.username} 
+                  className="w-16 h-16 rounded-full object-cover border border-white/10 z-10" 
+                  onError={(e) => {
+                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(verifiedBot.username || "B")}&background=random&color=fff&size=128`;
+                  }}
+                />
+                <div className="z-10 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-white">{verifiedBot.firstName}</h3>
+                    <ShieldCheck className="w-4 h-4 text-green-400" />
+                  </div>
+                  <p className="text-sm text-white/60">@{verifiedBot.username}</p>
+                </div>
+                
+                {/* Decorative glows */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl -mt-10 -mr-10"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-pink-500/10 rounded-full blur-2xl -mb-10 -ml-10"></div>
+              </div>
             </div>
           )}
 
-          {verified && (
+          {!!verifiedBot && (
             <div className="mt-6 space-y-5">
               {/* Short Description */}
               <div>

@@ -18,6 +18,14 @@ class BotService {
   }
 
   /**
+   * ✅ Verify Bot Token - Preview info before registration
+   */
+  async verifyBotToken(token: string): Promise<{ success: boolean; data: any }> {
+    const response = await apiClient.post<{ success: boolean; data: any }>('/bots/verify-token', { token });
+    return response.data;
+  }
+
+  /**
    * 📋 Get My Bots - Foydalanuvchi botlari
    */
   async getMyBots(params?: {

@@ -19,6 +19,7 @@ import {
 import { useBotStore } from "../../store/botStore";
 import { BOT_CATEGORIES } from "../../types/bot.types";
 import { useTranslations } from "../../hooks/useTranslations";
+import { API_BASE_URL } from "../../api/api";
 
 const BotSettings = () => {
   const { botId } = useParams<{ botId: string }>();
@@ -228,10 +229,21 @@ async Task<bool> ShowAd(long chatId) {
             <span className="text-sm">{bs?.backToBots ?? "Back to bots"}</span>
           </button>
         </div>
-
-        <div>
-          <h1 className="text-3xl font-bold">{bs?.pageTitle ?? "Bot Settings"}</h1>
-          <p className="text-gray-400 mt-2">@{currentBot.username}</p>
+          <div className="flex items-center gap-4">
+            <img 
+               src={`${API_BASE_URL}/bots/avatar/${currentBot.username}`} 
+               alt={currentBot.username} 
+               className="w-16 h-16 rounded-full object-cover border border-gray-700" 
+               onError={(e) => {
+                 e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentBot.username || "B")}&background=random&color=fff&size=128`;
+               }}
+            />
+            <div>
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              {bs?.pageTitle ?? "Bot Settings"}
+            </h1>
+            <p className="text-gray-400 mt-2">@{currentBot.username}</p>
+          </div>
         </div>
 
         {/* Error/Success Alerts */}

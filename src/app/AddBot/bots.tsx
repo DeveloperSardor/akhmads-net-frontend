@@ -15,6 +15,7 @@ import {
 import { useBotStore } from "../../store/botStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslations } from "../../hooks/useTranslations";
+import { API_BASE_URL } from "../../api/api";
 
 const Bots = () => {
   const navigate = useNavigate();
@@ -118,9 +119,14 @@ const Bots = () => {
                     {/* Bot Info */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
-                          {bot.username?.[0]?.toUpperCase() || "B"}
-                        </div>
+                        <img 
+                          src={`${API_BASE_URL}/bots/avatar/${bot.username}`} 
+                          alt={bot.username} 
+                          className="w-10 h-10 rounded-full object-cover border border-white/10"
+                          onError={(e) => {
+                            e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(bot.username || "B")}&background=random&color=fff&size=64`;
+                          }}
+                        />
                         <div>
                           <p className="font-semibold text-white">@{bot.username}</p>
                           <p className="text-xs text-white/50">{bot.firstName}</p>
@@ -155,6 +161,15 @@ const Bots = () => {
                           </p>
                         </div>
                       </div>
+                      {bot.botstatData && (
+                        <div className="mt-1 text-[10px] text-white/40 flex items-center gap-2">
+                          <span title="Live users">Live: {formatNumber(bot.botstatData.users_live || 0)}</span>
+                          <span title="Dead users">Dead: {formatNumber(bot.botstatData.users_die || 0)}</span>
+                          {(bot.botstatData.groups_live || 0) > 0 && (
+                            <span title="Groups">Groups: {formatNumber(bot.botstatData.groups_live)}</span>
+                          )}
+                        </div>
+                      )}
                     </td>
 
                     {/* Earnings */}

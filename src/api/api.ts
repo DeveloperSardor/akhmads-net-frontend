@@ -1,9 +1,10 @@
 // src/api/api.ts - CLEAN VERSION
 import axios from 'axios';
 
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.akhmads.net/api/v1';
+
 const apiClient = axios.create({
-  // baseURL: import.meta.env.VITE_API_URL || 'https://api.akhmads.net/api/v1',
-  baseURL: "https://api.akhmads.net/api/v1" || import.meta.env.VITE_API_URL,
+  baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

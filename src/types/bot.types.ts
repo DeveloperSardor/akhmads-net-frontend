@@ -13,6 +13,9 @@ export interface Bot {
   totalMembers: number;
   activeMembers: number;
   
+  avatarUrl?: string;
+  botstatData?: any;
+  
   // ✅ ANALYTICS FIELDS
   impressionsServed?: number;
   clicks?: number;
