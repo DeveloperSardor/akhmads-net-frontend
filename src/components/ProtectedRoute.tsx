@@ -4,11 +4,12 @@ import { useAuthStore } from '../store/authStore';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  allowedRoles?: string[];
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   const location = useLocation();
-  const { isAuthenticated, checkAuth } = useAuthStore();
+  const { isAuthenticated, checkAuth, user } = useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
@@ -33,13 +34,25 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
+  const currentLang = location.pathname.split('/')[1] || 'uz';
+
   // 🚫 Agar token yo'q bo'lsa - login ga yo'naltirish
   if (!isAuthenticated) {
-    const currentLang = location.pathname.split('/')[1] || 'uz';
     return <Navigate to={`/${currentLang}/login`} state={{ from: location }} replace />;
   }
 
-  // ✅ Token mavjud bo'lsa - children ni ko'rsatish
+  // 🚫 Agar ruxsat etilgan rollar berilgan bo'lsa va userning roliga to'g'ri kelmasa
+  if (allowedRoles && allowedRoles.length > 0 && user) {
+    const userRoles = user.roles || (user.role ? [user.role] : []);
+    const hasAllowedRole = allowedRoles.some(role => userRoles.includes(role));
+
+    if (!hasAllowedRole) {
+      // Yoki 403 sahifasiga, yoki wallet'ga qaytarish mumkin
+      return <Navigate to={`/${currentLang}/wallet`} replace />;
+    }
+  }
+
+  // ✅ Token mavjud va role ruxsat etilgan bo'lsa - children ni ko'rsatish
   return <>{children}</>;
 };
 

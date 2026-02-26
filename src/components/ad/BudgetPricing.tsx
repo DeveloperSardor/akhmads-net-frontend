@@ -1,6 +1,17 @@
 // src/components/ad/BudgetPricing.tsx - FIXED WITH SUBMIT
 import { useState, useEffect } from "react";
-import { Loader2, Rocket, Tag, Info, TrendingUp, Zap, Target, DollarSign, Wallet, AlertCircle } from "lucide-react";
+import {
+  Loader2,
+  Rocket,
+  Tag,
+  Info,
+  TrendingUp,
+  Zap,
+  Target,
+  DollarSign,
+  Wallet,
+  AlertCircle,
+} from "lucide-react";
 import { useAdStore } from "../../store/adStore";
 import { useAuthStore } from "../../store/authStore";
 import walletService from "../../services/wallet.service";
@@ -8,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 
 const BudgetPricing = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
   const {
     formData,
     updateFormData,
@@ -16,7 +26,6 @@ const BudgetPricing = () => {
     isSubmitting,
     createAd,
     submitAd,
-    currentAd,
     fetchPricingEstimate,
   } = useAdStore();
 
@@ -36,7 +45,7 @@ const BudgetPricing = () => {
       const response = await walletService.getWallet();
       setWalletBalance(parseFloat(response.data.wallet.available));
     } catch (error) {
-      console.error('Failed to load wallet:', error);
+      console.error("Failed to load wallet:", error);
     } finally {
       setLoadingWallet(false);
     }
@@ -63,18 +72,18 @@ const BudgetPricing = () => {
   const handleLaunch = async () => {
     try {
       // Step 1: Create ad (DRAFT)
-      const created = await createAd();
-      if (!created || !currentAd) {
+      const createdAd = await createAd();
+      if (!createdAd || !createdAd.id) {
         return;
       }
 
       // Step 2: Submit for review (PENDING_REVIEW + wallet reserve)
-      await submitAd(currentAd.id);
-      
+      await submitAd(createdAd.id);
+
       // Step 3: Navigate to My Ads
       navigate("/my-ads");
     } catch (error) {
-      console.error('Launch failed:', error);
+      console.error("Launch failed:", error);
     }
   };
 
@@ -90,7 +99,9 @@ const BudgetPricing = () => {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Wallet className="w-5 h-5 text-primary" />
-            <h3 className="text-sm font-semibold text-foreground">Wallet Balance</h3>
+            <h3 className="text-sm font-semibold text-foreground">
+              Wallet Balance
+            </h3>
           </div>
           {loadingWallet ? (
             <Loader2 className="w-4 h-4 animate-spin text-primary" />
@@ -105,9 +116,11 @@ const BudgetPricing = () => {
           <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
             <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
             <div className="text-xs text-destructive">
-              <strong>Insufficient balance.</strong> You need {formatCurrency(totalCost - walletBalance)} more to launch this campaign.
+              <strong>Insufficient balance.</strong> You need{" "}
+              {formatCurrency(totalCost - walletBalance)} more to launch this
+              campaign.
               <button
-                onClick={() => navigate('/wallet')}
+                onClick={() => navigate("/wallet")}
                 className="ml-2 underline font-semibold hover:no-underline"
               >
                 Add Funds
@@ -135,14 +148,20 @@ const BudgetPricing = () => {
                   <Target className="w-4 h-4 text-blue-500" />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-foreground">Base Campaign</div>
+                  <div className="text-sm font-medium text-foreground">
+                    Base Campaign
+                  </div>
                   <div className="text-xs text-muted-foreground">
                     ${pricingEstimate.pricing.baseCPM} per 1K impressions
                   </div>
                 </div>
               </div>
               <span className="text-sm font-semibold text-foreground tabular-nums">
-                {formatCurrency((pricingEstimate.pricing.baseCPM * formData.targetImpressions) / 1000)}
+                {formatCurrency(
+                  (pricingEstimate.pricing.baseCPM *
+                    formData.targetImpressions) /
+                    1000,
+                )}
               </span>
             </div>
 
@@ -153,8 +172,12 @@ const BudgetPricing = () => {
                   <Zap className="w-4 h-4 text-purple-500" />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-foreground">Target Impressions</div>
-                  <div className="text-xs text-muted-foreground">Expected reach</div>
+                  <div className="text-sm font-medium text-foreground">
+                    Target Impressions
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Expected reach
+                  </div>
                 </div>
               </div>
               <span className="text-sm font-semibold text-foreground tabular-nums">
@@ -169,8 +192,12 @@ const BudgetPricing = () => {
                   <DollarSign className="w-4 h-4 text-orange-500" />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-foreground">Platform Fee</div>
-                  <div className="text-xs text-muted-foreground">Service charge</div>
+                  <div className="text-sm font-medium text-foreground">
+                    Platform Fee
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Service charge
+                  </div>
                 </div>
               </div>
               <span className="text-sm font-semibold text-foreground tabular-nums">
@@ -186,7 +213,9 @@ const BudgetPricing = () => {
                     <Tag className="w-4 h-4 text-green-500" />
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-foreground">Promo Discount</div>
+                    <div className="text-sm font-medium text-foreground">
+                      Promo Discount
+                    </div>
                     <div className="text-xs text-muted-foreground font-mono">
                       {formData.promoCode}
                     </div>
@@ -202,8 +231,12 @@ const BudgetPricing = () => {
             <div className="p-6 bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/20 rounded-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Total Investment</div>
-                  <div className="text-xs text-muted-foreground">Campaign cost</div>
+                  <div className="text-sm text-muted-foreground mb-1">
+                    Total Investment
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Campaign cost
+                  </div>
                 </div>
                 <div className="text-4xl font-bold text-primary tabular-nums">
                   {formatCurrency(totalCost)}
@@ -214,7 +247,9 @@ const BudgetPricing = () => {
         ) : (
           <div className="p-16 bg-card border border-border rounded-xl text-center">
             <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">Calculating pricing...</p>
+            <p className="text-sm text-muted-foreground">
+              Calculating pricing...
+            </p>
           </div>
         )}
       </div>
@@ -249,7 +284,9 @@ const BudgetPricing = () => {
           <p className="text-xs text-destructive mt-2">{promoError}</p>
         )}
         {promoApplied && (
-          <p className="text-xs text-green-600 mt-2">✓ Promo code applied! Recalculating...</p>
+          <p className="text-xs text-green-600 mt-2">
+            ✓ Promo code applied! Recalculating...
+          </p>
         )}
       </div>
 
@@ -258,12 +295,28 @@ const BudgetPricing = () => {
         <div className="flex items-start gap-3">
           <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-2">What Happens Next?</h4>
+            <h4 className="text-sm font-semibold text-foreground mb-2">
+              What Happens Next?
+            </h4>
             <ul className="space-y-1.5 text-xs text-muted-foreground">
-              <li>• <span className="font-semibold text-foreground">Submit:</span> Your ad goes to moderation</li>
-              <li>• <span className="font-semibold text-foreground">Review:</span> We check content (usually &lt;24h)</li>
-              <li>• <span className="font-semibold text-foreground">Approved:</span> Campaign goes live automatically</li>
-              <li>• <span className="font-semibold text-foreground">Payment:</span> Charged only after approval</li>
+              <li>
+                • <span className="font-semibold text-foreground">Submit:</span>{" "}
+                Your ad goes to moderation
+              </li>
+              <li>
+                • <span className="font-semibold text-foreground">Review:</span>{" "}
+                We check content (usually &lt;24h)
+              </li>
+              <li>
+                •{" "}
+                <span className="font-semibold text-foreground">Approved:</span>{" "}
+                Campaign goes live automatically
+              </li>
+              <li>
+                •{" "}
+                <span className="font-semibold text-foreground">Payment:</span>{" "}
+                Charged only after approval
+              </li>
             </ul>
           </div>
         </div>
@@ -272,7 +325,9 @@ const BudgetPricing = () => {
       {/* Submit Button */}
       <button
         onClick={handleLaunch}
-        disabled={isSubmitting || !pricingEstimate || !hasBalance || loadingWallet}
+        disabled={
+          isSubmitting || !pricingEstimate || !hasBalance || loadingWallet
+        }
         className="w-full py-4 bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-500/90 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-primary/25"
       >
         {isSubmitting ? (
@@ -289,7 +344,8 @@ const BudgetPricing = () => {
       </button>
 
       <p className="text-xs text-center text-muted-foreground">
-        Funds will be reserved from your wallet. You'll be charged only after approval.
+        Funds will be reserved from your wallet. You'll be charged only after
+        approval.
       </p>
     </div>
   );

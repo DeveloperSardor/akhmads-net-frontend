@@ -1,0 +1,5 @@
+live actions for admin panel should work with socket
+if bots don't take action only just connect, admin should see that wrong bot owners
+
+
+

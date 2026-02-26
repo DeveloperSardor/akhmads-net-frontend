@@ -384,8 +384,8 @@ const Profile = () => {
                           <td className="py-3 px-3 text-red-400">{formatCurrency(ad.spent)}</td>
                           <td className="py-3 px-3">
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
-                                ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
-                                  "bg-gray-500/20 text-gray-400"
+                              ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
+                                "bg-gray-500/20 text-gray-400"
                               }`}>
                               {ad.status === "RUNNING" ? p?.statusActive : ad.status === "PAUSED" ? p?.statusPending : ad.status}
                             </span>
@@ -417,8 +417,8 @@ const Profile = () => {
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <p className="text-sm font-medium truncate">{ad.title}</p>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
-                            ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
-                              "bg-gray-500/20 text-gray-400"
+                          ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
+                            "bg-gray-500/20 text-gray-400"
                           }`}>
                           {ad.status === "RUNNING" ? p?.statusActive : ad.status === "PAUSED" ? p?.statusPending : ad.status}
                         </span>
@@ -482,8 +482,8 @@ const Profile = () => {
                           <td className="py-3 px-3 text-green-400">{formatCurrency(bot.earnings)}</td>
                           <td className="py-3 px-3">
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bot.status === "ACTIVE" ? "bg-green-500/20 text-green-400" :
-                                bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
-                                  "bg-red-500/20 text-red-400"
+                              bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
+                                "bg-red-500/20 text-red-400"
                               }`}>
                               {bot.status === "ACTIVE" ? p?.statusActive : bot.status === "PENDING" ? p?.statusPending : bot.status}
                             </span>
@@ -515,8 +515,8 @@ const Profile = () => {
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <p className="text-sm font-medium">@{bot.username}</p>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${bot.status === "ACTIVE" ? "bg-green-500/20 text-green-400" :
-                            bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
-                              "bg-red-500/20 text-red-400"
+                          bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
+                            "bg-red-500/20 text-red-400"
                           }`}>
                           {bot.status === "ACTIVE" ? p?.statusActive : bot.status === "PENDING" ? p?.statusPending : bot.status}
                         </span>

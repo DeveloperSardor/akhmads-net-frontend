@@ -43,7 +43,7 @@ interface AdActions {
   resetForm: () => void;
   fetchPricingEstimate: () => Promise<void>;
   fetchTargetingOptions: () => Promise<void>;
-  createAd: () => Promise<boolean>;
+  createAd: () => Promise<any>;
   fetchMyAds: (params?: any) => Promise<void>;
   fetchAdById: (adId: string) => Promise<void>;
   updateAd: (adId: string, data: Partial<CreateAdRequest>) => Promise<void>;
@@ -97,12 +97,12 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
     set((state) => ({
       formData: { ...state.formData, ...data },
     }));
-    
+
     if (data.targetImpressions !== undefined || data.targeting !== undefined) {
       if (pricingDebounceTimer) {
         clearTimeout(pricingDebounceTimer);
       }
-      
+
       pricingDebounceTimer = setTimeout(() => {
         get().fetchPricingEstimate();
       }, 500);
@@ -110,9 +110,9 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
   },
 
   setStep: (step) => set({ currentStep: step }),
-  
-  resetForm: () => set({ 
-    formData: initialFormData, 
+
+  resetForm: () => set({
+    formData: initialFormData,
     currentStep: 0,
     error: null,
     successMessage: null,
@@ -120,14 +120,14 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   fetchPricingEstimate: async () => {
     const { formData } = get();
-    
+
     try {
       const response = await adService.getPricingEstimate({
         impressions: formData.targetImpressions,
         targeting: formData.targeting,
         cpmBid: formData.cpmBid,
       });
-      
+
       set({ pricingEstimate: response.data.estimate });
     } catch (error: any) {
       console.error('Failed to fetch pricing:', error);
@@ -145,10 +145,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   createAd: async () => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const { formData } = get();
-      
+
       const response = await adService.createAd({
         contentType: formData.contentType,
         text: formData.text,
@@ -160,26 +160,26 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
         promoCode: formData.promoCode,
         trackingEnabled: true,
       });
-      
+
       set({
         currentAd: response.data.ad,
         isSubmitting: false,
         successMessage: 'Ad created successfully!',
       });
-      
-      return true;
+
+      return response.data.ad;
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to create ad',
         isSubmitting: false,
       });
-      return false;
+      return null;
     }
   },
 
   fetchMyAds: async (params) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       const response = await adService.getMyAds(params);
       set({
@@ -196,7 +196,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   fetchAdById: async (adId) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       const response = await adService.getAdById(adId);
       set({
@@ -213,10 +213,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   updateAd: async (adId, data) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.updateAd(adId, data);
-      
+
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         currentAd: state.currentAd?.id === adId ? response.data.ad : state.currentAd,
@@ -233,10 +233,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   submitAd: async (adId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.submitAd(adId);
-      
+
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
@@ -252,10 +252,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   pauseAd: async (adId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.pauseAd(adId);
-      
+
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
@@ -271,10 +271,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   resumeAd: async (adId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.resumeAd(adId);
-      
+
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
@@ -291,17 +291,17 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
   // ✅ FIXED - RETURNS DUPLICATED AD
   duplicateAd: async (adId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.duplicateAd(adId);
       const duplicatedAd = response.data.ad;
-      
+
       set((state) => ({
         ads: [duplicatedAd, ...state.ads],
         isSubmitting: false,
         successMessage: 'Ad duplicated!',
       }));
-      
+
       return duplicatedAd;
     } catch (error: any) {
       set({
@@ -314,10 +314,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   deleteAd: async (adId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       await adService.deleteAd(adId);
-      
+
       set((state) => ({
         ads: state.ads.filter((ad) => ad.id !== adId),
         isSubmitting: false,
@@ -334,11 +334,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
   toggleSaveAd: async (adId) => {
     try {
       const response = await adService.toggleSaveAd(adId);
-      
+
       set((state) => ({
-        ads: state.ads.map((ad) => 
-          ad.id === adId 
-            ? { ...ad, isSaved: response.data.saved } 
+        ads: state.ads.map((ad) =>
+          ad.id === adId
+            ? { ...ad, isSaved: response.data.saved }
             : ad
         ),
         successMessage: response.data.saved ? 'Ad saved!' : 'Ad unsaved!',
@@ -352,10 +352,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   archiveAd: async (adId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.archiveAd(adId);
-      
+
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
@@ -371,10 +371,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   unarchiveAd: async (adId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.unarchiveAd(adId);
-      
+
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
@@ -390,10 +390,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   setSchedule: async (adId, scheduleData) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.setSchedule(adId, scheduleData);
-      
+
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
@@ -409,10 +409,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   removeSchedule: async (adId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       const response = await adService.removeSchedule(adId);
-      
+
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
@@ -428,10 +428,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   sendTestAd: async (adId, telegramUserId) => {
     set({ isSubmitting: true, error: null });
-    
+
     try {
       await adService.sendTestAd(adId, telegramUserId);
-      
+
       set({
         isSubmitting: false,
         successMessage: 'Test ad sent to Telegram!',
@@ -446,15 +446,15 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   fetchDailyStats: async (adId, days = 30) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       const response = await adService.getDailyStats(adId, days);
-      
+
       set({
         dailyStats: response.data.stats,
         isLoading: false,
       });
-      
+
       return response.data.stats;
     } catch (error: any) {
       set({
@@ -467,15 +467,15 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   fetchHourlyStats: async (adId) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       const response = await adService.getHourlyStats(adId);
-      
+
       set({
         hourlyStats: response.data.stats,
         isLoading: false,
       });
-      
+
       return response.data.stats;
     } catch (error: any) {
       set({
@@ -488,15 +488,15 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   fetchOverviewStats: async (days = 30) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       const response = await adService.getOverviewStats(days);
-      
+
       set({
         overviewStats: response.data.stats,
         isLoading: false,
       });
-      
+
       return response.data.stats;
     } catch (error: any) {
       set({

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import {
   Wallet as WalletIcon,
   Plus,
+  ArrowUpRight,
   Loader2,
   TrendingUp,
   TrendingDown,
@@ -22,6 +23,7 @@ const Wallet = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -114,13 +116,22 @@ const Wallet = () => {
               <h2 className="text-4xl font-bold text-foreground mb-4 tabular-nums">
                 {formatCurrency(walletData?.available || 0)}
               </h2>
-              <button
-                onClick={() => setShowDepositModal(true)}
-                className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                {w?.addFunds}
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowDepositModal(true)}
+                  className="flex-1 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  {w?.addFunds}
+                </button>
+                <button
+                  onClick={() => setShowWithdrawModal(true)}
+                  className="flex-1 py-3 bg-card hover:bg-muted border border-border text-foreground font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+                >
+                  <ArrowUpRight className="w-4 h-4" />
+                  {w?.withdrawBtn}
+                </button>
+              </div>
             </div>
 
             {/* Reserved */}
@@ -246,6 +257,15 @@ const Wallet = () => {
           onSuccess={loadData}
         />
       )}
+
+      {/* Withdraw Modal */}
+      {showWithdrawModal && (
+        <WithdrawModal
+          onClose={() => setShowWithdrawModal(false)}
+          onSuccess={loadData}
+          availableBalance={walletData?.available || 0}
+        />
+      )}
     </>
   );
 };
@@ -337,6 +357,127 @@ const DepositModal = ({
             <>
               <ExternalLink className="w-4 h-4" />
               {dm?.continue}
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Withdraw Modal
+const WithdrawModal = ({
+  onClose,
+  onSuccess,
+  availableBalance,
+}: {
+  onClose: () => void;
+  onSuccess: () => void;
+  availableBalance: number | string;
+}) => {
+  const t = useTranslations();
+  const wm = t.wallet?.withdrawModal;
+
+  const [amount, setAmount] = useState("");
+  const [address, setAddress] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleWithdraw = async () => {
+    if (!amount || parseFloat(amount) < 10) {
+      alert(wm?.minAlert ?? "Minimum withdrawal: $10");
+      return;
+    }
+    if (parseFloat(amount) > parseFloat(String(availableBalance))) {
+      alert("Insufficient balance");
+      return;
+    }
+    if (!address || address.length < 10) {
+      alert("Please enter a valid wallet address");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await walletService.requestWithdraw({
+        amount: parseFloat(amount),
+        bep20Address: address,
+      });
+
+      alert(wm?.successMsg ?? "✅ Withdrawal requested successfully!");
+      onSuccess();
+      onClose();
+    } catch (error: any) {
+      alert(error.response?.data?.message || wm?.failMsg || "Withdrawal failed");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-card border border-border rounded-2xl w-full max-w-md p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-foreground">{wm?.title}</h3>
+          <button onClick={onClose} className="p-1 hover:bg-muted rounded-lg">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="mb-4">
+          <label className="text-sm font-semibold text-foreground mb-2 block">{wm?.amountLabel}</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder={wm?.amountPlaceholder}
+            className="w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+          <div className="flex justify-between items-center mt-1 px-1">
+            <span className="text-xs text-muted-foreground">Avaliable: ${parseFloat(String(availableBalance || 0)).toFixed(2)}</span>
+            <button 
+              onClick={() => setAmount(String(availableBalance))}
+              className="text-xs text-primary font-medium hover:underline"
+            >
+              Max
+            </button>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <label className="text-sm font-semibold text-foreground mb-2 block">{wm?.addressLabel}</label>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder={wm?.addressPlaceholder}
+            className="w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <div className="mb-6 p-4 border border-border rounded-xl">
+          <div className="flex items-center gap-3">
+            <Bitcoin className="w-5 h-5 text-primary" />
+            <div>
+              <p className="text-sm font-medium text-foreground">{wm?.cryptoTitle}</p>
+              <p className="text-xs text-muted-foreground">{wm?.cryptoDesc}</p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={handleWithdraw}
+          disabled={!amount || parseFloat(amount) < 10 || parseFloat(amount) > parseFloat(String(availableBalance)) || !address || isSubmitting}
+          className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {wm?.processing}
+            </>
+          ) : (
+            <>
+              <ArrowUpRight className="w-4 h-4" />
+              {wm?.continue}
             </>
           )}
         </button>

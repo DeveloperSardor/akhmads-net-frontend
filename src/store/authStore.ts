@@ -6,7 +6,7 @@ import authService from '../services/auth.service';
 
 interface AuthActions {
   setUser: (user: User) => void;
-  setTokens: (tokens: AuthTokens) => void; 
+  setTokens: (tokens: AuthTokens) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   login: (tokens: AuthTokens, user: User) => void;
@@ -86,16 +86,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         try {
           authService.setAuthToken(accessToken);
           const response = await authService.getCurrentUser();
-          
+
           set({
-            user: response.data,
+            user: response.data.user || (response.data as any),
             isAuthenticated: true,
           });
-          
+
           return true;
         } catch (error) {
           console.error('Auth check failed:', error);
-          
+
           // Agar token expired bo'lsa, refresh qilishga harakat qilamiz
           const refreshSuccess = await get().refreshAccessToken();
           return refreshSuccess;

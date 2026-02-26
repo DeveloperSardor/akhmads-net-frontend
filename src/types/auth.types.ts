@@ -9,6 +9,7 @@ export interface User {
   email?: string;
   avatarUrl?: string;
   role: string;
+  roles?: string[];
   locale: string;
 }
 
@@ -51,7 +52,9 @@ export interface LoginStatusResponse {
 
 export interface MeResponse {
   success: boolean;
-  data: User;
+  data: {
+    user: User;
+  };
 }
 
 export interface RefreshTokenResponse {

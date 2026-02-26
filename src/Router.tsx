@@ -29,7 +29,7 @@ export const routes = createBrowserRouter([
         path: "login",
         element: <Login />,
       },
-      
+
       // 🌟 PUBLIC HOME with Navbar (no auth required)
       {
         path: "",
@@ -39,9 +39,13 @@ export const routes = createBrowserRouter([
             index: true,
             element: <Home />,
           },
+          {
+            path: "faq",
+            element: <Faq />,
+          },
         ],
       },
-      
+
       // 🔐 PROTECTED ROUTES with Navbar (auth required)
       {
         path: "",
@@ -50,7 +54,7 @@ export const routes = createBrowserRouter([
           {
             path: "add-bot",
             element: (
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["BOT_OWNER"]}>
                 <AddBot />
               </ProtectedRoute>
             ),
@@ -58,7 +62,7 @@ export const routes = createBrowserRouter([
           {
             path: "bots/:botId/settings",
             element: (
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["BOT_OWNER"]}>
                 <BotSettings />
               </ProtectedRoute>
             ),
@@ -67,7 +71,7 @@ export const routes = createBrowserRouter([
           {
             path: "launch-ad",
             element: (
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["ADVERTISER"]}>
                 <LaunchAd />
               </ProtectedRoute>
             ),
@@ -75,7 +79,7 @@ export const routes = createBrowserRouter([
           {
             path: "my-ads",
             element: (
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["ADVERTISER"]}>
                 <MyAds />
               </ProtectedRoute>
             ),
@@ -83,7 +87,7 @@ export const routes = createBrowserRouter([
           {
             path: "ads/:adId",
             element: (
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["ADVERTISER"]}>
                 <AdDetails />
               </ProtectedRoute>
             ),
@@ -104,14 +108,7 @@ export const routes = createBrowserRouter([
               </ProtectedRoute>
             ),
           },
-          {
-            path: "faq",
-            element: (
-              <ProtectedRoute>
-                <Faq />
-              </ProtectedRoute>
-            ),
-          },
+
         ],
       },
     ],

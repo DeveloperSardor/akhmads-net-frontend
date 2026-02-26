@@ -46,11 +46,18 @@ export const useUserStore = create<UserState & UserActions>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await userService.getProfile();
+      const fetchedUser = response.data.user;
+
       set({
-        profile: response.data.user,
+        profile: fetchedUser,
         wallet: response.data.wallet,
         stats: response.data.stats,
         isLoading: false,
+      });
+
+      // Synchronize with authStore to prevent roles loss on navigation/reload
+      import('./authStore').then(({ useAuthStore }) => {
+        useAuthStore.getState().setUser(fetchedUser);
       });
     } catch (error: any) {
       set({
@@ -69,8 +76,8 @@ export const useUserStore = create<UserState & UserActions>((set) => ({
       const ads = Array.isArray(response.data.data)
         ? response.data.data
         : Array.isArray(response.data)
-        ? response.data
-        : [];
+          ? response.data
+          : [];
 
       set({ ads, isLoading: false });
     } catch (error: any) {
@@ -89,10 +96,10 @@ export const useUserStore = create<UserState & UserActions>((set) => ({
       const rawBots = Array.isArray(response.data.data)
         ? response.data.data
         : Array.isArray(response.data.bots)
-        ? response.data.bots
-        : Array.isArray(response.data)
-        ? response.data
-        : [];
+          ? response.data.bots
+          : Array.isArray(response.data)
+            ? response.data
+            : [];
 
       const bots = rawBots.map((bot: any) => ({
         ...bot,

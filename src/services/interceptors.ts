@@ -51,6 +51,15 @@ apiClient.interceptors.response.use(
 
     // Agar 401 error bo'lsa va refresh qilinmagan bo'lsa
     if (error.response?.status === 401 && !originalRequest._retry) {
+      const isAuthEndpoint =
+        originalRequest.url?.includes('/auth/refresh') ||
+        originalRequest.url?.includes('/auth/logout') ||
+        originalRequest.url?.includes('/auth/login');
+        
+      if (isAuthEndpoint) {
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         // Agar refresh jarayonida bo'lsa, navbatga qo'shish
         return new Promise((resolve, reject) => {
