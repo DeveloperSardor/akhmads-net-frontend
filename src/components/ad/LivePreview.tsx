@@ -21,6 +21,12 @@ const LivePreview = () => {
     if (!text) return '';
     let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // ✅ Handle <tg-emoji> tags
+    formatted = formatted.replace(/<tg-emoji emoji-id="(.*?)">(.*?)<\/tg-emoji>/g, (match, id, fallback) => {
+      return `<span class="premium-emoji-placeholder" title="Premium Emoji: ${id}">${fallback}<span class="premium-star-icon">⭐</span></span>`;
+    });
+
     formatted = formatted.replace(/\n/g, '<br />');
     return formatted;
   };
@@ -77,19 +83,6 @@ const LivePreview = () => {
 
           {hasContent ? (
             <div className="space-y-3">
-              {formData.mediaUrl && (
-                <div className="rounded-lg overflow-hidden">
-                  <img
-                    src={formData.mediaUrl}
-                    alt="Ad preview"
-                    className="w-full h-auto"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
-
               {formData.text && (
                 <div
                   className="text-white text-sm leading-relaxed whitespace-pre-wrap"
