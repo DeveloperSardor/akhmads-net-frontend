@@ -1,6 +1,6 @@
 // src/components/ad/AdComposer.tsx
 import { useState } from "react";
-import { FileText, Link2, Upload, X, Loader2, Sparkles, Send } from "lucide-react";
+import { FileText, Link2, /*Upload,*/ X, Loader2, Sparkles, Send } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
 import api from "../../api/api";
 import ButtonColorPicker from "./ButtonColorPicker";
@@ -12,9 +12,9 @@ const AdComposer = () => {
   const t = useTranslations();
   const ac = t.adComposer;
 
-  const [preview, setPreview] = useState<string | null>(formData.mediaUrl || null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  // const [preview, setPreview] = useState<string | null>(formData.mediaUrl || null);
+  // const [uploading, setUploading] = useState(false);
+  // const [uploadError, setUploadError] = useState<string | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [sendingPreview, setSendingPreview] = useState(false);
 
@@ -34,6 +34,7 @@ const AdComposer = () => {
     updateFormData({ buttons: updatedButtons });
   };
 
+  /*
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -79,6 +80,7 @@ const AdComposer = () => {
     setUploadError(null);
     updateFormData({ mediaUrl: undefined, mediaFile: undefined });
   };
+  */
 
   const handleSendPreview = async () => {
     if (!formData.text || formData.text.length < 10) {
@@ -149,7 +151,7 @@ const AdComposer = () => {
         </a>
       </div>
 
-      {/* Media Upload */}
+      {/* Media Upload (Temporarily Disabled)
       <div>
         <label className="block text-sm font-semibold text-foreground mb-3">
           {ac?.uploadLabel ?? 'Upload Media (Optional)'}
@@ -207,6 +209,7 @@ const AdComposer = () => {
           </div>
         )}
       </div>
+      */}
 
       {/* Ad Text */}
       <div>
@@ -325,7 +328,7 @@ const AdComposer = () => {
             </p>
             <ul className="text-xs text-primary/80 space-y-0.5">
               <li>✓ {formData.text?.length || 0} {ac?.summaryChars ?? 'characters'}</li>
-              {preview && <li>✓ {ac?.summaryMedia ?? 'Media image uploaded'}</li>}
+              {/* {preview && <li>✓ {ac?.summaryMedia ?? 'Media image uploaded'}</li>} */}
               {buttonCount > 0 && (
                 <li>✓ {buttonCount} {buttonCount > 1 ? (ac?.summaryButtons ?? 'buttons') : (ac?.summaryButton ?? 'button')}</li>
               )}
