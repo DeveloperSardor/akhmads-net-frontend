@@ -230,7 +230,14 @@ const Wallet = () => {
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-xs text-muted-foreground">
-                            {new Date(tx.createdAt).toLocaleDateString()}
+                            {new Date(tx.createdAt).toLocaleDateString("uz-UZ", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit"
+                            })}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
