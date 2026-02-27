@@ -182,11 +182,19 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await adService.getMyAds(params);
-      set({
-        ads: response.data || [],
-        isLoading: false,
-      });
+      if (params?.saved) {
+        const response = await adService.getSavedAds();
+        set({
+          ads: response.data?.ads || [],
+          isLoading: false,
+        });
+      } else {
+        const response = await adService.getMyAds(params);
+        set({
+          ads: response.data || [],
+          isLoading: false,
+        });
+      }
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch ads',
