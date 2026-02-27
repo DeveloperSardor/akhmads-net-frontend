@@ -34,7 +34,9 @@ const BotSettings = () => {
     error,
     successMessage,
     fetchBotById,
+    fetchBotHistory,
     updateBot,
+    history,
     clearError,
     clearSuccess,
   } = useBotStore();
@@ -57,8 +59,9 @@ const BotSettings = () => {
   useEffect(() => {
     if (botId) {
       fetchBotById(botId);
+      fetchBotHistory(botId);
     }
-  }, [botId, fetchBotById]);
+  }, [botId, fetchBotById, fetchBotHistory]);
 
   useEffect(() => {
     if (currentBot) {
@@ -494,10 +497,42 @@ async Task<bool> ShowAd(long chatId) {
             </button>
           </div>
 
-          <div className="text-center py-12 text-gray-500">
-            {activeTab === "released"
-              ? (bs?.noReleasedAds ?? "No released ads yet")
-              : (bs?.noExceptions ?? "No exceptions configured")}
+          <div className="space-y-4">
+            {activeTab === "released" ? (
+              history && history.length > 0 ? (
+                <div className="space-y-4">
+                  {history.map((item) => (
+                    <div key={item.id} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 transition-all hover:bg-gray-800">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="font-medium text-white">{item.ad?.title || "Reklama"}</h4>
+                          <p className="text-xs text-gray-400">
+                            {new Date(item.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-green-400">+$ {parseFloat(item.botOwnerEarns).toFixed(4)}</div>
+                          <div className="text-[10px] text-gray-500">ID: {item.adId.slice(-6)}</div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-300 line-clamp-2">{item.ad?.text}</p>
+                      <div className="mt-2 text-[10px] text-gray-500 flex items-center gap-2">
+                        <span className="px-1.5 py-0.5 bg-gray-700 rounded text-gray-300">{item.telegramUserId}</span>
+                        <span>{item.firstName} {item.lastName} (@{item.username})</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  {bs?.noReleasedAds ?? "No released ads yet"}
+                </div>
+              )
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                {bs?.noExceptions ?? "No exceptions configured"}
+              </div>
+            )}
           </div>
         </div>
       </div>

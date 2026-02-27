@@ -109,6 +109,56 @@ class BotService {
     });
     return response.data;
   }
+
+  /**
+   * 📜 Get Bot History - Bot reklamalar tarixi
+   */
+  async getBotHistory(botId: string): Promise<{
+    success: boolean;
+    data: {
+      history: Array<{
+        id: string;
+        adId: string;
+        botId: string;
+        telegramUserId: string;
+        firstName: string;
+        lastName: string;
+        username: string;
+        revenue: string;
+        botOwnerEarns: string;
+        createdAt: string;
+        ad: {
+          title: string;
+          text: string;
+          mediaUrl: string;
+        };
+      }>;
+    };
+  }> {
+    const response = await apiClient.get<{
+      success: boolean;
+      data: {
+        history: Array<{
+          id: string;
+          adId: string;
+          botId: string;
+          telegramUserId: string;
+          firstName: string;
+          lastName: string;
+          username: string;
+          revenue: string;
+          botOwnerEarns: string;
+          createdAt: string;
+          ad: {
+            title: string;
+            text: string;
+            mediaUrl: string;
+          };
+        }>;
+      };
+    }>(`/bots/${botId}/history`);
+    return response.data;
+  }
 }
 
 export default new BotService();

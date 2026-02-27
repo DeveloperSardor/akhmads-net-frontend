@@ -12,12 +12,14 @@ interface BotState {
   isSubmitting: boolean;
   error: string | null;
   successMessage: string | null;
+  history: any[]; // Bot ad history
 }
 
 interface BotActions {
   registerBot: (data: RegisterBotRequest) => Promise<{ bot: Bot; apiKey: string } | null>;
   fetchMyBots: (params?: { status?: string; limit?: number }) => Promise<void>;
   fetchBotById: (botId: string) => Promise<void>;
+  fetchBotHistory: (botId: string) => Promise<void>;
   updateBot: (botId: string, data: UpdateBotRequest) => Promise<void>;
   deleteBot: (botId: string) => Promise<void>;
   togglePause: (botId: string, isPaused: boolean) => Promise<void>;
@@ -26,7 +28,7 @@ interface BotActions {
   clearSuccess: () => void;
 }
 
-export const useBotStore = create<BotState & BotActions>((set, get) => ({
+export const useBotStore = create<BotState & BotActions>((set) => ({
   // Initial State
   bots: [],
   currentBot: null,
@@ -34,6 +36,7 @@ export const useBotStore = create<BotState & BotActions>((set, get) => ({
   isSubmitting: false,
   error: null,
   successMessage: null,
+  history: [],
 
   /**
    * 🤖 Register Bot
@@ -74,7 +77,7 @@ export const useBotStore = create<BotState & BotActions>((set, get) => ({
       const response = await botService.getMyBots(params);
       
       // ✅ Backend returns { bots: [...] }
-      const botsData = response.data.bots || response.data || [];
+      const botsData = (response.data as any).bots || response.data || [];
       
       set({
         bots: botsData,
@@ -96,12 +99,31 @@ export const useBotStore = create<BotState & BotActions>((set, get) => ({
     try {
       const response = await botService.getBotById(botId);
       set({
-        currentBot: response.data.bot || response.data,
+        currentBot: (response.data as any).bot || response.data,
         isLoading: false,
       });
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch bot',
+        isLoading: false,
+      });
+    }
+  },
+
+  /**
+   * 📜 Fetch Bot History
+   */
+  fetchBotHistory: async (botId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await botService.getBotHistory(botId);
+      set({
+        history: response.data.history || [],
+        isLoading: false,
+      });
+    } catch (error: any) {
+      set({
+        error: error.response?.data?.message || 'Failed to fetch bot history',
         isLoading: false,
       });
     }
@@ -114,7 +136,7 @@ export const useBotStore = create<BotState & BotActions>((set, get) => ({
     set({ isSubmitting: true, error: null });
     try {
       const response = await botService.updateBot(botId, data);
-      const updatedBot = response.data.bot || response.data;
+      const updatedBot = (response.data as any).bot || response.data;
       
       // Update in list
       set((state) => ({
@@ -163,7 +185,7 @@ export const useBotStore = create<BotState & BotActions>((set, get) => ({
     set({ isSubmitting: true, error: null });
     try {
       const response = await botService.toggleBotPause(botId, isPaused);
-      const updatedBot = response.data.bot || response.data;
+      const updatedBot = (response.data as any).bot || response.data;
       
       // Update in list
       set((state) => ({
