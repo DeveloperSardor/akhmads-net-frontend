@@ -7,7 +7,7 @@ interface AdFormData extends Partial<CreateAdRequest> {
   contentType: 'TEXT' | 'HTML' | 'MARKDOWN' | 'MEDIA' | 'POLL';
   title: string;
   text: string;
-  buttons: Array<{ text: string; url: string }>;
+  buttons: Array<{ text: string; url: string; color?: string }>;
   mediaUrl?: string;
   mediaFile?: File;
   targetImpressions: number;
@@ -15,7 +15,7 @@ interface AdFormData extends Partial<CreateAdRequest> {
     categories?: string[];
     aiSegments?: string[];
     languages?: string[];
-    frequency?: string;
+    frequency?: 'unique' | 'daily' | 'weekly' | 'monthly';
   };
   cpmBid?: number;
   promoCode?: string;
@@ -151,6 +151,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
       const response = await adService.createAd({
         contentType: formData.contentType,
+        title: formData.title,
         text: formData.text,
         buttons: formData.buttons,
         mediaUrl: formData.mediaUrl,
@@ -289,7 +290,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
   },
 
   // ✅ FIXED - RETURNS DUPLICATED AD
-  duplicateAd: async (adId) => {
+  duplicateAd: async (adId: string) => {
     set({ isSubmitting: true, error: null });
 
     try {

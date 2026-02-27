@@ -445,6 +445,8 @@ export const ru = {
         summaryMedia: "Изображение загружено",
         summaryButton: "кнопка",
         summaryButtons: "кнопки",
+        addViaBot: "Добавить через Telegram бот",
+        addViaBotHint: "Создайте рекламу, просто отправив сообщение боту (Текст, Фото, Видео)",
     },
 
     // Live Preview

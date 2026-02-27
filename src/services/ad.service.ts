@@ -111,10 +111,10 @@ class AdService {
   /**
    * Duplicate ad
    */
-//   async duplicateAd(adId: string): Promise<{ success: boolean; data: { ad: Ad } }> {
-//     const response = await apiClient.post(`/ads/${adId}/duplicate`);
-//     return response.data;
-//   }
+  async duplicateAd(adId: string): Promise<{ success: boolean; data: { ad: Ad } }> {
+    const response = await apiClient.post(`/ads/${adId}/duplicate`);
+    return response.data;
+  }
 
   /**
    * Delete ad

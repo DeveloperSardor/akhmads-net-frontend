@@ -445,6 +445,8 @@ export const uz = {
     summaryMedia: "Rasm yuklangan",
     summaryButton: "tugma",
     summaryButtons: "ta tugma",
+    addViaBot: "Telegram bot orqali qo'shish",
+    addViaBotHint: "Reklamani botga shunchaki xabar yuborish orqali yarating (Matn, Rasm, Video)",
   },
 
   // Live Preview

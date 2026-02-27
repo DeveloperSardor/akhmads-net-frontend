@@ -105,19 +105,48 @@ const AdComposer = () => {
 
   return (
     <div className="space-y-6">
-      {/* Content Type Info */}
-      <div className="p-4 bg-card border border-border rounded-xl">
-        <div className="flex items-center gap-2 mb-2">
-          <FileText className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium text-foreground">
-            {formData.mediaUrl
-              ? (ac?.contentTypeMedia ?? 'Media Ad (Image + Text + Buttons)')
-              : (ac?.contentTypeText ?? 'Text Ad (Text + Buttons)')}
-          </span>
+      {/* Campaign Type selection */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Option 1: Web Composer (Active) */}
+        <div className="p-4 bg-primary/10 border-2 border-primary rounded-xl ring-4 ring-primary/5 transition-all">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-1.5 bg-primary/20 rounded-lg">
+              <FileText className="w-4 h-4 text-primary" />
+            </div>
+            <span className="text-sm font-bold text-foreground">
+              {formData.mediaUrl
+                ? (ac?.contentTypeMedia ?? 'Media Ad (Image + Text + Buttons)')
+                : (ac?.contentTypeText ?? 'Text Ad (Text + Buttons)')}
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {ac?.contentTypeHint ?? 'You can add text, image, and buttons together'}
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground">
-          {ac?.contentTypeHint ?? 'You can add text, image, and buttons together'}
-        </p>
+
+        {/* Option 2: Telegram Bot (Redirect) */}
+        <a 
+          href="https://t.me/akhmadsnetbot" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="p-4 bg-card border border-border hover:border-blue-500/50 hover:bg-blue-500/5 rounded-xl transition-all group relative overflow-hidden"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-1.5 bg-blue-500/20 rounded-lg transition-transform group-hover:scale-110">
+              <Send className="w-4 h-4 text-blue-500" />
+            </div>
+            <span className="text-sm font-medium text-foreground group-hover:text-blue-500 transition-colors">
+              {ac?.addViaBot ?? 'Add via Telegram Bot'}
+            </span>
+            <Sparkles className="w-3 h-3 text-yellow-500 animate-pulse" />
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {ac?.addViaBotHint ?? 'Create an ad by simply sending a message to the bot'}
+          </p>
+          <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="flex h-1.5 w-1.5 rounded-full bg-blue-500 ring-4 ring-blue-500/20"></span>
+          </div>
+        </a>
       </div>
 
       {/* Media Upload */}

@@ -443,6 +443,8 @@ export const eng = {
         summaryMedia: "Media image uploaded",
         summaryButton: "button",
         summaryButtons: "buttons",
+        addViaBot: "Add via Telegram Bot",
+        addViaBotHint: "Create an ad by simply sending a message to the bot (Text, Image, Video)",
     },
 
     // Live Preview
