@@ -126,7 +126,7 @@ const AdComposer = () => {
 
         {/* Option 2: Telegram Bot (Redirect) */}
         <a 
-          href="https://t.me/akhmadsnetbot" 
+          href="https://t.me/akhmadsnetbot?start=add_ad" 
           target="_blank" 
           rel="noopener noreferrer"
           className="p-4 bg-card border border-border hover:border-blue-500/50 hover:bg-blue-500/5 rounded-xl transition-all group relative overflow-hidden"
