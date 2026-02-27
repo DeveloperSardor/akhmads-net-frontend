@@ -120,7 +120,7 @@ const BotSettings = () => {
 async def show_ad(chat_id: int):
     async with aiohttp.ClientSession() as session:
         async with session.post(
-            'https://api.akhmads.net/ad/SendPost',
+            'https://akhmads.net/api/v1/ad/SendPost',
             headers={'Authorization': 'Bearer ${apiKey}'},
             json={'SendToChatId': chat_id}
         ) as response:
@@ -131,7 +131,7 @@ async def show_ad(chat_id: int):
 
 async function showAd(chatId) {
   const response = await axios.post(
-    'https://api.akhmads.net/ad/SendPost',
+    'https://akhmads.net/api/v1/ad/SendPost',
     { SendToChatId: chatId },
     { headers: { 'Authorization': 'Bearer ${apiKey}' } }
   );
@@ -140,7 +140,7 @@ async function showAd(chatId) {
 
       php: `<?php
 function showAd($chatId) {
-  $ch = curl_init('https://api.akhmads.net/ad/SendPost');
+  $ch = curl_init('https://akhmads.net/api/v1/ad/SendPost');
   curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['SendToChatId' => $chatId]));
   curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json',
@@ -161,7 +161,7 @@ async Task<bool> ShowAd(long chatId) {
     JsonSerializer.Serialize(new { SendToChatId = chatId }),
     Encoding.UTF8, "application/json");
   var response = await client.PostAsync(
-    "https://api.akhmads.net/ad/SendPost", content);
+    "https://akhmads.net/api/v1/ad/SendPost", content);
   var result = await response.Content.ReadAsStringAsync();
   return JsonDocument.Parse(result).RootElement
     .GetProperty("SendPostResult").GetInt32() == 1;
