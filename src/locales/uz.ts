@@ -91,40 +91,40 @@ export const uz = {
 
   // FAQ
   faq: {
-    pageTitle: "FAQ va Yordam",
-    pageSubtitle: "Ko'p So'raladigan Savollar va Yordam Markazi",
-    contactTitle: "Biz bilan bog'laning",
-    contactSubtitle: "Javob topa olmadingizmi? Bizga xabar yuboring.",
+    pageTitle: "Yordam markazi",
+    pageSubtitle: "Platforma haqida bilishingiz kerak bo'lgan hamma narsa",
+    contactTitle: "Savolingiz bormi?",
+    contactSubtitle: "Kerakli javobni topa olmadingizmi? Bizga yozing.",
     sendMessage: "Xabar yuborish",
-    namePlaceholder: "Ism",
-    emailPlaceholder: "Email",
-    messagePlaceholder: "Xabaringizni yozing...",
-    minChars: "Kamida 20 ta belgi",
+    namePlaceholder: "Ismingiz",
+    emailPlaceholder: "Emailingiz",
+    messagePlaceholder: "Savol yoki muammongizni tasvirlab bering...",
+    minChars: "Kamida 10 ta belgi",
     sendBtn: "Yuborish",
     sending: "Yuborilmoqda...",
-    successMsg: "Xabar muvaffaqiyatli yuborildi! Tez orada javob beramiz.",
+    successMsg: "Xabaringiz yuborildi! Tez orada bog'lanamiz.",
     fillAllFields: "Iltimos, barcha maydonlarni to'ldiring",
-    minCharsError: "Xabar kamida 20 ta belgidan iborat bo'lishi kerak",
-    failedMsg: "Xabar yuborishda xatolik yuz berdi",
+    minCharsError: "Xabar kamida 10 ta belgidan iborat bo'lishi kerak",
+    failedMsg: "Xato yuz berdi. Qayta urinib ko'ring.",
     sections: [
       {
         section: "Umumiy",
         items: [
           {
-            q: "AKHMAD NET qanday ishlaydi?",
-            a: "Platformamiz reklama beruvchilar va bot egalari o'rtasida ko'prik vazifasini bajaradi. Reklamalar AI yordamida mos auditoriyaga tarqatiladi.",
+            q: "AKHMAD NET nima va u qanday faoliyat yuritadi?",
+            a: "AKHMAD NET reklama beruvchilarni Telegram bot egalari bilan birlashtiradi. Reklamangiz AI asosidagi tizim orqali to'g'ri auditoriyaga yetkaziladi.",
           },
           {
-            q: "Ro'yxatdan o'tish bepulmi?",
-            a: "Ha, ro'yxatdan o'tish mutlaqo bepul.",
+            q: "Ro'yxatdan o'tish uchun to'lov talab qilinadi?",
+            a: "Yo'q, hisob yaratish butunlay bepul — hech qanday yashirin to'lovlar yo'q.",
           },
           {
-            q: "Qaysi mamlakatlarda faoliyat yuritasiz?",
-            a: "Biz butun dunyo bo'ylab faoliyat yuritamiz.",
+            q: "Xizmat qaysi mamlakatlarda mavjud?",
+            a: "AKHMAD NET geografik cheklovlarsiz butun dunyo bo'ylab ishlaydi.",
           },
           {
-            q: "Qaysi valyutalarda ishlaysiz?",
-            a: "USD, EUR va USDT.",
+            q: "Qaysi valyutalar qo'llab-quvvatlanadi?",
+            a: "USD, EUR va USDT qabul qilinadi.",
           },
         ],
       },
@@ -132,16 +132,16 @@ export const uz = {
         section: "Reklama",
         items: [
           {
-            q: "Reklama qachon ko'rsatila boshlaydi?",
-            a: "Moderatsiya tasdig'idan so'ng.",
+            q: "Reklamam qachon efirga chiqadi?",
+            a: "Reklama moderatsiya tekshiruvidan o'tgach darhol ishga tushadi.",
           },
           {
-            q: "Minimal byudjet qancha bo'lishi kerak?",
-            a: "Minimal byudjet $10.",
+            q: "Eng kam qancha pul bilan reklama berishim mumkin?",
+            a: "Atigi $10 bilan boshlashingiz mumkin.",
           },
           {
-            q: "Reklamani to'xtatish mumkinmi?",
-            a: "Ha, istalgan vaqt boshqaruv panelingi orqali.",
+            q: "Reklamani to'xtatib yoki bekor qilish mumkinmi?",
+            a: "Albatta — hisobingizdan istalgan vaqtda reklamani to'xtatishingiz mumkin.",
           },
         ],
       },
@@ -149,16 +149,16 @@ export const uz = {
         section: "Bot",
         items: [
           {
-            q: "Botim tasdiqlanmasa nima qilaman?",
-            a: "Qo'llanmani tekshiring va qayta yuboring.",
+            q: "Botim rad etildi — keyin nima qilishim kerak?",
+            a: "Talablarni diqqat bilan o'qib chiqing, kerakli o'zgartirishlar kiriting va botni qayta yuboring.",
           },
           {
-            q: "Bir nechta bot qo'sha olamanmi?",
-            a: "Ha, cheksiz bot qo'sha olasiz.",
+            q: "Bir nechta bot ulash mumkinmi?",
+            a: "Ha, bot qo'shish uchun hech qanday cheklov yo'q.",
           },
           {
-            q: "Bot egalari qancha daromad oladi?",
-            a: "Daromad trafik va reklamalarga bog'liq.",
+            q: "Bot egalari qanday daromad kutishi mumkin?",
+            a: "Daromad botingiz faolligi va ko'rsatilgan reklamalar soniga qarab farq qiladi.",
           },
         ],
       },
@@ -166,16 +166,16 @@ export const uz = {
         section: "To'lov",
         items: [
           {
-            q: "To'lovlar qanday amalga oshiriladi?",
-            a: "To'lovlar avtomatik ravishda amalga oshiriladi.",
+            q: "To'lov tizimi qanday ishlaydi?",
+            a: "Barcha tranzaksiyalar tizim tomonidan avtomatik tarzda bajariladi — qo'lda hech narsa qilish shart emas.",
           },
           {
-            q: "Pulni qaytarib olish mumkinmi?",
-            a: "Qaytarish har bir holat bo'yicha ko'rib chiqiladi.",
+            q: "Pulni qaytarib olish imkoni bormi?",
+            a: "Har bir qaytarish so'rovi qo'llab-quvvatlash jamoamiz tomonidan alohida ko'rib chiqiladi.",
           },
           {
-            q: "Qaysi to'lov usullarini qabul qilasiz?",
-            a: "Visa, Mastercard, USDT.",
+            q: "Qanday to'lov usullari mavjud?",
+            a: "Visa, Mastercard va USDT qabul qilinadi.",
           },
         ],
       },

@@ -55,8 +55,8 @@ const Faq = () => {
       return;
     }
 
-    if (formData.message.length < 20) {
-      setError(faqT?.minCharsError ?? "Message must be at least 20 characters");
+    if (formData.message.length < 10) {
+      setError(faqT?.minCharsError ?? "Message must be at least 10 characters");
       return;
     }
 
@@ -157,11 +157,11 @@ const Faq = () => {
               placeholder={faqT?.messagePlaceholder}
               className="mt-4 h-32 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none focus:border-purple-500 transition resize-none"
               required
-              minLength={20}
+              minLength={10}
             />
 
             <p className="mt-2 text-left text-xs text-white/40">
-              {faqT?.minChars} ({formData.message.length}/20)
+              {faqT?.minChars} ({formData.message.length}/10)
             </p>
 
             <button

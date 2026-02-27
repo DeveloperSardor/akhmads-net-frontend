@@ -91,40 +91,40 @@ export const eng = {
 
     // FAQ
     faq: {
-        pageTitle: "FAQ & Support",
-        pageSubtitle: "Frequently Asked Questions and Help Center",
-        contactTitle: "Contact us",
-        contactSubtitle: "Couldn't find an answer? Send us a message.",
+        pageTitle: "Help Center",
+        pageSubtitle: "Everything you need to know about our platform",
+        contactTitle: "Still have questions?",
+        contactSubtitle: "Can't find what you're looking for? Drop us a message.",
         sendMessage: "Send Message",
-        namePlaceholder: "Name",
-        emailPlaceholder: "Email",
-        messagePlaceholder: "Write your message...",
-        minChars: "Minimum 20 characters",
+        namePlaceholder: "Your name",
+        emailPlaceholder: "Your email",
+        messagePlaceholder: "Describe your question or issue...",
+        minChars: "Minimum 10 characters",
         sendBtn: "Send",
         sending: "Sending...",
-        successMsg: "Message sent successfully! We'll get back to you soon.",
+        successMsg: "Your message has been sent! We'll be in touch shortly.",
         fillAllFields: "Please fill in all fields",
-        minCharsError: "Message must be at least 20 characters",
-        failedMsg: "Failed to send message",
+        minCharsError: "Message must be at least 10 characters",
+        failedMsg: "Something went wrong. Please try again.",
         sections: [
             {
                 section: "General",
                 items: [
                     {
-                        q: "How does AKHMAD NET work?",
-                        a: "Our platform acts as a bridge between advertisers and bot owners. Advertisements are distributed to the appropriate audience using AI.",
+                        q: "What is AKHMAD NET and how does it work?",
+                        a: "AKHMAD NET connects advertisers with Telegram bot owners. Your ad reaches the right audience through our AI-powered targeting system.",
                     },
                     {
-                        q: "Is registration free?",
-                        a: "Yes, registration is completely free.",
+                        q: "Does it cost anything to sign up?",
+                        a: "Not at all — creating an account is 100% free with no hidden fees.",
                     },
                     {
-                        q: "In which countries do you operate?",
-                        a: "We operate globally.",
+                        q: "Where is your service available?",
+                        a: "AKHMAD NET is available worldwide with no geographic restrictions.",
                     },
                     {
-                        q: "In which currencies do you operate?",
-                        a: "USD, EUR and USDT.",
+                        q: "Which currencies are supported?",
+                        a: "We support USD, EUR, and USDT.",
                     },
                 ],
             },
@@ -132,16 +132,16 @@ export const eng = {
                 section: "Advertisement",
                 items: [
                     {
-                        q: "When will the advertisement start showing?",
-                        a: "After moderation approval.",
+                        q: "How soon will my ad go live?",
+                        a: "Your ad will go live as soon as it passes our moderation review.",
                     },
                     {
-                        q: "What should the minimum budget be?",
-                        a: "The minimum budget is $10.",
+                        q: "What is the smallest amount I can spend on an ad?",
+                        a: "You can get started with as little as $10.",
                     },
                     {
-                        q: "Can the advertisement be stopped?",
-                        a: "Yes, anytime from your dashboard.",
+                        q: "Can I pause or cancel my ad at any time?",
+                        a: "Absolutely — you can pause or stop your ad whenever you want from your account.",
                     },
                 ],
             },
@@ -149,16 +149,16 @@ export const eng = {
                 section: "Bot",
                 items: [
                     {
-                        q: "What should I do if my bot is not approved?",
-                        a: "Check guidelines and resubmit.",
+                        q: "My bot was rejected — what should I do?",
+                        a: "Review our bot requirements carefully, make the necessary adjustments, and resubmit for review.",
                     },
                     {
-                        q: "Can I add multiple bots?",
-                        a: "Yes, you can add unlimited bots.",
+                        q: "Can I connect more than one bot?",
+                        a: "Yes, there is no limit on the number of bots you can add.",
                     },
                     {
-                        q: "How much do bot owners earn?",
-                        a: "Earnings depend on traffic and ads.",
+                        q: "What kind of income can bot owners expect?",
+                        a: "Your earnings depend on your bot's activity level and the volume of ads it delivers.",
                     },
                 ],
             },
@@ -166,16 +166,16 @@ export const eng = {
                 section: "Payment",
                 items: [
                     {
-                        q: "How are payments processed?",
-                        a: "Payments are processed automatically.",
+                        q: "How does the payment system work?",
+                        a: "All transactions are handled automatically by our platform — no manual steps needed.",
                     },
                     {
-                        q: "Can money be refunded?",
-                        a: "Refunds are reviewed case by case.",
+                        q: "Is it possible to get a refund?",
+                        a: "Each refund request is reviewed individually by our support team.",
                     },
                     {
-                        q: "What payment methods do you accept?",
-                        a: "Visa, Mastercard, USDT.",
+                        q: "Which payment options are available?",
+                        a: "We accept Visa, Mastercard, and USDT.",
                     },
                 ],
             },
