@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Link,
   NavLink,
@@ -9,6 +9,7 @@ import {
 import { useAuthStore } from "../../store/authStore";
 import { useUserStore } from "../../store/userStore";
 import { useTranslations } from "../../hooks/useTranslations";
+import walletService from "../../services/wallet.service";
 
 const languages = ["uz", "eng", "ru"] as const;
 type Lang = (typeof languages)[number];
@@ -29,6 +30,10 @@ const Navbar = () => {
   const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Wallet balance state
+  const [walletBalance, setWalletBalance] = useState<string | null>(null);
+  const [walletLoading, setWalletLoading] = useState(false);
   const desktopLangRef = useRef<HTMLDivElement>(null);
   const mobileLangRef = useRef<HTMLDivElement>(null);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
@@ -39,6 +44,24 @@ const Navbar = () => {
       fetchProfile();
     }
   }, [isAuthenticated]);
+
+  // ✅ Fetch wallet balance
+  const fetchWallet = useCallback(async () => {
+    if (!isAuthenticated) return;
+    setWalletLoading(true);
+    try {
+      const res = await walletService.getWallet();
+      setWalletBalance(res.data.wallet.available);
+    } catch {
+      // silent fail — wallet may not be accessible
+    } finally {
+      setWalletLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    fetchWallet();
+  }, [fetchWallet]);
 
   /* 🔒 Tashqariga bosilganda yopish */
   useEffect(() => {
@@ -249,6 +272,38 @@ const Navbar = () => {
                     </button>
                   ) : (
                     <div className="flex items-center gap-3">
+                      {/* ✅ Wallet Balance Badge */}
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => navigate(`/${lang}/wallet`)}
+                          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-2 text-sm text-white/80 hover:text-white transition"
+                        >
+                          <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                          </svg>
+                          {walletLoading ? (
+                            <span className="w-12 h-3 bg-white/10 rounded animate-pulse inline-block" />
+                          ) : (
+                            <span className="font-medium">
+                              ${walletBalance !== null ? parseFloat(walletBalance).toFixed(2) : "0.00"}
+                            </span>
+                          )}
+                        </button>
+                        <button
+                          onClick={fetchWallet}
+                          disabled={walletLoading}
+                          title="Reload balance"
+                          className="w-8 h-8 flex items-center justify-center rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition disabled:opacity-40"
+                        >
+                          <svg
+                            className={`w-3.5 h-3.5 ${walletLoading ? "animate-spin" : ""}`}
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                        </button>
+                      </div>
+
                       {/* ✅ Launch Ad Button */}
                       {(user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
                         <button
@@ -432,23 +487,56 @@ const Navbar = () => {
         <div className="overflow-y-auto h-[calc(100%-70px)]">
           {/* User info if authenticated */}
           {isAuthenticated && (
-            <div className="px-5 py-4 border-b border-white/10 flex items-center gap-3">
-              <img
-                src={avatarUrl}
-                alt={profile?.firstName || user?.firstName || "User"}
-                className="w-10 h-10 rounded-full ring-2 ring-purple-500/40"
-                onError={(e) => {
-                  const name = profile?.firstName || user?.firstName || "U";
-                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b5cf6&color=fff&size=128&bold=true`;
-                }}
-              />
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-white truncate">
-                  {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
-                </p>
-                <p className="text-xs text-white/50 truncate">
-                  @{profile?.username || user?.username || user?.email}
-                </p>
+            <div className="px-5 py-4 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <img
+                  src={avatarUrl}
+                  alt={profile?.firstName || user?.firstName || "User"}
+                  className="w-10 h-10 rounded-full ring-2 ring-purple-500/40"
+                  onError={(e) => {
+                    const name = profile?.firstName || user?.firstName || "U";
+                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b5cf6&color=fff&size=128&bold=true`;
+                  }}
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white truncate">
+                    {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
+                  </p>
+                  <p className="text-xs text-white/50 truncate">
+                    @{profile?.username || user?.username || user?.email}
+                  </p>
+                </div>
+              </div>
+              {/* Wallet balance — mobile */}
+              <div className="mt-3 flex items-center gap-2">
+                <button
+                  onClick={() => { navigate(`/${lang}/wallet`); setMobileOpen(false); }}
+                  className="flex-1 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-3 py-2 text-sm text-white/80 hover:text-white transition"
+                >
+                  <svg className="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                  {walletLoading ? (
+                    <span className="w-14 h-3 bg-white/10 rounded animate-pulse inline-block" />
+                  ) : (
+                    <span className="font-medium">
+                      ${walletBalance !== null ? parseFloat(walletBalance).toFixed(2) : "0.00"}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={fetchWallet}
+                  disabled={walletLoading}
+                  title="Reload balance"
+                  className="w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition disabled:opacity-40"
+                >
+                  <svg
+                    className={`w-4 h-4 ${walletLoading ? "animate-spin" : ""}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </button>
               </div>
             </div>
           )}
