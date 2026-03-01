@@ -45,6 +45,7 @@ const MyAds = () => {
     pauseAd,
     resumeAd,
     deleteAd,
+    archiveAd,
     resetForm,
     toggleSaveAd,
     updateFormData,
@@ -140,6 +141,13 @@ const MyAds = () => {
   const handleDelete = async (adId: string) => {
     if (confirm(m?.deleteConfirm ?? "Are you sure you want to delete this ad?")) {
       await deleteAd(adId);
+      loadAds();
+    }
+  };
+
+  const handleArchive = async (adId: string) => {
+    if (confirm(m?.archiveConfirm ?? "Are you sure you want to archive this ad?")) {
+      await archiveAd(adId);
       loadAds();
     }
   };
@@ -287,6 +295,7 @@ const MyAds = () => {
                 onDelete={() => handleDelete(ad.id)}
                 onSchedule={() => handleSchedule(ad)}
                 onTest={() => handleTest(ad)}
+                onArchive={() => handleArchive(ad.id)}
                 onToggleSave={handleToggleSave}
               />
             ))}
@@ -329,6 +338,7 @@ const AdCard = ({
   onDelete,
   onSchedule,
   onTest,
+  onArchive,
   onToggleSave,
 }: any) => {
   const t = useTranslations();
@@ -497,6 +507,16 @@ const AdCard = ({
             title={actions?.delete ?? "Delete"}
           >
             <Trash2 className="w-4 h-4 text-destructive" />
+          </button>
+        )}
+
+        {!["DRAFT", "ARCHIVED", "PENDING_REVIEW", "SUBMITTED"].includes(ad.status) && (
+          <button
+            onClick={onArchive}
+            className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
+            title={actions?.archive ?? "Archive"}
+          >
+            <Archive className="w-4 h-4 text-muted-foreground" />
           </button>
         )}
       </div>

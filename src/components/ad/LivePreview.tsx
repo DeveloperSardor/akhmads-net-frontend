@@ -85,7 +85,7 @@ const LivePreview = () => {
             <div className="space-y-3">
               {formData.text && (
                 <div
-                  className="text-white text-sm leading-relaxed whitespace-pre-wrap"
+                  className="text-white text-sm leading-relaxed whitespace-pre-wrap break-words break-all"
                   dangerouslySetInnerHTML={{ __html: formatText(formData.text) }}
                 />
               )}
