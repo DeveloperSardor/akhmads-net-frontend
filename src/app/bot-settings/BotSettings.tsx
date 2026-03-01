@@ -7,14 +7,9 @@ import {
   Copy,
   CheckCircle,
   Loader2,
-  TrendingUp,
-  Eye,
-  MousePointerClick,
-  DollarSign,
   ChevronDown,
-  AlertCircle,
   X,
-  Info,
+  Info
 } from "lucide-react";
 import { useBotStore } from "../../store/botStore";
 import { useTranslations } from "../../hooks/useTranslations";
@@ -50,7 +45,6 @@ const BotSettings = () => {
     newToken: "",
   });
 
-  const [showStats, setShowStats] = useState(false);
   const [activeCodeTab, setActiveCodeTab] = useState("python");
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
@@ -214,16 +208,10 @@ async Task<bool> ShowAd(long chatId) {
     return `$${Number(amount || 0).toFixed(2)}`;
   };
 
-  const postFilterOptions = [
-    { value: "all", label: bs?.postFilterAll ?? "All posts" },
-    { value: "not_mine", label: bs?.postFilterNotMine ?? "All posts but mine" },
-    { value: "only_mine", label: bs?.postFilterOnlyMine ?? "My posts only" },
-  ];
-
   if (isLoading && !currentBot) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-white" />
       </div>
     );
   }
@@ -237,390 +225,373 @@ async Task<bool> ShowAd(long chatId) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-[#050505] text-white pb-20 font-sans">
+      
+      {/* Top Navigation Bar */}
+      <div className="bg-[#0a0a0a] border-b border-[#1f1f1f] sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">{bs?.backToBots ?? "Back to bots"}</span>
+            {bs?.backToBots ?? "Back to bots"}
           </button>
-        </div>
+          
           <div className="flex items-center gap-4">
-            <img 
-               src={`${API_BASE_URL}/bots/avatar/${currentBot.username}`} 
-               alt={currentBot.username} 
-               className="w-16 h-16 rounded-full object-cover border border-gray-700" 
-               onError={(e) => {
-                 e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentBot.username || "B")}&background=random&color=fff&size=128`;
-               }}
-            />
-            <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              {bs?.pageTitle ?? "Bot Settings"}
-            </h1>
-            <p className="text-gray-400 mt-2">@{currentBot.username}</p>
-          </div>
-        </div>
-
-        {/* Error/Success Alerts */}
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-400" />
-              <p className="text-sm text-red-400">{error}</p>
-            </div>
-            <button onClick={clearError} className="text-red-400 hover:text-red-300">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        )}
-
-        {successMessage && (
-          <div className="bg-green-500/10 border border-green-500/50 rounded-xl p-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-400" />
-              <p className="text-sm text-green-400">{successMessage}</p>
-            </div>
-            <button onClick={clearSuccess} className="text-green-400 hover:text-green-300">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        )}
-
-        {/* Category Filters */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">{bs?.allowedCategories ?? "Allowed Categories"}</h2>
-          <div className="flex flex-wrap gap-3">
-            {apiCategories.map((category) => {
-              const isAllowed = settings.allowedCategories.includes(category.slug);
-
-              return (
-                <button
-                  key={category.slug}
-                  onClick={() => handleCategoryToggle(category.slug)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${isAllowed
-                    ? "bg-green-500/20 border-green-500/50 text-green-400"
-                    : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
-                    }`}
-                >
-                  {isAllowed ? (
-                    <CheckCircle className="w-4 h-4" />
-                  ) : (
-                    <div className="w-4 h-4 border-2 border-current rounded" />
-                  )}
-                  <span className="text-sm">{category.icon} {getCatName(category)}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Ad Blocking */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <AdSelector
-            label="Reklamalarni bloklash"
-            description="Botda ko'rsatishni xohlamagan qora ro'yxatdagi reklamalarni tanlang."
-            selectedIds={settings.blockedAdIds}
-            onChange={(ids) => setSettings({ ...settings, blockedAdIds: ids })}
-          />
-        </div>
-
-        {/* Statistics */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl">
-          <button
-            onClick={() => setShowStats(!showStats)}
-            className="w-full flex items-center justify-between p-6"
-          >
-            <h2 className="text-lg font-semibold">{bs?.statistics ?? "Statistics"}</h2>
-            <ChevronDown className={`w-5 h-5 transition-transform ${showStats ? "rotate-180" : ""}`} />
-          </button>
-
-          {showStats && (
-            <div className="px-6 pb-6 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-gray-800 pt-6">
-              <div className="bg-gray-800/50 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Eye className="w-4 h-4 text-purple-400" />
-                  <span className="text-xs text-gray-400">{bs?.impressions ?? "Impressions"}</span>
-                </div>
-                <p className="text-2xl font-bold">{formatNumber(currentBot.impressionsServed || 0)}</p>
-              </div>
-
-              <div className="bg-gray-800/50 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <MousePointerClick className="w-4 h-4 text-purple-400" />
-                  <span className="text-xs text-gray-400">{bs?.clicks ?? "Clicks"}</span>
-                </div>
-                <p className="text-2xl font-bold">{formatNumber(currentBot.clicks || 0)}</p>
-              </div>
-
-              <div className="bg-gray-800/50 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-purple-400" />
-                  <span className="text-xs text-gray-400">{bs?.ctr ?? "CTR"}</span>
-                </div>
-                <p className="text-2xl font-bold">{currentBot.ctr || 0}%</p>
-              </div>
-
-              <div className="bg-gray-800/50 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="w-4 h-4 text-green-400" />
-                  <span className="text-xs text-gray-400">{bs?.earnings ?? "Earnings"}</span>
-                </div>
-                <p className="text-2xl font-bold text-green-400">{formatCurrency(currentBot.totalEarnings)}</p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Ad Rules Info */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">{bs?.adFormatTitle ?? "Ad Format - Impressions"}</h2>
-          <p className="text-sm text-gray-400 mb-4">{bs?.adFormatDesc}</p>
-          <p className="text-sm text-yellow-400 mb-4">{bs?.adFormatWarning}</p>
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => setShowRulesModal(true)}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors"
-            >
-              {bs?.acceptRules ?? "ACCEPT RULES AND GET INSTRUCTIONS"}
-            </button>
-            <button
-              onClick={() => setShowResultModal(true)}
-              className="px-6 py-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg font-medium transition-colors flex items-center gap-2"
-            >
-              <Info className="w-4 h-4" />
-              {bs?.resultCodes ?? "Result Codes"}
-            </button>
-          </div>
-        </div>
-
-        {/* Frequency Limit */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">{bs?.frequencyTitle ?? "Limit frequency"}</h2>
-          <input
-            type="number"
-            value={settings.frequencyMinutes}
-            onChange={(e) => setSettings({ ...settings, frequencyMinutes: parseInt(e.target.value) || 5 })}
-            min="1"
-            max="1440"
-            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500"
-          />
-          <p className="text-xs text-gray-400 mt-2">{bs?.frequencyHint}</p>
-          <button
-            onClick={handleSaveSettings}
-            disabled={isSubmitting}
-            className="mt-4 flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            <span>{isSubmitting ? (bs?.saving ?? "Saving...") : (bs?.save ?? "SAVE")}</span>
-          </button>
-        </div>
-
-        {/* Post Filter */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">{bs?.postFilterTitle ?? "Which posts can this bot publish?"}</h2>
-          <div className="space-y-3">
-            {postFilterOptions.map((option) => (
-              <label
-                key={option.value}
-                className="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-750 transition-colors"
-              >
-                <input
-                  type="radio"
-                  name="postFilter"
-                  value={option.value}
-                  checked={settings.postFilter === option.value}
-                  onChange={(e) => setSettings({ ...settings, postFilter: e.target.value as any })}
-                  className="w-4 h-4 text-purple-600"
-                />
-                <span className="text-sm">{option.label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Integration Code */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Code className="w-5 h-5" />
-              {bs?.integrationCode ?? "Integration Code"}
-            </h2>
-            <button
-              onClick={handleCopyCode}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              {copiedCode ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-              <span className="text-sm">{copiedCode ? (bs?.copied ?? "Copied!") : (bs?.copy ?? "Copy")}</span>
-            </button>
-          </div>
-
-          <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
-            {["python", "javascript", "php", "csharp"].map((lang) => (
-              <button
-                key={lang}
-                onClick={() => setActiveCodeTab(lang)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors shrink-0 ${activeCodeTab === lang
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-                  }`}
-              >
-                {lang === "csharp" ? "C#" : lang}
-              </button>
-            ))}
-          </div>
-
-          <pre className="bg-black border border-gray-800 rounded-lg p-4 overflow-x-auto">
-            <code className="text-sm text-gray-300">{getIntegrationCode(activeCodeTab)}</code>
-          </pre>
-        </div>
-
-        {/* Update Token */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-2">{bs?.updateToken ?? "Update access token"}</h2>
-          <p className="text-xs text-gray-400 mb-4">{bs?.updateTokenDesc}</p>
-          <input
-            type="password"
-            value={settings.newToken}
-            onChange={(e) => setSettings({ ...settings, newToken: e.target.value })}
-            placeholder={bs?.newTokenPlaceholder ?? "New bot's access token from the BotFather"}
-            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 mb-4"
-          />
-          <button
-            onClick={handleUpdateToken}
-            disabled={isSubmitting || !settings.newToken.trim()}
-            className="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            <span>{isSubmitting ? (bs?.saving ?? "Saving...") : (bs?.save ?? "SAVE")}</span>
-          </button>
-        </div>
-
-        {/* Released Ads / Exceptions */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <button
-              onClick={() => setActiveTab("released")}
-              className={`flex items-center gap-2 pb-2 border-b-2 transition-colors ${activeTab === "released" ? "border-green-500 text-green-400" : "border-transparent text-gray-400"
-                }`}
-            >
-              <CheckCircle className="w-4 h-4" />
-              <span className="font-medium">{bs?.releasedAds ?? "Released ads"}</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("exceptions")}
-              className={`flex items-center gap-2 pb-2 border-b-2 transition-colors ${activeTab === "exceptions" ? "border-gray-500 text-white" : "border-transparent text-gray-400"
-                }`}
-            >
-              <span className="font-medium">{bs?.exceptions ?? "Exceptions"}</span>
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {activeTab === "released" ? (
-              history && history.length > 0 ? (
-                <div className="space-y-4">
-                  {history.map((item) => (
-                    <div key={item.id} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 transition-all hover:bg-gray-800">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h4 className="font-medium text-white">{item.ad?.title || "Reklama"}</h4>
-                          <p className="text-xs text-gray-400">
-                            {new Date(item.createdAt).toLocaleString()}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-semibold text-green-400">+$ {parseFloat(item.botOwnerEarns).toFixed(4)}</div>
-                          <div className="text-[10px] text-gray-500">ID: {item.adId.slice(-6)}</div>
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-300 line-clamp-2">{item.ad?.text}</p>
-                      <div className="mt-2 text-[10px] text-gray-500 flex items-center gap-2">
-                        <span className="px-1.5 py-0.5 bg-gray-700 rounded text-gray-300">{item.telegramUserId}</span>
-                        <span>{item.firstName} {item.lastName} (@{item.username})</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12 text-gray-500">
-                  {bs?.noReleasedAds ?? "No released ads yet"}
-                </div>
-              )
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                {bs?.noExceptions ?? "No exceptions configured"}
-              </div>
-            )}
+             <button
+               onClick={() => setShowRulesModal(true)}
+               className="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+             >
+               {bs?.acceptRules ?? "Rules"}
+             </button>
+             <button
+               onClick={handleSaveSettings}
+               disabled={isSubmitting || settings.allowedCategories.length === 0}
+               className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+             >
+               {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+               {isSubmitting ? (bs?.saving ?? "Saving...") : (bs?.save ?? "Save")}
+             </button>
           </div>
         </div>
       </div>
 
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-8">
+        
+        {/* Header Section */}
+        <div className="flex items-center gap-5">
+           <img 
+              src={`${API_BASE_URL}/bots/avatar/${currentBot.username}`} 
+              alt={currentBot.username} 
+              className="w-16 h-16 rounded-full object-cover border border-[#222] bg-[#111]" 
+              onError={(e) => {
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentBot.username || "B")}&background=random&color=fff&size=128`;
+              }}
+           />
+           <div>
+             <h1 className="text-3xl font-bold tracking-tight text-white mb-1">{currentBot.firstName}</h1>
+             <p className="text-gray-400 text-sm font-medium">@{currentBot.username}</p>
+           </div>
+        </div>
+
+        {/* Error/Success Alerts */}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl p-4 text-sm flex justify-between items-center">
+             <span>{error}</span>
+             <button onClick={clearError} className="hover:opacity-75"><X className="w-4 h-4" /></button>
+          </div>
+        )}
+        {successMessage && (
+          <div className="bg-green-500/10 border border-green-500/20 text-green-500 rounded-xl p-4 text-sm flex justify-between items-center">
+             <span>{successMessage}</span>
+             <button onClick={clearSuccess} className="hover:opacity-75"><X className="w-4 h-4" /></button>
+          </div>
+        )}
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+           <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+              <div className="text-sm font-medium text-gray-400 mb-2">{bs?.impressions ?? "Impressions"}</div>
+              <div className="text-3xl font-bold tracking-tight text-white">{formatNumber(currentBot.impressionsServed || 0)}</div>
+           </div>
+           <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+              <div className="text-sm font-medium text-gray-400 mb-2">{bs?.clicks ?? "Clicks"}</div>
+              <div className="text-3xl font-bold tracking-tight text-white">{formatNumber(currentBot.clicks || 0)}</div>
+           </div>
+           <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+              <div className="text-sm font-medium text-gray-400 mb-2">CTR</div>
+              <div className="text-3xl font-bold tracking-tight text-white">{currentBot.ctr || 0}%</div>
+           </div>
+           <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-5">
+                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div className="text-sm font-medium text-gray-400 mb-2">{bs?.earnings ?? "Earnings"}</div>
+              <div className="text-3xl font-bold tracking-tight text-green-400">{formatCurrency(currentBot.totalEarnings)}</div>
+           </div>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8 items-start">
+           
+           {/* Main Configuration - 2 Columns wide */}
+           <div className="lg:col-span-2 space-y-6">
+              
+              {/* Allowed Categories */}
+              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+                 <div className="px-6 py-5 border-b border-[#1f1f1f]">
+                    <h2 className="text-lg font-semibold text-white">{bs?.allowedCategories ?? "Allowed Categories"}</h2>
+                    <p className="text-sm text-gray-400 mt-1">Select the types of ads permitted to be shown in your bot. At least one must be selected.</p>
+                 </div>
+                 <div className="p-6 bg-[#0a0a0a]">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                       {apiCategories.map((c: any) => {
+                         const isSelected = settings.allowedCategories.includes(c.id);
+                         return (
+                           <button
+                             key={c.id}
+                             onClick={() => handleCategoryToggle(c.id)}
+                             className={`flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left group ${
+                               isSelected 
+                                 ? "bg-[#1a1a1a] border-[#333] text-white" 
+                                 : "bg-transparent border-[#1f1f1f] text-gray-500 hover:border-[#333] hover:text-gray-300"
+                             }`}
+                           >
+                              <div className={`text-xl transition-transform ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>{c.icon}</div>
+                              <span className="text-sm font-medium">{getCatName(c)}</span>
+                           </button>
+                         );
+                       })}
+                    </div>
+                 </div>
+              </div>
+
+              {/* Advanced Settings */}
+              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+                 <h2 className="text-lg font-semibold mb-6 text-white">Posting Rules & Limits</h2>
+                 
+                 <div className="grid sm:grid-cols-2 gap-6">
+                    <div>
+                       <label className="block text-sm font-medium text-gray-300 mb-2">
+                          {bs?.frequencyTitle ?? "Limit frequency (Min)"}
+                       </label>
+                       <div className="relative">
+                          <input
+                            type="number"
+                            min="0"
+                            value={settings.frequencyMinutes}
+                            onChange={(e) => setSettings({ ...settings, frequencyMinutes: parseInt(e.target.value) || 0 })}
+                            className="w-full pl-4 pr-12 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium focus:outline-none focus:border-[#444] transition-colors"
+                          />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium pointer-events-none">
+                            MIN
+                          </div>
+                       </div>
+                    </div>
+
+                    <div>
+                       <label className="block text-sm font-medium text-gray-300 mb-2">
+                          {bs?.postFilterTitle ?? "Which posts can this bot publish?"}
+                       </label>
+                       <div className="relative">
+                          <select
+                            value={settings.postFilter}
+                            onChange={(e) => setSettings({ ...settings, postFilter: e.target.value as any })}
+                            className="w-full pl-4 pr-10 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium appearance-none focus:outline-none focus:border-[#444] transition-colors"
+                          >
+                            <option value="all">{bs?.postFilterAll ?? "All posts"}</option>
+                            <option value="not_mine">{bs?.postFilterNotMine ?? "All posts but mine"}</option>
+                            <option value="only_mine">{bs?.postFilterOnlyMine ?? "My posts only"}</option>
+                          </select>
+                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Blocked Ads */}
+              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+                 <AdSelector
+                    onSelect={(ids) => setSettings({ ...settings, blockedAdIds: ids })}
+                    initialSelectedIds={settings.blockedAdIds}
+                 />
+              </div>
+
+           </div>
+
+           {/* Right Column - Integration & History */}
+           <div className="space-y-6">
+
+              {/* Integration Card */}
+              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+                 <div className="px-5 py-5 border-b border-[#1f1f1f] flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-white">{bs?.integrationCode ?? "Integration Code"}</h2>
+                    <button
+                      onClick={handleCopyCode}
+                      className="text-gray-400 hover:text-white transition-colors"
+                      title="Copy code"
+                    >
+                      {copiedCode ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                 </div>
+                 <div className="p-5">
+                    <div className="flex gap-2 mb-4">
+                       {[
+                         { id: "python", label: "Python" },
+                         { id: "javascript", label: "Node.js" },
+                         { id: "php", label: "PHP" },
+                         { id: "csharp", label: "C#" }
+                       ].map((lang) => (
+                         <button
+                           key={lang.id}
+                           onClick={() => setActiveCodeTab(lang.id)}
+                           className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
+                              activeCodeTab === lang.id
+                              ? "bg-white text-black"
+                              : "bg-[#1a1a1a] border border-[#222] text-gray-400 hover:text-white"
+                           }`}
+                         >
+                            {lang.label}
+                         </button>
+                       ))}
+                    </div>
+                    <div className="bg-[#050505] border border-[#222] rounded-xl relative">
+                       <pre className="p-4 overflow-x-auto text-[11px] font-mono text-gray-400 leading-relaxed scrollbar-none">
+                          <code>{getIntegrationCode(activeCodeTab)}</code>
+                       </pre>
+                    </div>
+                    <button
+                      onClick={() => setShowResultModal(true)}
+                      className="mt-4 text-xs font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                      View API Result Codes
+                    </button>
+                 </div>
+              </div>
+
+              {/* Token Update */}
+              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+                 <h2 className="text-sm font-semibold mb-4 text-white">{bs?.updateToken ?? "Update Access Token"}</h2>
+                 <div className="flex gap-3">
+                    <input
+                      type="password"
+                      value={settings.newToken}
+                      onChange={(e) => setSettings({ ...settings, newToken: e.target.value })}
+                      placeholder="New token from BotFather..."
+                      className="flex-1 px-4 py-2.5 bg-[#050505] border border-[#222] rounded-xl text-sm text-white focus:outline-none focus:border-[#444] transition-colors placeholder:text-gray-600"
+                    />
+                    <button
+                      onClick={handleUpdateToken}
+                      disabled={isSubmitting || !settings.newToken.trim()}
+                      className="px-5 py-2.5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                    >
+                       Update
+                    </button>
+                 </div>
+              </div>
+
+              {/* History / Released */}
+              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl flex flex-col h-[400px]">
+                 <div className="flex items-center gap-6 p-5 border-b border-[#1f1f1f]">
+                   <button
+                     onClick={() => setActiveTab("released")}
+                     className={`text-sm font-semibold transition-colors relative ${
+                       activeTab === "released" ? "text-white" : "text-gray-500 hover:text-gray-300"
+                     }`}
+                   >
+                     {bs?.releasedAds ?? "Released ads"}
+                     {activeTab === "released" && (
+                         <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
+                     )}
+                   </button>
+                   <button
+                     onClick={() => setActiveTab("exceptions")}
+                     className={`text-sm font-semibold transition-colors relative ${
+                       activeTab === "exceptions" ? "text-white" : "text-gray-500 hover:text-gray-300"
+                     }`}
+                   >
+                     {bs?.exceptions ?? "Exceptions"}
+                     {activeTab === "exceptions" && (
+                         <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
+                     )}
+                   </button>
+                 </div>
+                 
+                 <div className="flex-1 overflow-y-auto p-4 scrollbar-none">
+                    {activeTab === "released" ? (
+                      history && history.length > 0 ? (
+                        <div className="space-y-3">
+                          {history.map((item) => (
+                            <div key={item.id} className="bg-[#0a0a0a] border border-[#222] rounded-xl p-4">
+                               <div className="flex justify-between items-start mb-2">
+                                  <h4 className="text-sm font-semibold text-white truncate pr-3">{item.ad?.title || "Ad"}</h4>
+                                  <span className="text-sm font-mono text-green-400 font-medium shrink-0">+${parseFloat(item.botOwnerEarns).toFixed(4)}</span>
+                               </div>
+                               <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{item.ad?.text}</p>
+                               <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#1f1f1f]">
+                                  <span className="text-[10px] text-gray-500 font-medium">{new Date(item.createdAt).toLocaleDateString()}</span>
+                                  <span className="text-[10px] font-mono bg-[#1a1a1a] border border-[#333] px-2 py-0.5 rounded-md text-gray-400">@{item.username}</span>
+                               </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                           <p className="text-sm font-medium">{bs?.noReleasedAds ?? "No released ads yet"}</p>
+                        </div>
+                      )
+                    ) : (
+                        <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                           <p className="text-sm font-medium">{bs?.noExceptions ?? "No exceptions configured"}</p>
+                        </div>
+                    )}
+                 </div>
+              </div>
+
+           </div>
+        </div>
+      </div>
+      
       {/* RULES MODAL */}
       {showRulesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setShowRulesModal(false)}
-              className="absolute top-4 right-4 p-2 hover:bg-gray-800 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h2 className="text-2xl font-bold mb-4">{bs?.rulesModal?.title ?? "API Integration Instructions"}</h2>
-
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold mb-2 text-gray-400">{bs?.rulesModal?.apiTokenLabel ?? "Your API Token"}</h3>
-              <div className="flex items-center gap-2 bg-black border border-gray-800 rounded-lg p-4">
-                <code className="flex-1 text-sm text-green-400 break-all">
-                  {currentBot?.apiKey || (bs?.rulesModal?.loading ?? "Loading...")}
-                </code>
-                <button onClick={handleCopyToken} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
-                  {copiedToken ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
-                </button>
-              </div>
-              <p className="text-xs text-yellow-400 mt-2">{bs?.rulesModal?.tokenWarning}</p>
+          <div className="bg-[#0f0f0f] border border-[#222] rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+               <h2 className="text-lg font-bold text-white tracking-tight">{bs?.rulesModal?.title ?? "API Integration Instructions"}</h2>
+               <button onClick={() => setShowRulesModal(false)} className="text-gray-400 hover:text-white transition-colors">
+                  <X className="w-5 h-5"/>
+               </button>
             </div>
+            
+            <div className="space-y-6">
+               <div>
+                 <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.rulesModal?.apiTokenLabel ?? "Your API Token"}</h3>
+                 <div className="flex items-center gap-3 bg-[#050505] border border-[#222] rounded-xl p-3">
+                   <code className="flex-1 text-sm text-green-400 break-all font-mono">{currentBot?.apiKey || "Loading..."}</code>
+                   <button onClick={handleCopyToken} className="text-gray-400 hover:text-white p-1 rounded-md hover:bg-[#222] transition-colors">
+                     {copiedToken ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                   </button>
+                 </div>
+                 <p className="text-xs text-yellow-500/80 mt-2">{bs?.rulesModal?.tokenWarning}</p>
+               </div>
+               
+               <div>
+                  <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.rulesModal?.quickStart ?? "Quick Start"}</h3>
+                  <div className="space-y-2.5 text-sm text-gray-400">
+                    {(bs?.rulesModal?.quickStartSteps ?? [
+                      "1. Copy your API token above",
+                      "2. Choose your programming language from the Integration Code section",
+                      "3. Use the provided code to integrate ad requests into your bot",
+                      "4. Call the ad function after completing useful tasks for users"
+                    ]).map((s: string, i: number) => <p key={i}>{s}</p>)}
+                  </div>
+               </div>
 
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold mb-3 text-gray-400">{bs?.rulesModal?.quickStart ?? "Quick Start"}</h3>
-              <div className="space-y-3 text-sm text-gray-300">
-                {(bs?.rulesModal?.quickStartSteps ?? [
-                  "1. Copy your API token above",
-                  "2. Choose your programming language from the Integration Code section",
-                  "3. Use the provided code to integrate ad requests into your bot",
-                  "4. Call the ad function after completing useful tasks for users",
-                ]).map((step: string, i: number) => <p key={i}>{step}</p>)}
-              </div>
+               <div>
+                 <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.rulesModal?.importantRules ?? "Important Rules"}</h3>
+                 <ul className="space-y-2.5 text-sm text-gray-400">
+                   {(bs?.rulesModal?.rules ?? [
+                     "Only show ads after completing useful tasks",
+                     "Follow the \"completed task → display ad\" principle",
+                     "Mass mailings are strictly prohibited",
+                     "Violation may result in account ban"
+                   ]).map((rule: string, i: number) => (
+                     <li key={i} className="flex gap-2.5">
+                       <span className={i === 3 ? "text-red-400" : "text-yellow-500"}>•</span>
+                       <span className={i === 3 ? "text-red-400 font-medium" : ""}>{rule}</span>
+                     </li>
+                   ))}
+                 </ul>
+               </div>
+
+               <button
+                 onClick={() => setShowRulesModal(false)}
+                 className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors mt-4"
+               >
+                 {bs?.rulesModal?.gotIt ?? "Got it!"}
+               </button>
             </div>
-
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold mb-3 text-gray-400">{bs?.rulesModal?.importantRules ?? "Important Rules"}</h3>
-              <ul className="space-y-2 text-sm text-gray-300">
-                {(bs?.rulesModal?.rules ?? [
-                  "Only show ads after completing useful tasks",
-                  "Follow the \"completed task → display ad\" principle",
-                  "Mass mailings are strictly prohibited",
-                  "Violation may result in account ban",
-                ]).map((rule: string, i: number) => (
-                  <li key={i} className="flex gap-2">
-                    <span className={i === 3 ? "text-red-400" : "text-yellow-400"}>•</span>
-                    <span className={i === 3 ? "text-red-400" : ""}>{rule}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <button
-              onClick={() => setShowRulesModal(false)}
-              className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors"
-            >
-              {bs?.rulesModal?.gotIt ?? "Got it!"}
-            </button>
           </div>
         </div>
       )}
@@ -628,56 +599,56 @@ async Task<bool> ShowAd(long chatId) {
       {/* RESULT CODES MODAL */}
       {showResultModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setShowResultModal(false)}
-              className="absolute top-4 right-4 p-2 hover:bg-gray-800 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h2 className="text-2xl font-bold mb-4">{bs?.resultCodesModal?.title ?? "Result Codes"}</h2>
+          <div className="bg-[#0f0f0f] border border-[#222] rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+               <h2 className="text-lg font-bold text-white tracking-tight">{bs?.resultCodesModal?.title ?? "Result Codes"}</h2>
+               <button onClick={() => setShowResultModal(false)} className="text-gray-400 hover:text-white transition-colors">
+                  <X className="w-5 h-5"/>
+               </button>
+            </div>
+            
             <p className="text-sm text-gray-400 mb-6">{bs?.resultCodesModal?.desc}</p>
 
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold mb-2 text-gray-400">{bs?.resultCodesModal?.exampleTitle ?? "Example Response (200 OK)"}</h3>
-              <pre className="bg-black border border-gray-800 rounded-lg p-4">
-                <code className="text-sm text-green-400">{"{\\n  \\\"SendPostResult\\\": 1\\n}"}</code>
-              </pre>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold mb-3 text-gray-400">{bs?.resultCodesModal?.allCodesTitle ?? "All Result Codes"}</h3>
-              <div className="space-y-2 bg-black border border-gray-800 rounded-lg p-4">
-                {[
-                  { code: 0, name: "Undefined", color: "text-gray-400" },
-                  { code: 1, name: "Success", color: "text-green-400" },
-                  { code: 2, name: "RevokedTokenError", color: "text-red-400" },
-                  { code: 3, name: "UserForbiddenError", color: "text-red-400" },
-                  { code: 4, name: "TooManyRequestsError", color: "text-yellow-400" },
-                  { code: 5, name: "OtherBotApiError", color: "text-red-400" },
-                  { code: 6, name: "OtherError", color: "text-red-400" },
-                  { code: 7, name: "AdLimited", color: "text-yellow-400" },
-                  { code: 8, name: "NoAds", color: "text-gray-400" },
-                  { code: 9, name: "BotIsNotEnabled", color: "text-yellow-400" },
-                  { code: 10, name: "Banned", color: "text-red-400" },
-                  { code: 11, name: "InReview", color: "text-yellow-400" },
-                ].map((item) => (
-                  <div key={item.code} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
-                    <span className={`font-mono text-sm ${item.color}`}>
-                      {item.name} = {item.code}
-                    </span>
+            <div className="space-y-6">
+               <div>
+                  <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.resultCodesModal?.exampleTitle ?? "Example Response (200 OK)"}</h3>
+                  <div className="bg-[#050505] border border-[#222] rounded-xl p-4">
+                    <pre className="text-sm text-green-400 font-mono">{"{\n  \"SendPostResult\": 1\n}"}</pre>
                   </div>
-                ))}
-              </div>
-            </div>
+               </div>
 
-            <button
-              onClick={() => setShowResultModal(false)}
-              className="mt-6 w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors"
-            >
-              {bs?.resultCodesModal?.close ?? "Close"}
-            </button>
+               <div>
+                 <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.resultCodesModal?.allCodesTitle ?? "All Result Codes"}</h3>
+                 <div className="bg-[#050505] border border-[#222] rounded-xl overflow-hidden">
+                   {[
+                     { code: 0, name: "Undefined", color: "text-gray-500" },
+                     { code: 1, name: "Success", color: "text-green-500" },
+                     { code: 2, name: "RevokedTokenError", color: "text-red-500" },
+                     { code: 3, name: "UserForbiddenError", color: "text-red-500" },
+                     { code: 4, name: "TooManyRequestsError", color: "text-yellow-500" },
+                     { code: 5, name: "OtherBotApiError", color: "text-red-500" },
+                     { code: 6, name: "OtherError", color: "text-red-500" },
+                     { code: 7, name: "AdLimited", color: "text-yellow-500" },
+                     { code: 8, name: "NoAds", color: "text-gray-500" },
+                     { code: 9, name: "BotIsNotEnabled", color: "text-yellow-500" },
+                     { code: 10, name: "Banned", color: "text-red-500" },
+                     { code: 11, name: "InReview", color: "text-yellow-500" },
+                   ].map((item, idx, arr) => (
+                     <div key={item.code} className={`flex items-center justify-between p-3 text-sm ${idx !== arr.length - 1 ? "border-b border-[#1f1f1f]" : ""}`}>
+                       <span className="font-mono text-gray-300">{item.name}</span>
+                       <span className={`font-mono font-bold ${item.color}`}>{item.code}</span>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+
+               <button
+                 onClick={() => setShowResultModal(false)}
+                 className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors mt-4"
+               >
+                 {bs?.resultCodesModal?.close ?? "Close"}
+               </button>
+            </div>
           </div>
         </div>
       )}

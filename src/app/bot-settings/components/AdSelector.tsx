@@ -3,45 +3,78 @@ import { Search, Loader2, X, AlertOctagon } from "lucide-react";
 import adService from "../../../services/ad.service";
 import type { Ad } from "../../../types/ad.types";
 
+import { useTranslations } from "@/hooks/useTranslations";
+
 interface AdSelectorProps {
-  label: string;
-  description: string;
-  selectedIds: string[];
-  onChange: (ids: string[]) => void;
+  label?: string;
+  description?: string;
+  onSelect: (selectedIds: string[]) => void;
+  initialSelectedIds?: string[];
   placeholder?: string;
 }
 
-const AdSelector = ({ label, description, selectedIds, onChange, placeholder = "Search active ads to block..." }: AdSelectorProps) => {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Partial<Ad>[]>([]);
-  const [loading, setLoading] = useState(false);
+export default function AdSelector({
+  label,
+  description,
+  onSelect,
+  initialSelectedIds = [],
+  placeholder,
+}: AdSelectorProps) {
+  const t = useTranslations();
+  const bs = t.botSettings;
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Partial<Ad>[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedAds, setSelectedAds] = useState<Partial<Ad>[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Initialize selected ads from initialSelectedIds
+  useEffect(() => {
+    if (initialSelectedIds.length > 0) {
+      const fetchSelectedAds = async () => {
+        try {
+          const fetchedAds = await Promise.all(
+            initialSelectedIds.map(async (id) => {
+              const res = await adService.getAdById(id);
+              return res.data.ad;
+            })
+          );
+          setSelectedAds(fetchedAds.filter(Boolean));
+        } catch (error) {
+          console.error("Failed to fetch initial selected ads", error);
+        }
+      };
+      fetchSelectedAds();
+    } else {
+      setSelectedAds([]);
+    }
+  }, [initialSelectedIds]);
+
   // Debounced search
   useEffect(() => {
     const search = async () => {
-      if (!query.trim() || query.length < 2) {
-        setResults([]);
+      if (!searchQuery.trim() || searchQuery.length < 2) {
+        setSearchResults([]);
         return;
       }
-      setLoading(true);
+      setIsLoading(true);
       try {
-        const res = await adService.searchActiveAds(query);
+        const res = await adService.searchActiveAds(searchQuery);
         const fetchedAds = res.data.ads || [];
         // Filter out already selected ads
-        setResults(fetchedAds.filter((a: any) => !selectedIds.includes(a.id)));
+        setSearchResults(fetchedAds.filter((a: any) => !selectedAds.some(sa => sa.id === a.id)));
       } catch (err) {
         console.error("Failed to search ads", err);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     const timer = setTimeout(search, 400);
     return () => clearTimeout(timer);
-  }, [query, selectedIds]);
+  }, [searchQuery, selectedAds]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -55,108 +88,115 @@ const AdSelector = ({ label, description, selectedIds, onChange, placeholder = "
   }, []);
 
   const handleSelect = (ad: Partial<Ad>) => {
-    if (!ad.id) return;
+    if (!ad.id || selectedAds.some(sa => sa.id === ad.id)) return;
     const newSelectedAds = [...selectedAds, ad];
     setSelectedAds(newSelectedAds);
-    onChange([...selectedIds, ad.id]);
-    setQuery("");
+    onSelect(newSelectedAds.map((a) => a.id!));
+    setSearchQuery("");
     setIsOpen(false);
   };
 
   const handleRemove = (adId: string) => {
-    setSelectedAds(selectedAds.filter((a) => a.id !== adId));
-    onChange(selectedIds.filter((id) => id !== adId));
+    const newSelectedAds = selectedAds.filter((a) => a.id !== adId);
+    setSelectedAds(newSelectedAds);
+    onSelect(newSelectedAds.map((a) => a.id!));
   };
 
   return (
-    <div className="space-y-3" ref={containerRef}>
+    <div className="space-y-4" ref={containerRef}>
       <div>
         <label className="text-sm font-semibold text-foreground mb-1 flex items-center gap-2">
           <AlertOctagon className="w-4 h-4 text-destructive" />
-          {label}
+          {label || bs?.blockAdsTitle}
         </label>
-        <p className="text-xs text-muted-foreground">{description}</p>
-      </div>
+        <p className="text-xs text-muted-foreground mb-3">
+          {description || bs?.blockAdsDesc}
+        </p>
 
-      <div className="relative">
-        <div className="relative flex items-center">
-          <Search className="absolute left-3 w-4 h-4 text-muted-foreground" />
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
+            ) : (
+              <Search className="w-4 h-4 text-muted-foreground" />
+            )}
+          </div>
           <input
             type="text"
-            value={query}
+            className="w-full pl-10 pr-4 py-3 bg-secondary/30 border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+            placeholder={placeholder || bs?.searchAds}
+            value={searchQuery}
             onChange={(e) => {
-              setQuery(e.target.value);
+              setSearchQuery(e.target.value);
               setIsOpen(true);
             }}
             onFocus={() => setIsOpen(true)}
-            placeholder={placeholder}
-            className="w-full pl-9 pr-10 py-2.5 bg-input border border-border rounded-xl text-sm focus:ring-1 focus:ring-destructive focus:border-destructive transition-all outline-none"
           />
-          {loading && (
-            <div className="absolute right-3">
-              <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
-            </div>
-          )}
         </div>
 
         {/* Dropdown */}
-        {isOpen && query.length >= 2 && (
-          <div className="absolute top-11 left-0 right-0 max-h-60 overflow-y-auto bg-card border border-border rounded-xl shadow-xl z-50 p-2">
-            {!loading && results.length === 0 ? (
-              <div className="p-3 text-center text-sm text-muted-foreground">
-                Hech qanday reklama topilmadi
-              </div>
-            ) : (
-              results.map((ad) => (
-                <button
-                  key={ad.id}
-                  onClick={() => handleSelect(ad)}
-                  className="w-full flex items-center gap-3 p-2 hover:bg-destructive/10 rounded-lg transition-colors text-left"
-                >
-                  {ad.mediaUrl ? (
-                    <img src={ad.mediaUrl} alt="" className="w-8 h-8 rounded-md object-cover" />
-                  ) : (
-                    <div className="w-8 h-8 bg-card border border-border rounded-md flex items-center justify-center text-[10px] text-muted-foreground">
-                      TEXT
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{ad.title || "Ads Without Title"}</p>
-                    <p className="text-xs text-muted-foreground truncate">{ad.text?.substring(0, 40)}...</p>
+        {isOpen && searchQuery.length >= 2 && (
+          <div className="absolute z-10 w-full mt-1 bg-card border border-border shadow-xl rounded-xl max-h-60 overflow-y-auto overflow-x-hidden backdrop-blur-xl">
+            {searchResults.map((ad) => (
+              <div
+                key={ad.id}
+                className="px-4 py-3 hover:bg-secondary/50 cursor-pointer flex items-center gap-3 transition-colors border-b border-border/10 last:border-0"
+                onClick={() => handleSelect(ad)}
+              >
+                {ad.mediaUrl ? (
+                  <img src={ad.mediaUrl} alt="Ad media" className="w-10 h-10 object-cover rounded-lg" />
+                ) : (
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-bold shadow-inner">
+                    {ad.title?.charAt(0).toUpperCase() || "AD"}
                   </div>
-                </button>
-              ))
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-sm text-foreground truncate h-5">{ad.title || "Ads Without Title"}</div>
+                  <div className="text-xs text-muted-foreground truncate h-4">{ad.text || "No description"}</div>
+                </div>
+              </div>
+            ))}
+            {searchResults.length === 0 && !isLoading && searchQuery.length >= 2 && (
+              <div className="p-4 text-center text-sm text-muted-foreground">
+                {bs?.noAdsFound}
+              </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Selected tags */}
-      {selectedIds.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-2">
-          {selectedIds.map((id) => {
-            const adData = selectedAds.find((a) => a.id === id);
-            return (
+      {selectedAds.length > 0 && (
+        <div className="mt-4 p-4 bg-secondary/20 border border-border/50 rounded-xl">
+          <div className="text-xs font-semibold text-muted-foreground mb-3 flex items-center gap-2">
+             <AlertOctagon className="w-4 h-4 text-destructive" />
+             {bs?.selectedAds || "Bloklangan reklamalar"} ({selectedAds.length})
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {selectedAds.map((ad) => (
               <div
-                key={id}
-                className="flex items-center gap-2 pl-2 pr-1 py-1 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg"
+                key={ad.id}
+                className="flex items-center gap-2 px-3 py-1.5 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-foreground shadow-sm group"
               >
-                <div className="text-sm font-medium">
-                  {adData ? (adData.title || "Ads Without Title") : <span>ID: {id.substring(0, 6)}...</span>}
-                </div>
+                {ad.mediaUrl ? (
+                  <img src={ad.mediaUrl} alt="" className="w-5 h-5 object-cover rounded shadow-sm" />
+                ) : (
+                  <div className="w-5 h-5 bg-primary/20 rounded flex items-center justify-center text-primary text-[10px] font-bold">
+                    {ad.title?.charAt(0).toUpperCase() || "AD"}
+                  </div>
+                )}
+                <span className="truncate max-w-[150px] font-medium">{ad.title || "Ads Without Title"}</span>
                 <button
-                  onClick={() => handleRemove(id)}
-                  className="p-1 hover:bg-destructive text-destructive hover:text-white rounded-md transition-colors"
+                  type="button"
+                  onClick={() => handleRemove(ad.id!)}
+                  className="p-0.5 hover:bg-destructive/20 rounded-full transition-colors opacity-70 group-hover:opacity-100"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       )}
     </div>
   );
-};
-
-export default AdSelector;
+}

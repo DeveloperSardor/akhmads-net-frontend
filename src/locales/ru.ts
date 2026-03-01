@@ -496,6 +496,11 @@ export const ru = {
         exceptions: "Исключения",
         noReleasedAds: "Выпущенных объявлений пока нет",
         noExceptions: "Исключения не настроены",
+        blockAdsTitle: "Блокировка рекламы",
+        blockAdsDesc: "Выберите рекламу, которую вы не хотите показывать в этом боте",
+        searchAds: "Поиск рекламы...",
+        noAdsFound: "Реклама не найдена",
+        selectedAds: "Заблокированная реклама",
         rulesModal: {
             title: "Инструкции по интеграции API",
             apiTokenLabel: "Ваш API-токен",

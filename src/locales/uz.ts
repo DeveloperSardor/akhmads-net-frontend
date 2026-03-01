@@ -496,6 +496,11 @@ export const uz = {
     exceptions: "Istisnolar",
     noReleasedAds: "Hali chiqarilgan reklamalar yo'q",
     noExceptions: "Istisnolar sozlanmagan",
+    blockAdsTitle: "Reklamalarni bloklash",
+    blockAdsDesc: "Ushbu botda ko'rsatilishini xohlamagan reklamalarni tanlang",
+    searchAds: "Reklamalarni qidirish...",
+    noAdsFound: "Reklamalar topilmadi",
+    selectedAds: "Bloklangan reklamalar",
     rulesModal: {
       title: "API Integratsiya Ko'rsatmalari",
       apiTokenLabel: "Sizning API Tokeningiz",

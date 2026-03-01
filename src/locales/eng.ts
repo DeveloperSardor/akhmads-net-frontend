@@ -494,6 +494,11 @@ export const eng = {
         exceptions: "Exceptions",
         noReleasedAds: "No released ads yet",
         noExceptions: "No exceptions configured",
+        blockAdsTitle: "Block Ads",
+        blockAdsDesc: "Select the ads you do not want to show in this bot",
+        searchAds: "Search ads...",
+        noAdsFound: "No ads found",
+        selectedAds: "Blocked ads",
         rulesModal: {
             title: "API Integration Instructions",
             apiTokenLabel: "Your API Token",
