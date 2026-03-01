@@ -68,7 +68,7 @@ const ScheduleModal = ({ ad, onClose }: ScheduleModalProps) => {
         <div className="flex items-center justify-between p-6 border-b border-border sticky top-0 bg-card z-10">
           <div>
             <h2 className="text-2xl font-bold text-foreground">Schedule Ad</h2>
-            <p className="text-sm text-muted-foreground mt-1">{ad.title}</p>
+            <p className="text-sm text-muted-foreground mt-1">{ad.text?.slice(0, 60)}</p>
           </div>
           <button
             onClick={onClose}

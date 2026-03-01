@@ -71,7 +71,7 @@ const TestBotModal = ({ ad, onClose }: TestBotModalProps) => {
             <>
               <div className="bg-muted/50 rounded-lg p-4 mb-6">
                 <p className="text-sm text-foreground font-medium mb-2">
-                  {ad.title}
+                  {ad.text?.slice(0, 60)}
                 </p>
                 <p className="text-xs text-muted-foreground line-clamp-3">
                   {ad.text}

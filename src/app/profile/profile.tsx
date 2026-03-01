@@ -377,7 +377,7 @@ const Profile = () => {
                     ) : (
                       ads.map((ad) => (
                         <tr key={ad.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
-                          <td className="py-3 px-3 max-w-[160px] truncate">{ad.title}</td>
+                          <td className="py-3 px-3 max-w-[160px] truncate">{ad.text?.slice(0, 40)}</td>
                           <td className="py-3 px-3">{formatNumber(ad.impressions)}</td>
                           <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
                           <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
@@ -415,7 +415,7 @@ const Profile = () => {
                   ads.map((ad) => (
                     <div key={ad.id} className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="text-sm font-medium truncate">{ad.title}</p>
+                        <p className="text-sm font-medium truncate">{ad.text?.slice(0, 60)}</p>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
                           ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
                             "bg-gray-500/20 text-gray-400"

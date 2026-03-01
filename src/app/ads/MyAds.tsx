@@ -87,7 +87,6 @@ const MyAds = () => {
   const filteredAds = ads.filter((ad) => {
     if (searchQuery) {
       return (
-        ad.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         ad.text.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -107,7 +106,7 @@ const MyAds = () => {
     resetForm();
     updateFormData({
       contentType: ad.contentType || "TEXT",
-      title: `${ad.title} (Copy)`,
+      title: '',
       text: ad.text || "",
       buttons: ad.buttons
         ? typeof ad.buttons === "string"
@@ -348,7 +347,7 @@ const AdCard = ({
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-foreground mb-1 line-clamp-2">
-            {ad.title}
+            {ad.text?.slice(0, 60)}
           </h3>
           <AdStatusBadge status={ad.status} />
         </div>
