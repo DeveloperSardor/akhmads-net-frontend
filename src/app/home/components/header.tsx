@@ -13,7 +13,7 @@ import { useTranslations } from "../../../hooks/useTranslations";
 const Header = () => {
   const navigate = useNavigate();
   const { lang } = useParams<{ lang?: string }>();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { profile, fetchProfile } = useUserStore();
   const t = useTranslations();
 
@@ -68,12 +68,12 @@ const Header = () => {
                 {brandIcons.map((icon, i) => (
                   <div
                     key={`a-${i}`}
-                    className="flex items-center justify-center px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500 cursor-default group"
+                    className="flex items-center justify-center w-28 h-16 md:w-36 md:h-20 px-4 py-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.07] hover:border-white/10 transition-all duration-500 cursor-default group"
                   >
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      className="h-8 md:h-10 w-auto object-contain opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 select-none brightness-0 invert"
+                      className="max-h-8 md:max-h-10 max-w-full w-auto object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 select-none"
                       draggable={false}
                     />
                   </div>
@@ -85,12 +85,12 @@ const Header = () => {
                 {brandIcons.map((icon, i) => (
                   <div
                     key={`b-${i}`}
-                    className="flex items-center justify-center px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500 cursor-default group"
+                    className="flex items-center justify-center w-28 h-16 md:w-36 md:h-20 px-4 py-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.07] hover:border-white/10 transition-all duration-500 cursor-default group"
                   >
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      className="h-8 md:h-10 w-auto object-contain opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 select-none brightness-0 invert"
+                      className="max-h-8 md:max-h-10 max-w-full w-auto object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 select-none"
                       draggable={false}
                     />
                   </div>
