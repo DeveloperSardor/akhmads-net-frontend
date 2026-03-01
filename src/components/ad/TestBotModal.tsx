@@ -11,16 +11,16 @@ interface TestBotModalProps {
 const TestBotModal = ({ ad, onClose }: TestBotModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [botUsername, setBotUsername] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
-      // ✅ Backend will use user's telegramId automatically
-      await adService.sendTestAd(ad.id, ''); // Empty string, backend uses auth user's ID
-      
+      const result = await adService.sendTestAd(ad.id, '');
+      setBotUsername(result?.data?.botUsername || null);
       setSuccess(true);
-      
+
       setTimeout(() => {
         onClose();
       }, 2000);
@@ -61,7 +61,10 @@ const TestBotModal = ({ ad, onClose }: TestBotModalProps) => {
                 Test sent! ✨
               </h3>
               <p className="text-sm text-muted-foreground">
-                Check your Telegram messages from @akhmadsnetbot
+                Check your Telegram messages from{" "}
+                <span className="font-semibold">
+                  @{botUsername || "akhmadsnetbot"}
+                </span>
               </p>
             </div>
           ) : (
@@ -77,7 +80,7 @@ const TestBotModal = ({ ad, onClose }: TestBotModalProps) => {
 
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
                 <p className="text-sm text-blue-600 dark:text-blue-400">
-                  ℹ️ This test will be sent to your Telegram via <span className="font-semibold">@akhmadsnetbot</span>
+                  ℹ️ This test will be sent to your Telegram via your registered bot
                 </p>
               </div>
             </>

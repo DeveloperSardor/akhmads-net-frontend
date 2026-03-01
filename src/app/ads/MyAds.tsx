@@ -18,6 +18,8 @@ import {
   Clock,
   BarChart3,
   Send,
+  Pencil,
+  AlertTriangle,
 } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
 import AdStatusBadge from "../../components/ad/AdStatusBadge";
@@ -45,6 +47,7 @@ const MyAds = () => {
     resetForm,
     toggleSaveAd,
     updateFormData,
+    startEditingAd,
   } = useAdStore();
 
   const [activeTab, setActiveTab] = useState<TabType>("all");
@@ -120,6 +123,11 @@ const MyAds = () => {
         : { languages: ["uz", "ru", "en"], frequency: "unique" },
       cpmBid: ad.cpmBid ? parseFloat(ad.cpmBid) : undefined,
     });
+    navigate(`/${lang}/launch-ad`);
+  };
+
+  const handleEdit = (ad: any) => {
+    startEditingAd(ad);
     navigate(`/${lang}/launch-ad`);
   };
 
@@ -269,6 +277,7 @@ const MyAds = () => {
                 onView={() => navigate(`/${lang}/ads/${ad.id}`)}
                 onPauseResume={() => handlePauseResume(ad)}
                 onDuplicate={() => handleDuplicate(ad)}
+                onEdit={() => handleEdit(ad)}
                 onDelete={() => handleDelete(ad.id)}
                 onSchedule={() => handleSchedule(ad)}
                 onTest={() => handleTest(ad)}
@@ -310,6 +319,7 @@ const AdCard = ({
   onView,
   onPauseResume,
   onDuplicate,
+  onEdit,
   onDelete,
   onSchedule,
   onTest,
@@ -362,6 +372,18 @@ const AdCard = ({
           )}
         </div>
       </div>
+
+      {ad.rejectionReason && (ad.status === "DRAFT" || ad.status === "REJECTED") && (
+        <div className="mb-4 flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+          <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+          <div className="text-xs text-amber-600 dark:text-amber-400 leading-relaxed">
+            <span className="font-semibold block mb-0.5">
+              {ad.status === "REJECTED" ? "Rad etildi:" : "Tahrirlash so'raldi:"}
+            </span>
+            {String(ad.rejectionReason).replace(/^Edit requested:\s*/i, "")}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="flex items-center gap-2 text-sm">
@@ -419,6 +441,16 @@ const AdCard = ({
             ) : (
               <Play className="w-4 h-4 text-green-400" />
             )}
+          </button>
+        )}
+
+        {(ad.status === "DRAFT" || ad.status === "REJECTED") && (
+          <button
+            onClick={onEdit}
+            className="px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg transition-all"
+            title={actions?.edit ?? "Tahrirlash"}
+          >
+            <Pencil className="w-4 h-4 text-amber-500" />
           </button>
         )}
 

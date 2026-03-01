@@ -13,7 +13,6 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
-import { useAuthStore } from "../../store/authStore";
 import walletService from "../../services/wallet.service";
 import { useNavigate } from "react-router-dom";
 
@@ -27,6 +26,8 @@ const BudgetPricing = () => {
     createAd,
     submitAd,
     fetchPricingEstimate,
+    editAdId,
+    updateAndSubmitAd,
   } = useAdStore();
 
   const [promoInput, setPromoInput] = useState("");
@@ -68,19 +69,18 @@ const BudgetPricing = () => {
     fetchPricingEstimate();
   };
 
-  // ✅ FIXED - CREATE + SUBMIT FLOW
   const handleLaunch = async () => {
     try {
-      // Step 1: Create ad (DRAFT)
-      const createdAd = await createAd();
-      if (!createdAd || !createdAd.id) {
-        return;
+      if (editAdId) {
+        // Edit mode: update existing ad content + submit for review
+        const result = await updateAndSubmitAd(editAdId);
+        if (!result) return; // error already set in store
+      } else {
+        // Create mode: create new ad (DRAFT) then submit
+        const createdAd = await createAd();
+        if (!createdAd || !createdAd.id) return;
+        await submitAd(createdAd.id);
       }
-
-      // Step 2: Submit for review (PENDING_REVIEW + wallet reserve)
-      await submitAd(createdAd.id);
-
-      // Step 3: Navigate to My Ads
       navigate("/my-ads");
     } catch (error) {
       console.error("Launch failed:", error);
@@ -333,12 +333,12 @@ const BudgetPricing = () => {
         {isSubmitting ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Submitting for Review...</span>
+            <span>{editAdId ? "Saqlanmoqda..." : "Submitting for Review..."}</span>
           </>
         ) : (
           <>
             <Rocket className="w-5 h-5" />
-            <span>Submit for Review</span>
+            <span>{editAdId ? "Saqlash va qayta yuborish" : "Submit for Review"}</span>
           </>
         )}
       </button>

@@ -1,7 +1,7 @@
 // src/app/ads/LaunchAd.tsx
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Check, AlertCircle, CheckCircle } from "lucide-react";
+import { ArrowLeft, Check, AlertCircle, CheckCircle, AlertTriangle } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
 import AdComposer from "../../components/ad/AdComposer";
 import AudienceReach from "../../components/ad/AudienceReach";
@@ -27,6 +27,9 @@ const LaunchAd = () => {
     clearSuccess,
     fetchTargetingOptions,
     fetchPricingEstimate,
+    editAdId,
+    editAdRejectionReason,
+    resetForm,
   } = useAdStore();
 
   useEffect(() => {
@@ -101,7 +104,7 @@ const LaunchAd = () => {
         {/* Header */}
         <div className="mb-8">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => { resetForm(); navigate(-1); }}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -111,10 +114,10 @@ const LaunchAd = () => {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">
-                {la?.pageTitle ?? "Create Campaign"}
+                {editAdId ? "Reklamani tahrirlash" : (la?.pageTitle ?? "Create Campaign")}
               </h1>
               <p className="text-muted-foreground">
-                {la?.pageSubtitle ?? "Launch in 3 simple steps"}
+                {editAdId ? "O'zgartirishlarni kiriting va qayta yuboring" : (la?.pageSubtitle ?? "Launch in 3 simple steps")}
               </p>
             </div>
 
@@ -158,6 +161,21 @@ const LaunchAd = () => {
             </div>
           </div>
         </div>
+
+        {/* Edit mode - rejection reason banner */}
+        {editAdId && editAdRejectionReason && (
+          <div className="mb-6 flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <div className="font-semibold text-amber-600 dark:text-amber-400 text-sm mb-1">
+                Admin izohi:
+              </div>
+              <div className="text-sm text-amber-600/80 dark:text-amber-400/80">
+                {String(editAdRejectionReason).replace(/^Edit requested:\s*/i, "")}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Messages */}
         {(error || successMessage) && (

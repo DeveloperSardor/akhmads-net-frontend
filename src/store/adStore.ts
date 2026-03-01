@@ -35,12 +35,16 @@ interface AdState {
   isSubmitting: boolean;
   error: string | null;
   successMessage: string | null;
+  editAdId: string | null;
+  editAdRejectionReason: string | null;
 }
 
 interface AdActions {
   updateFormData: (data: Partial<AdFormData>) => void;
   setStep: (step: number) => void;
   resetForm: () => void;
+  startEditingAd: (ad: any) => void;
+  updateAndSubmitAd: (adId: string) => Promise<any>;
   fetchPricingEstimate: () => Promise<void>;
   fetchTargetingOptions: () => Promise<void>;
   createAd: () => Promise<any>;
@@ -92,6 +96,8 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
   isSubmitting: false,
   error: null,
   successMessage: null,
+  editAdId: null,
+  editAdRejectionReason: null,
 
   updateFormData: (data) => {
     set((state) => ({
@@ -114,9 +120,69 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
   resetForm: () => set({
     formData: initialFormData,
     currentStep: 0,
+    editAdId: null,
+    editAdRejectionReason: null,
     error: null,
     successMessage: null,
   }),
+
+  startEditingAd: (ad) => {
+    const buttons = ad.buttons
+      ? (typeof ad.buttons === 'string' ? JSON.parse(ad.buttons) : ad.buttons)
+      : [];
+    const targeting = ad.targeting
+      ? (typeof ad.targeting === 'string' ? JSON.parse(ad.targeting) : ad.targeting)
+      : { languages: ['uz', 'ru', 'en'], frequency: 'unique' };
+
+    set({
+      editAdId: ad.id,
+      editAdRejectionReason: ad.rejectionReason || null,
+      currentStep: 0,
+      error: null,
+      successMessage: null,
+      formData: {
+        contentType: ad.contentType || 'TEXT',
+        title: ad.title || '',
+        text: ad.text || '',
+        buttons,
+        mediaUrl: ad.mediaUrl || undefined,
+        targetImpressions: ad.targetImpressions || 1000,
+        targeting,
+        cpmBid: ad.cpmBid ? parseFloat(String(ad.cpmBid)) : undefined,
+      },
+    });
+  },
+
+  updateAndSubmitAd: async (adId) => {
+    set({ isSubmitting: true, error: null });
+    try {
+      const { formData } = get();
+      await adService.updateAd(adId, {
+        contentType: formData.contentType,
+        title: formData.title || undefined,
+        text: formData.text,
+        buttons: formData.buttons,
+        mediaUrl: formData.mediaUrl,
+        targetImpressions: formData.targetImpressions,
+        targeting: formData.targeting,
+        cpmBid: formData.cpmBid,
+      });
+      await adService.submitAd(adId);
+      set({
+        isSubmitting: false,
+        successMessage: 'Ad submitted for review!',
+        editAdId: null,
+        editAdRejectionReason: null,
+      });
+      return true;
+    } catch (error: any) {
+      set({
+        error: error.response?.data?.message || 'Failed to submit ad',
+        isSubmitting: false,
+      });
+      return null;
+    }
+  },
 
   fetchPricingEstimate: async () => {
     const { formData } = get();
@@ -151,7 +217,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
       const response = await adService.createAd({
         contentType: formData.contentType,
-        title: formData.title,
+        title: formData.title || undefined,
         text: formData.text,
         buttons: formData.buttons,
         mediaUrl: formData.mediaUrl,
