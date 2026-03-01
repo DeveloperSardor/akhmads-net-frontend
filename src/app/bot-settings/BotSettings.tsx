@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Save,
-  Code,
   Copy,
   CheckCircle,
   Loader2,
@@ -321,7 +320,7 @@ async Task<bool> ShowAd(long chatId) {
               <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
                  <div className="px-6 py-5 border-b border-[#1f1f1f]">
                     <h2 className="text-lg font-semibold text-white">{bs?.allowedCategories ?? "Allowed Categories"}</h2>
-                    <p className="text-sm text-gray-400 mt-1">Select the types of ads permitted to be shown in your bot. At least one must be selected.</p>
+                    <p className="text-sm text-gray-400 mt-1">{bs?.allowedCategoriesDesc ?? "Select the types of ads permitted to be shown in your bot. At least one must be selected."}</p>
                  </div>
                  <div className="p-6 bg-[#0a0a0a]">
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -348,12 +347,12 @@ async Task<bool> ShowAd(long chatId) {
 
               {/* Advanced Settings */}
               <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-                 <h2 className="text-lg font-semibold mb-6 text-white">Posting Rules & Limits</h2>
+                 <h2 className="text-lg font-semibold mb-6 text-white">{bs?.postingRules ?? "Posting Rules & Limits"}</h2>
                  
                  <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          {bs?.frequencyTitle ?? "Limit frequency (Min)"}
+                          {bs?.frequencyTitle ?? "Post Frequency"}
                        </label>
                        <div className="relative">
                           <input
@@ -445,7 +444,7 @@ async Task<bool> ShowAd(long chatId) {
                       className="mt-4 text-xs font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
                     >
                       <Info className="w-3.5 h-3.5" />
-                      View API Result Codes
+                      {bs?.viewResultCodes ?? "View API Result Codes"}
                     </button>
                  </div>
               </div>
@@ -458,7 +457,7 @@ async Task<bool> ShowAd(long chatId) {
                       type="password"
                       value={settings.newToken}
                       onChange={(e) => setSettings({ ...settings, newToken: e.target.value })}
-                      placeholder="New token from BotFather..."
+                      placeholder={bs?.newTokenPlaceholder ?? "New token from BotFather..."}
                       className="flex-1 px-4 py-2.5 bg-[#050505] border border-[#222] rounded-xl text-sm text-white focus:outline-none focus:border-[#444] transition-colors placeholder:text-gray-600"
                     />
                     <button
@@ -466,7 +465,7 @@ async Task<bool> ShowAd(long chatId) {
                       disabled={isSubmitting || !settings.newToken.trim()}
                       className="px-5 py-2.5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-gray-200 disabled:opacity-50 transition-colors"
                     >
-                       Update
+                       {bs?.update ?? "Update"}
                     </button>
                  </div>
               </div>
