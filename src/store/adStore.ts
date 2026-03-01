@@ -250,17 +250,21 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
     try {
       let fetchedAds: any[] = [];
       if (params?.saved) {
-        const response = await adService.getSavedAds();
+        const response: any = await adService.getSavedAds();
         if (Array.isArray(response)) fetchedAds = response;
-        else if (response?.data && Array.isArray(response.data)) fetchedAds = response.data;
-        else if (response?.data?.ads && Array.isArray(response.data.ads)) fetchedAds = response.data.ads;
-        else if ((response as any)?.ads && Array.isArray((response as any).ads)) fetchedAds = (response as any).ads;
+        else if (Array.isArray(response?.data)) fetchedAds = response.data;
+        else if (Array.isArray(response?.data?.ads)) fetchedAds = response.data.ads;
+        else if (Array.isArray(response?.data?.ads?.ads)) fetchedAds = response.data.ads.ads;
+        else if (Array.isArray(response?.ads)) fetchedAds = response.ads;
+        else if (Array.isArray(response?.ads?.ads)) fetchedAds = response.ads.ads;
       } else {
         const response: any = await adService.getMyAds(params);
         if (Array.isArray(response)) fetchedAds = response;
-        else if (response?.data && Array.isArray(response.data)) fetchedAds = response.data;
-        else if (response?.data?.ads && Array.isArray(response.data.ads)) fetchedAds = response.data.ads;
-        else if (response?.ads && Array.isArray(response.ads)) fetchedAds = response.ads;
+        else if (Array.isArray(response?.data)) fetchedAds = response.data;
+        else if (Array.isArray(response?.data?.ads)) fetchedAds = response.data.ads;
+        else if (Array.isArray(response?.data?.ads?.ads)) fetchedAds = response.data.ads.ads;
+        else if (Array.isArray(response?.ads)) fetchedAds = response.ads;
+        else if (Array.isArray(response?.ads?.ads)) fetchedAds = response.ads.ads;
       }
 
       set({
