@@ -432,6 +432,24 @@ export const eng = {
         ],
     },
 
+    // Audience Reach
+    audienceReach: {
+        targetImpressions: "Target Impressions",
+        users: "users",
+        customAmount: "Custom Amount",
+        targetUsers: "target users",
+        categorySelect: "Select Categories",
+        categoryDesc: "Select bot categories where your ad will be shown",
+        categoriesSelected: "categories selected",
+        estimatedReach: "Estimated Reach",
+        specificBots: "Specific Bots (Optional)",
+        includeBots: "Show only in these bots",
+        includeBotsDesc: "Your ad will only appear in the bots you select (and nowhere else).",
+        excludeBots: "Do not show in these bots",
+        excludeBotsDesc: "Your ad will definitely not appear in these bots (Blacklist).",
+        searchPlaceholder: "Search by bot name or username...",
+    },
+
     // Ad Composer
     adComposer: {
         contentTypeText: "Text Ad (Text + Buttons)",

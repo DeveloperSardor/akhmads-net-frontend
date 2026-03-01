@@ -29,7 +29,9 @@ const AudienceReach = () => {
       .catch(() => {});
   }, []);
 
-  const { locale } = useTranslations();
+  const t = useTranslations();
+  const { locale } = t;
+  const ar = t.audienceReach;
 
   const getCatName = (cat: CategoryFromApi) => {
     if (locale === "uz") return cat.nameUz;
@@ -86,7 +88,7 @@ const AudienceReach = () => {
         <div className="flex items-center gap-2 mb-4">
           <Users className="w-4 h-4 text-muted-foreground" />
           <label className="text-sm font-semibold text-foreground">
-            Target Impressions
+            {ar?.targetImpressions ?? "Target Impressions"}
           </label>
         </div>
 
@@ -108,7 +110,7 @@ const AudienceReach = () => {
                   <div className={`text-xl font-bold mb-1 ${isActive ? "" : ""}`}>
                     {reach.label}
                   </div>
-                  <div className="text-xs opacity-80">users</div>
+                  <div className="text-xs opacity-80">{ar?.users ?? "users"}</div>
                 </div>
                 {isActive && (
                   <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
@@ -123,7 +125,7 @@ const AudienceReach = () => {
         {/* Custom Slider */}
         <div className="p-5 bg-card border border-border rounded-xl">
           <label className="block text-xs font-medium text-muted-foreground mb-4 uppercase tracking-wide">
-            Custom Amount
+            {ar?.customAmount ?? "Custom Amount"}
           </label>
           
           <div className="mb-6">
@@ -178,7 +180,7 @@ const AudienceReach = () => {
               <div className="text-3xl font-bold text-foreground tabular-nums">
                 {formatNumber(formData.targetImpressions)}
               </div>
-              <div className="text-xs text-muted-foreground mt-1">target users</div>
+              <div className="text-xs text-muted-foreground mt-1">{ar?.targetUsers ?? "target users"}</div>
             </div>
             <span>100K</span>
           </div>
@@ -189,11 +191,11 @@ const AudienceReach = () => {
       <div>
         <div className="flex items-center gap-2 mb-4">
           <Target className="w-4 h-4 text-muted-foreground" />
-          <h3 className="text-sm font-semibold text-foreground">Kategoriya tanlash</h3>
+          <h3 className="text-sm font-semibold text-foreground">{ar?.categorySelect ?? "Kategoriya tanlash"}</h3>
         </div>
 
         <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-          Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang
+          {ar?.categoryDesc ?? "Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang"}
         </p>
 
         <div className="flex flex-wrap gap-3">
@@ -227,10 +229,10 @@ const AudienceReach = () => {
         {selectedSegments.length > 0 && (
           <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
             <div className="text-sm font-medium text-foreground">
-              {selectedSegments.length} ta kategoriya tanlandi
+              {selectedSegments.length} {ar?.categoriesSelected ?? "ta kategoriya tanlandi"}
             </div>
             <div className="text-right">
-              <div className="text-xs text-primary font-medium">Taxminiy qamrov</div>
+              <div className="text-xs text-primary font-medium">{ar?.estimatedReach ?? "Taxminiy qamrov"}</div>
               <div className="text-lg font-bold text-foreground tabular-nums">
                 {formatNumber(estimatedReach)}
               </div>
@@ -243,22 +245,22 @@ const AudienceReach = () => {
       <div className="pt-6 border-t border-border">
         <div className="flex items-center gap-2 mb-4">
           <Target className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-semibold text-foreground">Maxsus botlarni tanlash (Ixtiyoriy)</h3>
+          <h3 className="text-sm font-semibold text-foreground">{ar?.specificBots ?? "Maxsus botlarni tanlash (Ixtiyoriy)"}</h3>
         </div>
 
         <div className="space-y-6">
           <BotSelector
-            label="Faqat shu botlarda ko'rsatilsin"
-            description="Reklamangiz faqat siz tanlagan botlardagina chiqadi (boshqalarida chiqmaydi)."
-            placeholder="Bot nomi yoki username kiritib izlang..."
+            label={ar?.includeBots ?? "Faqat shu botlarda ko'rsatilsin"}
+            description={ar?.includeBotsDesc ?? "Reklamangiz faqat siz tanlagan botlardagina chiqadi (boshqalarida chiqmaydi)."}
+            placeholder={ar?.searchPlaceholder ?? "Bot nomi yoki username kiritib izlang..."}
             selectedIds={formData.specificBotIds || []}
             onChange={(ids) => updateFormData({ specificBotIds: ids })}
           />
 
           <BotSelector
-            label="Shu botlarda ko'rsatilmasin"
-            description="Reklamangiz aniq siz xohlamagan botlarda ko'rinmaydi (Blacklist)."
-            placeholder="Bot nomi yoki username kiritib izlang..."
+            label={ar?.excludeBots ?? "Shu botlarda ko'rsatilmasin"}
+            description={ar?.excludeBotsDesc ?? "Reklamangiz aniq siz xohlamagan botlarda ko'rinmaydi (Blacklist)."}
+            placeholder={ar?.searchPlaceholder ?? "Bot nomi yoki username kiritib izlang..."}
             selectedIds={formData.excludedBotIds || []}
             onChange={(ids) => updateFormData({ excludedBotIds: ids })}
           />

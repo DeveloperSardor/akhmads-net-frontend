@@ -447,6 +447,24 @@ export const ru = {
         ],
     },
 
+    // Audience Reach
+    audienceReach: {
+        targetImpressions: "Целевые показы",
+        users: "пользователей",
+        customAmount: "Своё количество",
+        targetUsers: "целевых пользователей",
+        categorySelect: "Выбор категории",
+        categoryDesc: "Выберите категории ботов для показа рекламы",
+        categoriesSelected: "категорий выбрано",
+        estimatedReach: "Примерный охват",
+        specificBots: "Выбор конкретных ботов (Необязательно)",
+        includeBots: "Показывать только в этих ботах",
+        includeBotsDesc: "Реклама будет показана только в выбранных ботах (на других - не будет).",
+        excludeBots: "Не показывать в этих ботах",
+        excludeBotsDesc: "Реклама не будет показываться в указанных ботах (Blacklist).",
+        searchPlaceholder: "Поиск по имени бота или username...",
+    },
+
     // Ad Composer
     adComposer: {
         contentTypeText: "Текстовая реклама (Текст + Кнопки)",

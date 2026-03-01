@@ -462,6 +462,24 @@ export const uz = {
     ],
   },
 
+  // Audience Reach
+  audienceReach: {
+    targetImpressions: "Target Impressions",
+    users: "users",
+    customAmount: "Custom Amount",
+    targetUsers: "target users",
+    categorySelect: "Kategoriya tanlash",
+    categoryDesc: "Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang",
+    categoriesSelected: "ta kategoriya tanlandi",
+    estimatedReach: "Taxminiy qamrov",
+    specificBots: "Maxsus botlarni tanlash (Ixtiyoriy)",
+    includeBots: "Faqat shu botlarda ko'rsatilsin",
+    includeBotsDesc: "Reklamangiz faqat siz tanlagan botlardagina chiqadi (boshqalarida chiqmaydi).",
+    excludeBots: "Shu botlarda ko'rsatilmasin",
+    excludeBotsDesc: "Reklamangiz aniq siz xohlamagan botlarda ko'rinmaydi (Blacklist).",
+    searchPlaceholder: "Bot nomi yoki username kiritib izlang...",
+  },
+
   // Ad Composer
   adComposer: {
     contentTypeText: "Matnli reklama (Matn + Tugmalar)",

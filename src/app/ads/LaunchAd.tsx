@@ -8,7 +8,6 @@ import AdComposer from "../../components/ad/AdComposer";
 import AudienceReach from "../../components/ad/AudienceReach";
 import BudgetPricing from "../../components/ad/BudgetPricing";
 import LivePreview from "../../components/ad/LivePreview";
-import AIRecommendations from "../../components/ad/AIRecommendations";
 import FeaturedBots from "../../components/ad/FeaturedBots";
 import { useTranslations } from "../../hooks/useTranslations";
 
@@ -255,9 +254,6 @@ const LaunchAd = () => {
           <div className="space-y-6">
             <LivePreview />
             <FeaturedBots />
-            <div className="hidden lg:block opacity-30">
-              <AIRecommendations />
-            </div>
 
             <div className="bg-gradient-to-br from-primary/15 to-indigo-900/30 border border-primary/20 rounded-3xl overflow-hidden relative group shadow-2xl shadow-primary/5">
               <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/20 rounded-full blur-2xl transition-transform group-hover:scale-150 duration-700" />
