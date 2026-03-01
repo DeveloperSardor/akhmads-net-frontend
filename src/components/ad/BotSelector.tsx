@@ -98,31 +98,48 @@ const BotSelector = ({ label, description, selectedIds, onChange, placeholder = 
 
         {/* Dropdown */}
         {isOpen && query.length >= 2 && (
-          <div className="absolute top-11 left-0 right-0 max-h-60 overflow-y-auto bg-card border border-border rounded-xl shadow-xl z-50 p-2">
+          <div className="absolute top-12 left-0 right-0 max-h-[400px] overflow-y-auto bg-card/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl z-50 p-2 space-y-1 custom-scrollbar">
+            <div className="px-3 py-2 text-[10px] uppercase font-bold text-muted-foreground tracking-widest border-b border-border mb-2">
+              Qidiruv natijalari
+            </div>
             {!loading && results.length === 0 ? (
-              <div className="p-3 text-center text-sm text-muted-foreground">
-                No bots found
+              <div className="p-8 text-center">
+                <BotIcon className="w-10 h-10 text-muted-foreground/20 mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">Hech qanday bot topilmadi</p>
               </div>
             ) : (
               results.map((bot) => (
                 <button
                   key={bot.id}
                   onClick={() => handleSelect(bot)}
-                  className="w-full flex items-center gap-3 p-2 hover:bg-primary/5 rounded-lg transition-colors text-left"
+                  className="w-full flex items-center gap-4 p-3 hover:bg-primary/10 rounded-xl transition-all text-left group"
                 >
-                  {bot.avatarUrl ? (
-                    <img src={bot.avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
-                  ) : (
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                      <BotIcon className="w-4 h-4 text-primary" />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{bot.firstName}</p>
-                    <p className="text-xs text-muted-foreground truncate">@{bot.username}</p>
+                  <div className="relative">
+                    {bot.avatarUrl ? (
+                      <img src={bot.avatarUrl} alt="" className="w-11 h-11 rounded-xl object-cover ring-2 ring-transparent group-hover:ring-primary/30 transition-all" />
+                    ) : (
+                      <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <BotIcon className="w-5 h-5 text-primary" />
+                      </div>
+                    )}
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-card rounded-full" />
                   </div>
-                  <div className="text-xs font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">
-                    {bot.totalMembers?.toLocaleString()} users
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                       <p className="text-sm font-bold text-foreground truncate">{bot.firstName}</p>
+                       {bot.totalMembers && bot.totalMembers > 10000 && (
+                         <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 text-[8px] font-black uppercase rounded border border-yellow-500/20">Popular</span>
+                       )}
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate opacity-70">@{bot.username}</p>
+                  </div>
+
+                  <div className="text-right">
+                    <div className="text-sm font-black text-primary tabular-nums">
+                      {(bot as any).activeUsers30d ? ((bot as any).activeUsers30d >= 1000 ? `${((bot as any).activeUsers30d / 1000).toFixed(1)}K` : (bot as any).activeUsers30d) : "0"}
+                    </div>
+                    <div className="text-[9px] text-muted-foreground uppercase font-bold opacity-60">Active Users</div>
                   </div>
                 </button>
               ))

@@ -1,6 +1,10 @@
-// src/app/profile/Profile.tsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 import {
   LineChart,
   Line,
@@ -28,6 +32,8 @@ import {
   Copy,
   Check,
   Users,
+  MousePointer2,
+  Heart,
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { useUserStore } from "../../store/userStore";
@@ -47,7 +53,7 @@ const Profile = () => {
   const [showAdModal, setShowAdModal] = useState(false);
   const [showBotModal, setShowBotModal] = useState(false);
 
-  const { user: authUser, logout } = useAuthStore();
+  const { logout } = useAuthStore();
 
   const {
     profile,
@@ -416,7 +422,12 @@ const Profile = () => {
                     ) : (
                       ads.map((ad) => (
                         <tr key={ad.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
-                          <td className="py-3 px-3 max-w-[160px] truncate">{ad.title || ad.text?.slice(0, 40)}</td>
+                          <td className="py-3 px-3 max-w-[160px] truncate">
+                            <div className="flex items-center gap-2">
+                               {ad.isSaved && <Heart className="w-3 h-3 text-red-500 fill-red-500 shrink-0" />}
+                               <span>{ad.title || ad.text?.slice(0, 40)}</span>
+                            </div>
+                          </td>
                           <td className="py-3 px-3">{formatNumber(ad.deliveredImpressions ?? ad.impressions)}</td>
                           <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
                           <td className="py-3 px-3">{formatNumber(ad.conversions)}</td>
@@ -773,6 +784,26 @@ const AdDetailModal = ({ ad, onClose, formatNumber, formatCurrency, formatPercen
           </div>
         </div>
 
+        <div className="mt-8 border-t border-white/10 pt-6">
+           <div className="flex items-center justify-between mb-4">
+             <h3 className="text-sm font-bold flex items-center gap-2">
+               <Eye className="w-4 h-4 text-purple-400" />
+               Eng so'nggi ko'rishlar (Impressions)
+             </h3>
+           </div>
+           <DetailedImpressionsList adId={ad.id} />
+        </div>
+
+        <div className="mt-8 border-t border-white/10 pt-6">
+           <div className="flex items-center justify-between mb-4">
+             <h3 className="text-sm font-bold flex items-center gap-2">
+               <MousePointer2 className="w-4 h-4 text-blue-400" />
+               Eng so'nggi kliklar (Clicks)
+             </h3>
+           </div>
+           <DetailedClicksList adId={ad.id} />
+        </div>
+
         <div className="mt-8 pt-5 border-t border-white/5 flex justify-end">
           <button
             onClick={onClose}
@@ -785,6 +816,133 @@ const AdDetailModal = ({ ad, onClose, formatNumber, formatCurrency, formatPercen
     </div>
   );
 };
+
+const DetailedImpressionsList = ({ adId }: { adId: string }) => {
+  const { accessToken } = useAuthStore();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/ads/${adId}/impressions`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          params: { limit: 10 }
+        });
+        setData(res.data.data);
+      } catch (err) {
+        console.error("Failed to fetch impressions", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [adId]);
+
+  if (loading) return <div className="text-center py-4 text-white/40 text-xs">Yuklanmoqda...</div>;
+  if (!data?.length) return <div className="text-center py-4 text-white/40 text-xs">Hali ko'rishlar mavjud emas</div>;
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-[11px] text-white/70">
+        <thead>
+          <tr className="border-b border-white/5 text-left">
+            <th className="pb-2 font-medium">Foydalanuvchi</th>
+            <th className="pb-2 font-medium">Davlat</th>
+            <th className="pb-2 font-medium">Bot</th>
+            <th className="pb-2 font-medium">Vaqt</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-white/5">
+          {data.map((imp: any) => (
+            <tr key={imp.id}>
+              <td className="py-2">
+                <div className="flex flex-col">
+                  <span className="text-white font-medium">{imp.firstName} {imp.lastName}</span>
+                  <span className="text-white/40">@{imp.username || "user"}</span>
+                </div>
+              </td>
+              <td className="py-2">
+                <div className="flex items-center gap-1.5">
+                   <span className="opacity-60">{imp.languageCode || "-"}</span>
+                   <span className="bg-white/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-white/50">{imp.country || "???"}</span>
+                </div>
+              </td>
+              <td className="py-2 text-purple-400">@{imp.bot?.username}</td>
+              <td className="py-2 text-white/40">{dayjs(imp.createdAt).format("HH:mm, DD.MM")}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+const DetailedClicksList = ({ adId }: { adId: string }) => {
+  const { accessToken } = useAuthStore();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/ads/${adId}/clicks-detailed`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          params: { limit: 10 }
+        });
+        setData(res.data.data);
+      } catch (err) {
+        console.error("Failed to fetch clicks", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [adId]);
+
+  if (loading) return <div className="text-center py-4 text-white/40 text-xs">Yuklanmoqda...</div>;
+  if (!data?.length) return <div className="text-center py-4 text-white/40 text-xs">Hali kliklar mavjud emas</div>;
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-[11px] text-white/70">
+        <thead>
+          <tr className="border-b border-white/5 text-left">
+            <th className="pb-2 font-medium">Foydalanuvchi</th>
+            <th className="pb-2 font-medium">Davlat</th>
+            <th className="pb-2 font-medium">Device/IP</th>
+            <th className="pb-2 font-medium">Vaqt</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-white/5">
+          {data.map((click: any) => (
+            <tr key={click.id}>
+              <td className="py-2">
+                <div className="flex flex-col">
+                  <span className="text-white font-medium">{click.firstName} {click.lastName}</span>
+                  <span className="text-white/40">@{click.username || "user"}</span>
+                </div>
+              </td>
+              <td className="py-2">
+                <div className="flex items-center gap-1.5">
+                   <span className="opacity-60 uppercase">{click.languageCode || "-"}</span>
+                   <span className="bg-white/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-white/50">{click.country || "???"}</span>
+                </div>
+              </td>
+              <td className="py-2">
+                <div className="flex flex-col text-[9px] opacity-60">
+                   <span>{click.ipAddress}</span>
+                   <span className="truncate max-w-[100px]">{click.userAgent?.split(' ')[0]}</span>
+                </div>
+              </td>
+              <td className="py-2 text-white/40">{dayjs(click.clickedAt).format("HH:mm, DD.MM")}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 const BotDetailModal = ({ bot, onClose, formatNumber, formatCurrency, getBotStatusStyles, t }: any) => {
   if (!bot) return null;
@@ -854,6 +1012,17 @@ const BotDetailModal = ({ bot, onClose, formatNumber, formatCurrency, getBotStat
           </div>
         </div>
 
+        <div className="mt-8 border-t border-white/10 pt-6">
+           <div className="flex items-center justify-between mb-4">
+             <h3 className="text-sm font-bold flex items-center gap-2">
+               <Users className="w-4 h-4 text-purple-400" />
+               Eng oxirgi faol foydalanuvchilar (Active Users)
+             </h3>
+             <BotUsersExport botId={bot.id} />
+           </div>
+           <ActiveUsersList botId={bot.id} />
+        </div>
+
         <div className="mt-8 pt-5 border-t border-white/5 flex justify-end">
           <button
             onClick={onClose}
@@ -866,5 +1035,112 @@ const BotDetailModal = ({ bot, onClose, formatNumber, formatCurrency, getBotStat
     </div>
   );
 };
+
+const ActiveUsersList = ({ botId }: { botId: string }) => {
+  const { accessToken } = useAuthStore();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/bots/${botId}/active-users`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        setData(res.data.data.slice(0, 10)); // Top 10
+      } catch (err) {
+        console.error("Failed to fetch active users", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [botId]);
+
+  if (loading) return <div className="text-center py-4 text-white/40 text-xs">Yuklanmoqda...</div>;
+  if (!data?.length) return <div className="text-center py-4 text-white/40 text-xs">Hali foydalanuvchilar mavjud emas</div>;
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-[11px] text-white/70">
+        <thead>
+          <tr className="border-b border-white/5 text-left text-white/40">
+            <th className="pb-2 font-medium">Foydalanuvchi</th>
+            <th className="pb-2 font-medium">Til</th>
+            <th className="pb-2 font-medium">Davlat</th>
+            <th className="pb-2 font-medium">Oxirgi marta</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-white/5">
+          {data.map((user: any) => (
+            <tr key={user.id}>
+              <td className="py-2 text-white/90">
+                <div className="flex flex-col">
+                   <span className="font-bold">{user.firstName} {user.lastName}</span>
+                   <span className="text-[9px] opacity-40">@{user.username || "user"}</span>
+                </div>
+              </td>
+              <td className="py-2 uppercase opacity-60">{user.languageCode || "-"}</td>
+              <td className="py-2">
+                 <span className="bg-white/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-white/50">{user.country || "???"}</span>
+              </td>
+              <td className="py-2 text-white/40">{dayjs(user.lastSeenAt).fromNow()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+const BotUsersExport = ({ botId }: { botId: string }) => {
+  const { accessToken } = useAuthStore();
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/detailed-stats/bot/${botId}/export`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      
+      const data = res.data.data;
+      if (!data || data.length === 0) {
+        alert("Export qilish uchun ma'lumot yo'q");
+        return;
+      }
+
+      // Simple JSON to CSV
+      const headers = Object.keys(data[0]);
+      const csv = [
+        headers.join(','),
+        ...data.map((row: any) => headers.map(h => `"${row[h] || ''}"`).join(','))
+      ].join('\n');
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bot-users-${botId}.csv`;
+      a.click();
+    } catch (err) {
+      console.error("Export failed", err);
+      alert("Export qilishda xatolik yuz berdi");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleExport}
+      disabled={exporting}
+      className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[10px] font-bold transition flex items-center gap-1.5 disabled:opacity-50"
+    >
+      <TrendingUp className="w-3 h-3" />
+      {exporting ? "Tayyorlanmoqda..." : "Excel (CSV)"}
+    </button>
+  );
+}
 
 export default Profile;

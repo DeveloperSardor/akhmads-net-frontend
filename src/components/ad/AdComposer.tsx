@@ -1,6 +1,6 @@
 // src/components/ad/AdComposer.tsx
 import { useState } from "react";
-import { FileText, Link2, /*Upload,*/ X, Loader2, Sparkles, Send } from "lucide-react";
+import { FileText, Link2, /*Upload,*/ Loader2, Sparkles, Send, Plus, Trash2 } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
 import api from "../../api/api";
 import ButtonColorPicker from "./ButtonColorPicker";
@@ -12,9 +12,6 @@ const AdComposer = () => {
   const t = useTranslations();
   const ac = t.adComposer;
 
-  // const [preview, setPreview] = useState<string | null>(formData.mediaUrl || null);
-  // const [uploading, setUploading] = useState(false);
-  // const [uploadError, setUploadError] = useState<string | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [sendingPreview, setSendingPreview] = useState(false);
 
@@ -110,18 +107,18 @@ const AdComposer = () => {
       {/* Campaign Type selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Option 1: Web Composer (Active) */}
-        <div className="p-4 bg-primary/10 border-2 border-primary rounded-xl ring-4 ring-primary/5 transition-all">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-1.5 bg-primary/20 rounded-lg">
-              <FileText className="w-4 h-4 text-primary" />
+        <div className="p-6 bg-primary/5 border-2 border-primary/50 rounded-2xl ring-8 ring-primary/5 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 bg-primary/10 rounded-xl">
+              <FileText className="w-5 h-5 text-primary" />
             </div>
-            <span className="text-sm font-bold text-foreground">
+            <span className="text-base font-bold text-foreground">
               {formData.mediaUrl
                 ? (ac?.contentTypeMedia ?? 'Media Ad (Image + Text + Buttons)')
                 : (ac?.contentTypeText ?? 'Text Ad (Text + Buttons)')}
             </span>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed opacity-70">
             {ac?.contentTypeHint ?? 'You can add text, image, and buttons together'}
           </p>
         </div>
@@ -131,23 +128,20 @@ const AdComposer = () => {
           href="https://t.me/akhmadsnetbot?start=add_ad" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="p-4 bg-card border border-border hover:border-blue-500/50 hover:bg-blue-500/5 rounded-xl transition-all group relative overflow-hidden"
+          className="p-6 bg-card border border-border hover:border-blue-500/50 hover:bg-blue-500/5 rounded-2xl transition-all group relative overflow-hidden shadow-sm flex flex-col justify-center"
         >
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-1.5 bg-blue-500/20 rounded-lg transition-transform group-hover:scale-110">
-              <Send className="w-4 h-4 text-blue-500" />
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 bg-blue-500/10 rounded-xl transition-transform group-hover:scale-110">
+              <Send className="w-5 h-5 text-blue-500" />
             </div>
-            <span className="text-sm font-medium text-foreground group-hover:text-blue-500 transition-colors">
+            <span className="text-base font-bold text-foreground group-hover:text-blue-500 transition-colors">
               {ac?.addViaBot ?? 'Add via Telegram Bot'}
             </span>
-            <Sparkles className="w-3 h-3 text-yellow-500 animate-pulse" />
+            <Sparkles className="w-4 h-4 text-yellow-500 animate-pulse ml-auto" />
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed opacity-70">
             {ac?.addViaBotHint ?? 'Create an ad by simply sending a message to the bot'}
           </p>
-          <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <span className="flex h-1.5 w-1.5 rounded-full bg-blue-500 ring-4 ring-blue-500/20"></span>
-          </div>
         </a>
       </div>
 
@@ -212,16 +206,17 @@ const AdComposer = () => {
       */}
 
       {/* Ad Text */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <label className="text-sm font-semibold text-foreground">
+      <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <label className="text-sm font-bold text-foreground flex items-center gap-2">
+            <FileText className="w-4 h-4 text-primary" />
             {ac?.adTextLabel ?? 'Advertisement Text'} <span className="text-destructive">*</span>
           </label>
           <button
             onClick={() => setShowEmojiPicker(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-xs font-semibold transition-all shadow-lg shadow-blue-500/25"
+            className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold transition-all border border-primary/20"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-4 h-4" />
             {ac?.addEmoji ?? 'Add Emoji'}
           </button>
         </div>
@@ -231,23 +226,32 @@ const AdComposer = () => {
           onChange={(e) => updateFormData({ text: e.target.value })}
           placeholder={ac?.adTextPlaceholder ?? "Write your compelling advertisement text here..."}
           maxLength={1024}
-          rows={8}
-          className="w-full px-4 py-3 bg-input border border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-foreground placeholder:text-muted-foreground resize-none transition-all outline-none font-mono text-sm"
+          rows={10}
+          className="w-full px-4 py-4 bg-muted/30 border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-2xl text-foreground placeholder:text-muted-foreground resize-none transition-all outline-none font-sans text-base leading-relaxed"
         />
 
-        <div className="flex items-center justify-between mt-2 text-xs">
-          <p className="text-muted-foreground">{ac?.supportsMarkdown ?? 'Supports emojis and markdown'}</p>
-          <p className={`font-medium tabular-nums ${remainingChars < 100 ? "text-yellow-500" : "text-muted-foreground"}`}>
-            {remainingChars} {ac?.charsLeft ?? 'characters left'}
+        <div className="flex items-center justify-between mt-4">
+          <p className="text-xs text-muted-foreground flex items-center gap-1.5 opacity-60">
+             <span className="w-2 h-2 rounded-full bg-green-500"></span>
+             {ac?.supportsMarkdown ?? 'Supports emojis and markdown'}
           </p>
+          <div className="flex items-center gap-4">
+            <p className={`text-xs font-bold tabular-nums ${remainingChars < 100 ? "text-red-500" : "text-muted-foreground"}`}>
+              {remainingChars} {ac?.charsLeft ?? 'characters left'}
+            </p>
+          </div>
         </div>
 
-        {/* Send Preview */}
-        <div className="mt-3">
-          <button
+        {/* Send Preview Section */}
+        <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
+           <div className="space-y-1">
+              <h4 className="text-xs font-bold text-foreground">O'zingizga sinov xabarini yuboring</h4>
+              <p className="text-[10px] text-muted-foreground">Bot orqali reklama qanday ko'rinishini tekshiring</p>
+           </div>
+           <button
             onClick={handleSendPreview}
             disabled={sendingPreview || !formData.text || formData.text.length < 10}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/25"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold rounded-xl transition-all disabled:opacity-30 disabled:grayscale shadow-lg shadow-green-500/20 text-sm"
           >
             {sendingPreview ? (
               <><Loader2 className="w-4 h-4 animate-spin" />{ac?.sending ?? 'Sending...'}</>
@@ -259,60 +263,75 @@ const AdComposer = () => {
       </div>
 
       {/* Buttons */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <label className="text-sm font-semibold text-foreground">
+      <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <label className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Link2 className="w-4 h-4 text-primary" />
             {ac?.buttonsLabel ?? 'Call-to-Action Buttons (Optional)'}
           </label>
           {(!formData.buttons || formData.buttons.length < 3) && (
             <button
               onClick={handleAddButton}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-xs font-semibold transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold transition-all border border-primary/20"
             >
-              <Link2 className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5" />
               {ac?.addButton ?? 'Add Button'}
             </button>
           )}
         </div>
 
         {formData.buttons && formData.buttons.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {formData.buttons.map((button, index) => (
-              <div key={index} className="p-4 bg-card border border-border rounded-xl group hover:border-primary/30 transition-all space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 space-y-3">
-                    <input
-                      type="text"
-                      value={button.text}
-                      onChange={(e) => handleUpdateButton(index, "text", e.target.value)}
-                      placeholder={ac?.buttonTextPlaceholder ?? "Button text (e.g. Visit Website)"}
-                      className="w-full px-3 py-2 bg-input border border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-lg text-sm text-foreground placeholder:text-muted-foreground transition-all outline-none"
-                    />
-                    <input
-                      type="url"
-                      value={button.url}
-                      onChange={(e) => handleUpdateButton(index, "url", e.target.value)}
-                      placeholder="https://example.com"
-                      className="w-full px-3 py-2 bg-input border border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-lg text-sm text-foreground placeholder:text-muted-foreground font-mono transition-all outline-none"
-                    />
+              <div key={index} className="p-5 bg-muted/20 border border-border rounded-2xl group hover:border-primary/30 transition-all relative">
+                <div className="flex flex-col gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                       <label className="text-[10px] font-bold text-muted-foreground uppercase ml-1">Tugma matni</label>
+                       <input
+                        type="text"
+                        value={button.text}
+                        onChange={(e) => handleUpdateButton(index, "text", e.target.value)}
+                        placeholder={ac?.buttonTextPlaceholder ?? "Masalan: Saytga o'tish"}
+                        className="w-full px-4 py-2.5 bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl text-sm text-foreground placeholder:text-muted-foreground transition-all outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                       <label className="text-[10px] font-bold text-muted-foreground uppercase ml-1">URL Manzil</label>
+                       <input
+                        type="url"
+                        value={button.url}
+                        onChange={(e) => handleUpdateButton(index, "url", e.target.value)}
+                        placeholder="https://example.com"
+                        className="w-full px-4 py-2.5 bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl text-sm text-foreground placeholder:text-muted-foreground font-mono transition-all outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-border/50">
                     <ButtonColorPicker
                       selectedColor={button.color || "blue"}
                       onChange={(color) => handleUpdateButton(index, "color", color)}
                     />
+                    <button 
+                      onClick={() => handleRemoveButton(index)} 
+                      className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                      title="O'chirish"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
-                  <button onClick={() => handleRemoveButton(index)} className="p-2 text-muted-foreground hover:text-destructive transition-colors">
-                    <X className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 border-2 border-dashed border-border rounded-xl bg-card/50">
-            <Link2 className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground mb-3">{ac?.noButtons ?? 'No buttons added yet'}</p>
-            <button onClick={handleAddButton} className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-lg transition-all">
-              {ac?.addFirstButton ?? 'Add First Button'}
+          <div className="text-center py-10 border-2 border-dashed border-border rounded-2xl bg-muted/10">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-3">
+               <Link2 className="w-6 h-6 text-muted-foreground/60" />
+            </div>
+            <p className="text-sm font-medium text-muted-foreground mb-4">{ac?.noButtons ?? 'Hali tugmalar qo\'shilmagan'}</p>
+            <button onClick={handleAddButton} className="px-6 py-2.5 bg-primary text-primary-foreground text-sm font-bold rounded-xl transition-all shadow-lg shadow-primary/20">
+              {ac?.addFirstButton ?? 'Birinchi tugmani qo\'shish'}
             </button>
           </div>
         )}

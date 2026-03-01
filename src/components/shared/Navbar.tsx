@@ -257,6 +257,19 @@ const Navbar = () => {
                     </>
                   )}
                 </NavLink>
+
+                {isAuthenticated && (user?.roles?.includes('ADMIN') || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+                  <NavLink to={`/${lang}/admin`} className={navItemClass}>
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        )}
+                        Admin
+                      </>
+                    )}
+                  </NavLink>
+                )}
               </div>
             </div>
 

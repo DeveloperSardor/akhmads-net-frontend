@@ -196,7 +196,7 @@ const AudienceReach = () => {
           Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang
         </p>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {segments.map((segment) => {
             const isSelected = selectedSegments.includes(segment.id);
 
@@ -204,13 +204,20 @@ const AudienceReach = () => {
               <button
                 key={segment.id}
                 onClick={() => handleSegmentToggle(segment.id)}
-                className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                className={`px-4 py-2.5 rounded-xl border text-sm font-bold transition-all duration-300 flex items-center gap-2 group ${
                   isSelected
-                    ? "border-primary bg-primary/10 text-primary shadow-sm shadow-primary/10"
-                    : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    ? "border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+                    : "border-border bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card"
                 }`}
               >
-                <span>{segment.name}</span>
+                <span className={`transition-transform duration-300 ${isSelected ? 'scale-110' : 'group-hover:scale-110 opacity-70 group-hover:opacity-100'}`}>
+                  {segment.name}
+                </span>
+                {isSelected && (
+                   <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
+                      <Check className="w-2.5 h-2.5" />
+                   </div>
+                )}
               </button>
             );
           })}

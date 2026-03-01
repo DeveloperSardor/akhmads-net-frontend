@@ -14,6 +14,8 @@ import Profile from "./app/profile/profile";
 import LaunchAd from "./app/ads/LaunchAd";
 import MyAds from "./app/ads/MyAds";
 import AdDetails from "./app/ads/AdDetails";
+import BroadcastAd from "./app/ads/BroadcastAd";
+import AdminPanel from "./app/admin/AdminPanel";
 
 export const routes = createBrowserRouter([
   {
@@ -93,6 +95,14 @@ export const routes = createBrowserRouter([
             ),
           },
           {
+            path: "broadcasts/new",
+            element: (
+              <ProtectedRoute allowedRoles={["ADVERTISER"]}>
+                <BroadcastAd />
+              </ProtectedRoute>
+            ),
+          },
+          {
             path: "wallet",
             element: (
               <ProtectedRoute>
@@ -108,7 +118,14 @@ export const routes = createBrowserRouter([
               </ProtectedRoute>
             ),
           },
-
+          {
+            path: "admin",
+            element: (
+              <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
+                <AdminPanel />
+              </ProtectedRoute>
+            ),
+          },
         ],
       },
     ],

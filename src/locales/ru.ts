@@ -569,7 +569,6 @@ export const ru = {
             close: "Закрыть",
         },
     },
-    // Ad Details
     adDetails: {
         campaignDetails: "Детали кампании",
         backToCampaigns: "Вернуться к кампаниям",
@@ -592,6 +591,66 @@ export const ru = {
             impressions: "Показы",
             revenue: "Доход",
         },
+    },
+
+    // Network Insight
+    networkInsight: {
+        title: "Статистика сети",
+        reach: "Охват",
+        growth: "Рост",
+        topCategories: "Топ категории",
+        worldwide: "По всему миру",
+        botsCount: "ботов",
+        hint: "Ваша реклама достигнет миллионов пользователей через все активные боты в этой сети.",
+    },
+
+    // Featured Bots
+    featuredBots: {
+        title: "Популярные боты",
+        viewAll: "Все боты",
+        subscribers: "Подписчики",
+        users: "польз.",
+    },
+
+    broadcastAd: {
+        title: "Рассылка сообщений",
+        subtitle: "Мгновенно охватите тысячи активных пользователей ботов.",
+        back: "Назад",
+        targeting: {
+            title: "1. Таргетинг аудитории",
+            selectBot: "Выберите целевого бота",
+            searchBot: "Поиск бота...",
+            activityFilter: "Фильтр активности",
+            last7Days: "Последние 7 дней",
+            last30Days: "Последние 30 дней",
+            last90Days: "Последние 90 дней",
+            availableAudience: "Доступная аудитория",
+            unitPrice: "Цена за единицу",
+            confirmCount: "Подтвердите количество целей",
+            users: "пользователей",
+        },
+        content: {
+            title: "2. Содержание сообщения",
+            editorType: "Тип редактора",
+            plainText: "Простой текст",
+            htmlFormatted: "HTML / Форматированный",
+            composeMessage: "Составьте сообщение",
+            placeholder: "Начните писать ваше сообщение...",
+            ctaButtons: "Кнопки призыва к действию",
+            addNew: "+ Добавить",
+            label: "Метка",
+            url: "URL",
+        },
+        checkout: {
+            title: "Оформление",
+            recipients: "Получатели:",
+            reachPeriod: "Период охвата:",
+            advertisingCost: "Стоимость рекламы:",
+            serviceFee: "Комиссия сервиса (5%):",
+            total: "Итого",
+            launchNow: "ЗАПУСТИТЬ СЕЙЧАС",
+            info: "Рассылки обычно доставляются мгновенно или в течение нескольких минут. Трекинг в реальном времени будет доступен в вашей панели управления.",
+        }
     }
 };
 
