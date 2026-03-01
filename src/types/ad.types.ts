@@ -39,6 +39,7 @@ export interface Ad {
   status: AdStatus;
   targeting?: AdTargeting;
   specificBotIds?: string[];
+  excludedBotIds?: string[];
   promoCodeUsed?: string;
   discount: number;
   isSaved?: boolean;  // ✅ NEW - for frontend
@@ -113,6 +114,7 @@ export interface CreateAdRequest {
   cpmBid?: number;
   targeting?: AdTargeting;
   specificBotIds?: string[];
+  excludedBotIds?: string[];
   promoCode?: string;
   trackingEnabled?: boolean;
 }

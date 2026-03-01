@@ -159,6 +159,14 @@ class BotService {
     }>(`/bots/${botId}/history`);
     return response.data;
   }
+
+  /**
+   * 🔍 Search Public Bots - Botlarni qidirish (reklama uchun)
+   */
+  async searchBots(query: string): Promise<{ success: boolean; data: { bots: Pick<Bot, 'id' | 'username' | 'firstName' | 'avatarUrl' | 'totalMembers'>[] } }> {
+    const response = await apiClient.get('/bots/public/search', { params: { q: query } });
+    return response.data;
+  }
 }
 
 export default new BotService();

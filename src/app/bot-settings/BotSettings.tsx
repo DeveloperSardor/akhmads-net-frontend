@@ -20,6 +20,7 @@ import { useBotStore } from "../../store/botStore";
 import { useTranslations } from "../../hooks/useTranslations";
 import { API_BASE_URL } from "../../api/api";
 import axios from "axios";
+import AdSelector from "./components/AdSelector";
 
 const BotSettings = () => {
   const { botId } = useParams<{ botId: string }>();
@@ -45,6 +46,7 @@ const BotSettings = () => {
     frequencyMinutes: 5,
     postFilter: "all" as "all" | "not_mine" | "only_mine",
     allowedCategories: [] as string[],
+    blockedAdIds: [] as string[],
     newToken: "",
   });
 
@@ -82,6 +84,7 @@ const BotSettings = () => {
         frequencyMinutes: currentBot.frequencyMinutes || 5,
         postFilter: (currentBot.postFilter as any) || "all",
         allowedCategories: currentBot.allowedCategories || [],
+        blockedAdIds: currentBot.blockedAdIds || [],
         newToken: "",
       });
     }
@@ -116,6 +119,7 @@ const BotSettings = () => {
       frequencyMinutes: settings.frequencyMinutes,
       postFilter: settings.postFilter,
       allowedCategories: settings.allowedCategories,
+      blockedAdIds: settings.blockedAdIds,
     });
   };
 
@@ -313,6 +317,16 @@ async Task<bool> ShowAd(long chatId) {
               );
             })}
           </div>
+        </div>
+
+        {/* Ad Blocking */}
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <AdSelector
+            label="Reklamalarni bloklash"
+            description="Botda ko'rsatishni xohlamagan qora ro'yxatdagi reklamalarni tanlang."
+            selectedIds={settings.blockedAdIds}
+            onChange={(ids) => setSettings({ ...settings, blockedAdIds: ids })}
+          />
         </div>
 
         {/* Statistics */}

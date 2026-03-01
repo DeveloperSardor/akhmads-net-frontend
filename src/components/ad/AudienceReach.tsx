@@ -3,6 +3,7 @@ import { Check, Users, Target } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
 import { useTranslations } from "../../hooks/useTranslations";
 import axios from "axios";
+import BotSelector from "./BotSelector";
 
 interface CategoryFromApi {
   id: string;
@@ -229,6 +230,32 @@ const AudienceReach = () => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Specific Bot Targeting */}
+      <div className="pt-6 border-t border-border">
+        <div className="flex items-center gap-2 mb-4">
+          <Target className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Maxsus botlarni tanlash (Ixtiyoriy)</h3>
+        </div>
+
+        <div className="space-y-6">
+          <BotSelector
+            label="Faqat shu botlarda ko'rsatilsin"
+            description="Reklamangiz faqat siz tanlagan botlardagina chiqadi (boshqalarida chiqmaydi)."
+            placeholder="Bot nomi yoki username kiritib izlang..."
+            selectedIds={formData.specificBotIds || []}
+            onChange={(ids) => updateFormData({ specificBotIds: ids })}
+          />
+
+          <BotSelector
+            label="Shu botlarda ko'rsatilmasin"
+            description="Reklamangiz aniq siz xohlamagan botlarda ko'rinmaydi (Blacklist)."
+            placeholder="Bot nomi yoki username kiritib izlang..."
+            selectedIds={formData.excludedBotIds || []}
+            onChange={(ids) => updateFormData({ excludedBotIds: ids })}
+          />
+        </div>
       </div>
     </div>
   );

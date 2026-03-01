@@ -28,6 +28,7 @@ export interface Bot {
   postFilter: string;
   allowedCategories?: string[];
   blockedCategories?: string[];
+  blockedAdIds?: string[];
   frequencyMinutes: number;
   
   totalEarnings: number;
@@ -79,6 +80,7 @@ export interface UpdateBotRequest {
   postFilter?: string;
   allowedCategories?: string[];
   blockedCategories?: string[];
+  blockedAdIds?: string[];
   frequencyMinutes?: number;
 }
 

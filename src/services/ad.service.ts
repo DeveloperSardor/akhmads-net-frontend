@@ -235,6 +235,14 @@ class AdService {
     const response = await apiClient.get(`/ads/${adId}/clicks`, { params });
     return response.data;
   }
+
+  /**
+   * 🔍 Search Public Active Ads - Aktiv reklamalarni qidirish (bot egalari uchun bloklash uchun)
+   */
+  async searchActiveAds(query: string): Promise<{ success: boolean; data: { ads: Pick<Ad, 'id' | 'title' | 'text' | 'mediaUrl' | 'status'>[] } }> {
+    const response = await apiClient.get('/ads/public/search', { params: { q: query } });
+    return response.data;
+  }
 }
 
 export default new AdService();
