@@ -27,6 +27,7 @@ import {
   X,
   Copy,
   Check,
+  Users,
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { useUserStore } from "../../store/userStore";
@@ -41,6 +42,10 @@ const Profile = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [copiedTelegramId, setCopiedTelegramId] = useState(false);
   const [editForm, setEditForm] = useState({ firstName: "", lastName: "" });
+  const [selectedAdForModal, setSelectedAdForModal] = useState<any>(null);
+  const [selectedBotForModal, setSelectedBotForModal] = useState<any>(null);
+  const [showAdModal, setShowAdModal] = useState(false);
+  const [showBotModal, setShowBotModal] = useState(false);
 
   const { user: authUser, logout } = useAuthStore();
 
@@ -423,8 +428,15 @@ const Profile = () => {
                           </td>
                           <td className="py-3 px-3">
                             <div className="flex items-center justify-end gap-1">
-                              <button onClick={() => navigate(`/ads/${ad.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
-                                <Eye className="w-3.5 h-3.5" />
+                              <button
+                                onClick={() => {
+                                  setSelectedAdForModal(ad);
+                                  setShowAdModal(true);
+                                }}
+                                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                                title={t.myAds?.actions?.view || "View"}
+                              >
+                                <Eye className="w-3.5 h-3.5 text-purple-400" />
                               </button>
                               <button onClick={() => handleDeleteAd(ad.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
                                 <Trash2 className="w-3.5 h-3.5 text-red-400" />
@@ -466,8 +478,14 @@ const Profile = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 justify-end">
-                        <button onClick={() => navigate(`/ads/${ad.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
-                          <Eye className="w-4 h-4" />
+                        <button
+                          onClick={() => {
+                            setSelectedAdForModal(ad);
+                            setShowAdModal(true);
+                          }}
+                          className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                        >
+                          <Eye className="w-4 h-4 text-purple-400" />
                         </button>
                         <button onClick={() => handleDeleteAd(ad.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
                           <Trash2 className="w-4 h-4 text-red-400" />
@@ -515,8 +533,15 @@ const Profile = () => {
                           </td>
                           <td className="py-3 px-3">
                             <div className="flex items-center justify-end gap-1">
-                              <button onClick={() => navigate(`/bots/${bot.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
-                                <Eye className="w-3.5 h-3.5" />
+                              <button
+                                onClick={() => {
+                                  setSelectedBotForModal(bot);
+                                  setShowBotModal(true);
+                                }}
+                                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                                title={t.myAds?.actions?.view || "View"}
+                              >
+                                <Eye className="w-3.5 h-3.5 text-purple-400" />
                               </button>
                               <button onClick={() => handleDeleteBot(bot.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
                                 <Trash2 className="w-3.5 h-3.5 text-red-400" />
@@ -558,8 +583,14 @@ const Profile = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 justify-end">
-                        <button onClick={() => navigate(`/bots/${bot.id}`)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
-                          <Eye className="w-4 h-4" />
+                        <button
+                          onClick={() => {
+                            setSelectedBotForModal(bot);
+                            setShowBotModal(true);
+                          }}
+                          className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                        >
+                          <Eye className="w-4 h-4 text-purple-400" />
                         </button>
                         <button onClick={() => handleDeleteBot(bot.id)} className="p-1.5 hover:bg-white/10 rounded-lg transition">
                           <Trash2 className="w-4 h-4 text-red-400" />
@@ -626,6 +657,30 @@ const Profile = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Detail Modals */}
+      {showAdModal && (
+        <AdDetailModal
+          ad={selectedAdForModal}
+          onClose={() => setShowAdModal(false)}
+          formatNumber={formatNumber}
+          formatCurrency={formatCurrency}
+          formatPercent={formatPercent}
+          getAdStatusStyles={getAdStatusStyles}
+          t={t}
+        />
+      )}
+
+      {showBotModal && (
+        <BotDetailModal
+          bot={selectedBotForModal}
+          onClose={() => setShowBotModal(false)}
+          formatNumber={formatNumber}
+          formatCurrency={formatCurrency}
+          getBotStatusStyles={getBotStatusStyles}
+          t={t}
+        />
       )}
     </div>
   );
