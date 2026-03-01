@@ -376,6 +376,13 @@ export const uz = {
     noBots: "Botlar topilmadi",
     statusActive: "Faol",
     statusPending: "Kutilmoqda",
+    statusText: {
+        ACTIVE: "Faol",
+        PENDING: "Kutilmoqda",
+        REJECTED: "Rad etilgan",
+        PAUSED: "To'xtatilgan",
+        BANNED: "Bloklangan"
+    },
     adsTableHeaders: {
       title: "Reklama nomi",
       impressions: "Ko'rishlar",
@@ -541,6 +548,30 @@ export const uz = {
       close: "Yopish",
     },
   },
+    // Ad Details
+    adDetails: {
+        campaignDetails: "Kampaniya tafsilotlari",
+        backToCampaigns: "Kampaniyalarga qaytish",
+        created: "Yaratilgan:",
+        exportData: "Eksport qilish",
+        exporting: "Eksport qilinmoqda...",
+        impressions: "Ko'rishlar",
+        target: "maqsad",
+        clicks: "Kliklar",
+        totalEngagements: "Jami faollik",
+        ctr: "CTR",
+        clickThroughRate: "Kliklash darajasi (Click-through rate)",
+        spent: "Sarflangan",
+        remaining: "qoldi",
+        performanceByBot: "Botlar kesimida natijalar",
+        loadingPerformance: "Natijalar yuklanmoqda...",
+        tableHeaders: {
+            bot: "Bot",
+            audience: "Auditoriya",
+            impressions: "Ko'rishlar",
+            revenue: "Daromad",
+        },
+    }
 };
 
 

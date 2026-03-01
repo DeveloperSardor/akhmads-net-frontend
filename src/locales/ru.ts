@@ -376,6 +376,13 @@ export const ru = {
         noBots: "Боты не найдены",
         statusActive: "Активен",
         statusPending: "Ожидает",
+        statusText: {
+            ACTIVE: "Активен",
+            PENDING: "Ожидает",
+            REJECTED: "Отклонен",
+            PAUSED: "Приостановлен",
+            BANNED: "Заблокирован"
+        },
         adsTableHeaders: {
             title: "Название",
             impressions: "Показы",
@@ -541,6 +548,30 @@ export const ru = {
             close: "Закрыть",
         },
     },
+    // Ad Details
+    adDetails: {
+        campaignDetails: "Детали кампании",
+        backToCampaigns: "Вернуться к кампаниям",
+        created: "Создано:",
+        exportData: "Экспорт данных",
+        exporting: "Экспорт...",
+        impressions: "Показы",
+        target: "цель",
+        clicks: "Клики",
+        totalEngagements: "Всего взаимодействий",
+        ctr: "CTR",
+        clickThroughRate: "Кликовое соотношение (Click-through rate)",
+        spent: "Потрачено",
+        remaining: "осталось",
+        performanceByBot: "Эффективность по ботам",
+        loadingPerformance: "Загрузка данных об эффективности...",
+        tableHeaders: {
+            bot: "Бот",
+            audience: "Аудитория",
+            impressions: "Показы",
+            revenue: "Доход",
+        },
+    }
 };
 
 

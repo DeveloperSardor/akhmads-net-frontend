@@ -485,7 +485,7 @@ const Profile = () => {
                               bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
                                 "bg-red-500/20 text-red-400"
                               }`}>
-                              {bot.status === "ACTIVE" ? p?.statusActive : bot.status === "PENDING" ? p?.statusPending : bot.status}
+                              {p?.statusText?.[bot.status] || bot.status}
                             </span>
                           </td>
                           <td className="py-3 px-3">
@@ -518,7 +518,7 @@ const Profile = () => {
                           bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
                             "bg-red-500/20 text-red-400"
                           }`}>
-                          {bot.status === "ACTIVE" ? p?.statusActive : bot.status === "PENDING" ? p?.statusPending : bot.status}
+                          {p?.statusText?.[bot.status] || bot.status}
                         </span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs mb-3">

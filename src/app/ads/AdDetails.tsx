@@ -14,11 +14,15 @@ import {
 import { useAdStore } from "../../store/adStore";
 import adService from "../../services/ad.service";
 import type { AdPerformance } from "../../types/ad.types";
+import LivePreview from "../../components/ad/LivePreview";
+import { useTranslations } from "../../hooks/useTranslations";
 
 const AdDetails = () => {
   const { adId } = useParams<{ adId: string }>();
   const navigate = useNavigate();
   const { currentAd, isLoading, fetchAdById } = useAdStore();
+  const t = useTranslations();
+  const adDetails = t.adDetails;
 
   const [performance, setPerformance] = useState<AdPerformance | null>(null);
   const [loadingPerformance, setLoadingPerformance] = useState(true);
@@ -94,12 +98,12 @@ const AdDetails = () => {
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-3">
-                {currentAd.title}
+                {adDetails?.campaignDetails || 'Campaign Details'}
               </h1>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4" />
-                  <span>Created {new Date(currentAd.createdAt).toLocaleDateString()}</span>
+                  <span>{adDetails?.created || 'Created'} {new Date(currentAd.createdAt).toLocaleDateString()}</span>
                 </div>
                 <span>•</span>
                 <span>ID: {currentAd.id}</span>
@@ -114,34 +118,43 @@ const AdDetails = () => {
               {exporting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Exporting...</span>
+                  <span>{adDetails?.exporting || 'Exporting...'}</span>
                 </>
               ) : (
                 <>
                   <Download className="w-4 h-4" />
-                  <span>Export Data</span>
+                  <span>{adDetails?.exportData || 'Export Data'}</span>
                 </>
               )}
             </button>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* 2-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* LEFT: Ad Preview */}
+          <div className="lg:col-span-1">
+            <LivePreview />
+          </div>
+
+          {/* RIGHT: Stats & Performance */}
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
           <div className="p-6 bg-card border border-border rounded-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2.5 bg-primary/10 rounded-lg">
                 <Eye className="w-5 h-5 text-primary" />
               </div>
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Impressions
+                {adDetails?.impressions || 'Impressions'}
               </span>
             </div>
             <div className="text-3xl font-bold text-foreground mb-2 tabular-nums">
               {formatNumber(currentAd.deliveredImpressions)}
             </div>
             <div className="text-sm text-muted-foreground">
-              of {formatNumber(currentAd.targetImpressions)} target
+              {adDetails?.target ? `of ${formatNumber(currentAd.targetImpressions)} ${adDetails.target}` : `of ${formatNumber(currentAd.targetImpressions)} target`}
             </div>
             <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
               <div
@@ -157,13 +170,13 @@ const AdDetails = () => {
                 <MousePointerClick className="w-5 h-5 text-blue-500" />
               </div>
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Clicks
+                {adDetails?.clicks || 'Clicks'}
               </span>
             </div>
             <div className="text-3xl font-bold text-foreground mb-2 tabular-nums">
               {formatNumber(currentAd.clicks)}
             </div>
-            <div className="text-sm text-muted-foreground">Total engagements</div>
+            <div className="text-sm text-muted-foreground">{adDetails?.totalEngagements || 'Total engagements'}</div>
           </div>
 
           <div className="p-6 bg-card border border-border rounded-xl">
@@ -172,11 +185,11 @@ const AdDetails = () => {
                 <TrendingUp className="w-5 h-5 text-green-500" />
               </div>
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                CTR
+                {adDetails?.ctr || 'CTR'}
               </span>
             </div>
             <div className="text-3xl font-bold text-green-600 mb-2 tabular-nums">{currentAd.ctr}%</div>
-            <div className="text-sm text-muted-foreground">Click-through rate</div>
+            <div className="text-sm text-muted-foreground">{adDetails?.clickThroughRate || 'Click-through rate'}</div>
           </div>
 
           <div className="p-6 bg-card border border-border rounded-xl">
@@ -185,14 +198,14 @@ const AdDetails = () => {
                 <DollarSign className="w-5 h-5 text-green-500" />
               </div>
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Spent
+                {adDetails?.spent || 'Spent'}
               </span>
             </div>
             <div className="text-3xl font-bold text-green-600 mb-2 tabular-nums">
               {formatCurrency(currentAd.totalCost - currentAd.remainingBudget)}
             </div>
             <div className="text-sm text-muted-foreground">
-              {formatCurrency(currentAd.remainingBudget)} remaining
+              {formatCurrency(currentAd.remainingBudget)} {adDetails?.remaining || 'remaining'}
             </div>
           </div>
         </div>
@@ -201,14 +214,14 @@ const AdDetails = () => {
         {loadingPerformance ? (
           <div className="p-20 bg-card border border-border rounded-xl text-center">
             <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-3" />
-            <p className="text-muted-foreground text-sm">Loading performance data...</p>
+            <p className="text-muted-foreground text-sm">{adDetails?.loadingPerformance || 'Loading performance data...'}</p>
           </div>
         ) : performance ? (
           <div className="bg-card border border-border rounded-xl overflow-hidden">
             <div className="px-6 py-4 border-b border-border">
               <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-muted-foreground" />
-                Performance by Bot
+                {adDetails?.performanceByBot || 'Performance by Bot'}
               </h2>
             </div>
 
@@ -217,16 +230,16 @@ const AdDetails = () => {
                 <thead>
                   <tr className="border-b border-border">
                     <th className="text-left py-4 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Bot
+                      {adDetails?.tableHeaders?.bot || 'Bot'}
                     </th>
                     <th className="text-left py-4 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Audience
+                      {adDetails?.tableHeaders?.audience || 'Audience'}
                     </th>
                     <th className="text-right py-4 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Impressions
+                      {adDetails?.tableHeaders?.impressions || 'Impressions'}
                     </th>
                     <th className="text-right py-4 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Revenue
+                      {adDetails?.tableHeaders?.revenue || 'Revenue'}
                     </th>
                   </tr>
                 </thead>
@@ -276,6 +289,8 @@ const AdDetails = () => {
             </div>
           </div>
         ) : null}
+        </div>
+        </div>
       </div>
     </div>
   );
