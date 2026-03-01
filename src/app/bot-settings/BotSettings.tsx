@@ -394,6 +394,20 @@ async Task<bool> ShowAd(long chatId) {
                     onSelect={(ids) => setSettings({ ...settings, blockedAdIds: ids })}
                     initialSelectedIds={settings.blockedAdIds}
                  />
+                 <div className="mt-6 flex justify-end">
+                    <button
+                      onClick={handleSaveSettings}
+                      disabled={isSubmitting}
+                      className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 px-5 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-white/5"
+                    >
+                      {isSubmitting ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Save className="w-4 h-4" />
+                      )}
+                      {isSubmitting ? bs?.saving : bs?.save}
+                    </button>
+                 </div>
               </div>
 
            </div>
