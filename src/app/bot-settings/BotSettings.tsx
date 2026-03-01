@@ -53,6 +53,7 @@ const BotSettings = () => {
   const [apiCategories, setApiCategories] = useState<any[]>([]);
   const [blockedAdsDetails, setBlockedAdsDetails] = useState<Partial<Ad>[]>([]);
   const [isLoadingExceptions, setIsLoadingExceptions] = useState(false);
+  const [freqBounds, setFreqBounds] = useState({ min: 0, max: 10080 });
 
   const getCatName = (cat: any) => {
     if (t.locale === "uz") return cat.nameUz;
@@ -63,6 +64,13 @@ const BotSettings = () => {
   useEffect(() => {
     axios.get("https://api.akhmads.net/api/categories")
       .then((res: any) => setApiCategories(res.data.data || []))
+      .catch(() => {});
+    // ✅ Admin frequency limitlarini yuklash
+    axios.get("https://api.akhmads.net/api/v1/bots/frequency-limits")
+      .then((res: any) => {
+        const { min, max } = res.data?.data || {};
+        setFreqBounds({ min: min ?? 0, max: max ?? 10080 });
+      })
       .catch(() => {});
   }, []);
   const [showRulesModal, setShowRulesModal] = useState(false);
@@ -383,23 +391,31 @@ async Task<bool> ShowAd(long chatId) {
                  <h2 className="text-lg font-semibold mb-6 text-white">{bs?.postingRules ?? "Posting Rules & Limits"}</h2>
                  
                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                          {bs?.frequencyTitle ?? "Post Frequency"}
-                       </label>
-                       <div className="relative">
-                          <input
-                            type="number"
-                            min="0"
-                            value={settings.frequencyMinutes}
-                            onChange={(e) => setSettings({ ...settings, frequencyMinutes: parseInt(e.target.value) || 0 })}
-                            className="w-full pl-4 pr-12 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium focus:outline-none focus:border-[#444] transition-colors"
-                          />
-                          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium pointer-events-none">
-                            MIN
-                          </div>
-                       </div>
-                    </div>
+                     <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                           {bs?.frequencyTitle ?? "Post Frequency"}
+                        </label>
+                        <div className="relative">
+                           <input
+                             type="number"
+                             min={freqBounds.min}
+                             max={freqBounds.max}
+                             value={settings.frequencyMinutes}
+                             onChange={(e) => {
+                               const val = parseInt(e.target.value) || 0;
+                               const clamped = Math.min(Math.max(val, freqBounds.min), freqBounds.max);
+                               setSettings({ ...settings, frequencyMinutes: clamped });
+                             }}
+                             className="w-full pl-4 pr-12 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium focus:outline-none focus:border-[#444] transition-colors"
+                           />
+                           <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium pointer-events-none">
+                             MIN
+                           </div>
+                        </div>
+                        <div className="mt-2 text-xs text-gray-500">
+                          Admin belgilagan diapazon: <span className="text-gray-300 font-medium">{freqBounds.min} — {freqBounds.max} daqiqa</span>
+                        </div>
+                     </div>
 
                     <div>
                        <label className="block text-sm font-medium text-gray-300 mb-2">
