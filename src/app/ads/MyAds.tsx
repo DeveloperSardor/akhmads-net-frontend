@@ -21,6 +21,7 @@ import {
   Pencil,
   AlertTriangle,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import { useAdStore } from "../../store/adStore";
 import AdStatusBadge from "../../components/ad/AdStatusBadge";
 import AdCardSkeleton from "../../components/ad/AdCardSkeleton";
@@ -94,12 +95,18 @@ const MyAds = () => {
   });
 
   const handlePauseResume = async (ad: any) => {
-    if (ad.status === "RUNNING") {
-      await pauseAd(ad.id);
-    } else if (ad.status === "PAUSED") {
-      await resumeAd(ad.id);
+    try {
+      if (ad.status === "RUNNING") {
+        await pauseAd(ad.id);
+        toast.success("E'lon pauza qilindi");
+      } else if (ad.status === "PAUSED") {
+        await resumeAd(ad.id);
+        toast.success("E'lon davom etilmoqda");
+      }
+      loadAds();
+    } catch (error) {
+      toast.error("Xatolik yuz berdi");
     }
-    loadAds();
   };
 
   const handleDuplicate = (ad: any) => {

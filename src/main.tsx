@@ -1,6 +1,7 @@
 //src/main.tsx
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { routes } from './Router';
 import './index.css';
 
@@ -8,5 +9,8 @@ import './index.css';
 import './services/interceptors';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <RouterProvider router={routes} />
+  <>
+    <RouterProvider router={routes} />
+    <Toaster position="top-right" />
+  </>
 );

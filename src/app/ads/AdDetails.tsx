@@ -91,7 +91,7 @@ const AdDetails = () => {
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-            Back to campaigns
+            {adDetails?.backToCampaigns || 'Back to campaigns'}
           </button>
 
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
