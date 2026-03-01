@@ -566,13 +566,13 @@ export const eng = {
         noActiveBots: "No active bots found",
         searchBotPlaceholder: "Search bots...",
         notFound: "Not found",
-        usersSuffix: "users",
+        usersSuffix: "active users",
         activeDaysLabel: "Activity period (active in the last N days)",
         daysSuffix: "days",
-        targetCountLabel: "How many users to send to?",
+        targetCountLabel: "How many active users to send to?",
         maxPrefix: "max:",
         noActiveUsers: "No active users in this period. Choose another.",
-        allUsers: "All",
+        allUsers: "All active users",
         randomHint: "Users are selected randomly",
         nextStep: "Continue",
         messageFormat: "Message format",
@@ -585,7 +585,7 @@ export const eng = {
         buttonTextPlaceholder: "Button text",
         summary: {
             bot: "Bot:",
-            users: "Users:",
+            users: "Active users:",
             activeDays: "Activity period:",
             lastNDays: "Last {{n}} days",
         },
@@ -619,5 +619,11 @@ export const eng = {
             received: "✅ Content received",
             hint: "Send the bot a text, photo or video — it will auto-fill the form.",
         },
+    },
+
+    broadcastCard: {
+        title: "Professional Broadcast",
+        description: "Send direct mass messages to all active bot users. High impact and instant delivery.",
+        button: "Get Started",
     },
 };

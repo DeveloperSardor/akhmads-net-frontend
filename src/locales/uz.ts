@@ -206,12 +206,6 @@ export const uz = {
       subscribers: "Obunachilar",
       users: "Active Users",
     },
-
-    broadcastCard: {
-      title: "Professional Broadcast",
-      description: "Barcha faol bot foydalanuvchilariga to'g'ridan-to'g'ri massiv xabarlar yuboring. Yuqori natija va tezkor yetkazib berish.",
-      button: "Boshlash",
-    },
     statusFilters: {
       all: "Barcha holat",
       draft: "Qoralama",
@@ -626,13 +620,13 @@ export const uz = {
         noActiveBots: "Hozircha birorta faol bot yo'q",
         searchBotPlaceholder: "Bot qidiring...",
         notFound: "Topilmadi",
-        usersSuffix: "foydalanuvchi",
+        usersSuffix: "faol foydalanuvchi",
         activeDaysLabel: "Faollik davri (so'nggi N kun ichida aktiv bo'lganlar)",
         daysSuffix: "kun",
-        targetCountLabel: "Nechta foydalanuvchiga yuborish?",
+        targetCountLabel: "Nechta faol foydalanuvchiga yuborish?",
         maxPrefix: "max:",
         noActiveUsers: "Bu davr ichida faol foydalanuvchi yo'q. Boshqa davrni tanlang.",
-        allUsers: "Barchasi",
+        allUsers: "Barcha faol foydalanuvchilar",
         randomHint: "Foydalanuvchilar tasodifiy tanlanadi",
         nextStep: "Davom etish",
         messageFormat: "Xabar formati",
@@ -645,7 +639,7 @@ export const uz = {
         buttonTextPlaceholder: "Tugma matni",
         summary: {
             bot: "Bot:",
-            users: "Foydalanuvchilar:",
+            users: "Faol foydalanuvchilar:",
             activeDays: "Faollik davri:",
             lastNDays: "So'nggi {{n}} kun",
         },
@@ -679,7 +673,13 @@ export const uz = {
             received: "✅ Kontent qabul qilindi",
             hint: "Botga matn, rasm yoki video yuboring — sahifaga avtomatik to'ldiriladi.",
         },
-    }
+    },
+
+    broadcastCard: {
+        title: "Professional Broadcast",
+        description: "Barcha faol bot foydalanuvchilariga to'g'ridan-to'g'ri massiv xabarlar yuboring. Yuqori natija va tezkor yetkazib berish.",
+        button: "Boshlash",
+    },
 };
 
 
