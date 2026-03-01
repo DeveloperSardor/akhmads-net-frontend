@@ -146,7 +146,7 @@ const Navbar = () => {
             {/* 🔹 Logo */}
             <Link
               to={`/${lang}`}
-              className="flex items-center gap-3 hover:opacity-90 transition shrink-0"
+              className="flex items-center gap-2 xl:gap-3 hover:opacity-90 transition shrink-0 z-20"
             >
               {/* Logo — matches public/index.html */}
               <div
@@ -201,65 +201,67 @@ const Navbar = () => {
 
 
             {/* 🔹 Center links — desktop only */}
-            <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 bg-white/[0.03] border border-white/10 p-1 rounded-full items-center gap-1 backdrop-blur-md shadow-inner">
-              <NavLink to={`/${lang}`} end className={navItemClass}>
-                {({ isActive }) => (
-                  <>
-                    {isActive && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
-                    )}
-                    {nav?.home ?? "Home"}
-                  </>
-                )}
-              </NavLink>
-              {(!isAuthenticated || user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
-                <NavLink to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`} className={navItemClass}>
+            <div className="hidden lg:flex flex-1 justify-center z-10 mx-2 min-w-0">
+              <div className="bg-white/[0.03] border border-white/10 p-1 rounded-full flex items-center gap-0.5 xl:gap-1 backdrop-blur-md shadow-inner overflow-hidden">
+                <NavLink to={`/${lang}`} end className={navItemClass}>
                   {({ isActive }) => (
                     <>
                       {isActive && (
                         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
                       )}
-                      {nav?.myAds ?? "My Ads"}
+                      {nav?.home ?? "Home"}
                     </>
                   )}
                 </NavLink>
-              )}
-              {(!isAuthenticated || user?.roles?.includes('BOT_OWNER') || user?.role === 'BOT_OWNER') && (
-                <NavLink to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`} className={navItemClass}>
+                {(!isAuthenticated || user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
+                  <NavLink to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`} className={navItemClass}>
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        )}
+                        {nav?.myAds ?? "My Ads"}
+                      </>
+                    )}
+                  </NavLink>
+                )}
+                {(!isAuthenticated || user?.roles?.includes('BOT_OWNER') || user?.role === 'BOT_OWNER') && (
+                  <NavLink to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`} className={navItemClass}>
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        )}
+                        {nav?.addBot ?? "Add bot"}
+                      </>
+                    )}
+                  </NavLink>
+                )}
+                <NavLink to={`/${lang}/wallet`} className={navItemClass}>
                   {({ isActive }) => (
                     <>
                       {isActive && (
                         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
                       )}
-                      {nav?.addBot ?? "Add bot"}
+                      {nav?.wallet ?? "Wallet"}
                     </>
                   )}
                 </NavLink>
-              )}
-              <NavLink to={`/${lang}/wallet`} className={navItemClass}>
-                {({ isActive }) => (
-                  <>
-                    {isActive && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
-                    )}
-                    {nav?.wallet ?? "Wallet"}
-                  </>
-                )}
-              </NavLink>
-              <NavLink to={`/${lang}/faq`} className={navItemClass}>
-                {({ isActive }) => (
-                  <>
-                    {isActive && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
-                    )}
-                    {nav?.faq ?? "FAQ"}
-                  </>
-                )}
-              </NavLink>
+                <NavLink to={`/${lang}/faq`} className={navItemClass}>
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                      )}
+                      {nav?.faq ?? "FAQ"}
+                    </>
+                  )}
+                </NavLink>
+              </div>
             </div>
 
             {/* 🔹 Right side — desktop */}
-            <div className="hidden md:flex items-center gap-2 xl:gap-3 shrink-0">
+            <div className="hidden md:flex items-center gap-1.5 xl:gap-3 shrink-0 z-20">
               {/* 🌍 Language switcher */}
               <div ref={desktopLangRef} className="relative">
                 <button
