@@ -686,4 +686,185 @@ const Profile = () => {
   );
 };
 
+
+// --- SUB-COMPONENTS FOR MODALS ---
+
+const AdDetailModal = ({ ad, onClose, formatNumber, formatCurrency, formatPercent, getAdStatusStyles, t }: any) => {
+  if (!ad) return null;
+  const p = t.profile;
+
+  const calculateAdSpent = (ad: any): number => {
+    if (ad.spent !== undefined) return Number(ad.spent);
+    const total = Number(ad.totalCost) || 0;
+    const remaining = Number(ad.remainingBudget) || 0;
+    return Math.max(0, total - remaining);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto">
+      <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold">{p?.information} - {p?.myAds}</h2>
+          <button onClick={onClose} className="text-white/60 hover:text-white transition">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-[10px] text-white/40 mb-1.5 uppercase tracking-wider">{p?.adsTableHeaders.title}</label>
+            <p className="text-sm font-medium leading-relaxed bg-white/5 p-3 rounded-lg border border-white/5 whitespace-pre-wrap max-h-[150px] overflow-y-auto">
+              {ad.title || ad.text}
+            </p>
+
+            <div className="mt-5">
+              <label className="block text-[10px] text-white/40 mb-2 uppercase tracking-wider">{p?.adsTableHeaders.status}</label>
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getAdStatusStyles(ad.status)}`}>
+                {p?.statusText?.[ad.status] || t.adStatus[ad.status] || ad.status}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Eye className="w-3.5 h-3.5 text-purple-400" />
+                <span className="text-[10px] text-white/40 uppercase font-medium">{p?.adsTableHeaders.impressions}</span>
+              </div>
+              <p className="text-lg font-bold">{formatNumber(ad.deliveredImpressions ?? ad.impressions)}</p>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <MousePointerClick className="w-3.5 h-3.5 text-purple-400" />
+                <span className="text-[10px] text-white/40 uppercase font-medium">{p?.adsTableHeaders.ctr}</span>
+              </div>
+              <p className="text-lg font-bold">{formatPercent(ad.ctr)}</p>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
+                <span className="text-[10px] text-white/40 uppercase font-medium">{p?.adsTableHeaders.conversions}</span>
+              </div>
+              <p className="text-lg font-bold">{formatNumber(ad.conversions)}</p>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <DollarSign className="w-3.5 h-3.5 text-red-400" />
+                <span className="text-[10px] text-white/40 uppercase font-medium">{p?.adsTableHeaders.spent}</span>
+              </div>
+              <p className="text-lg font-bold text-red-400">{formatCurrency(calculateAdSpent(ad))}</p>
+            </div>
+
+            <div className="col-span-2 bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/10 rounded-lg p-3 mt-1">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[10px] text-white/40 uppercase font-medium">Byudjet</span>
+                <p className="text-sm font-bold">{formatCurrency(ad.totalCost)}</p>
+              </div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-purple-500 transition-all duration-500"
+                  style={{ width: `${Math.min(100, (calculateAdSpent(ad) / (ad.totalCost || 1)) * 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 pt-5 border-t border-white/5 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-8 py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg transition font-bold text-sm"
+          >
+            Yopish
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const BotDetailModal = ({ bot, onClose, formatNumber, formatCurrency, getBotStatusStyles, t }: any) => {
+  if (!bot) return null;
+  const p = t.profile;
+
+  return (
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto">
+      <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold">{p?.information} - {p?.myBots}</h2>
+          <button onClick={onClose} className="text-white/60 hover:text-white transition">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+              <div className="w-14 h-14 bg-purple-600/20 text-purple-400 rounded-full flex items-center justify-center text-xl font-bold border border-purple-500/20">
+                {bot.username?.[0]?.toUpperCase() || "B"}
+              </div>
+              <div>
+                <h3 className="text-lg font-bold">@{bot.username}</h3>
+                <p className="text-xs text-white/40 bg-white/5 px-2 py-0.5 rounded mt-1 inline-block">{bot.category}</p>
+              </div>
+            </div>
+
+            <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+              <label className="block text-[10px] text-white/40 mb-2 uppercase tracking-wider">{p?.botsTableHeaders.status}</label>
+              <span className={`px-4 py-1.5 rounded-full text-xs font-bold ${getBotStatusStyles(bot.status)}`}>
+                {p?.statusText?.[bot.status] || bot.status}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Users className="w-3.5 h-3.5 text-purple-400" />
+                <span className="text-[10px] text-white/40 uppercase font-medium">{p?.botsTableHeaders.subscribers}</span>
+              </div>
+              <p className="text-lg font-bold">{formatNumber(bot.subscribers)}</p>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Eye className="w-3.5 h-3.5 text-purple-400" />
+                <span className="text-[10px] text-white/40 uppercase font-medium">{p?.botsTableHeaders.impressions}</span>
+              </div>
+              <p className="text-lg font-bold">{formatNumber(bot.impressionsServed)}</p>
+            </div>
+
+            <div className="col-span-2 bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 rounded-xl p-5 mt-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <DollarSign className="w-4 h-4 text-green-400" />
+                    <span className="text-xs text-white/50 uppercase font-bold tracking-tight">{p?.botsTableHeaders.earnings}</span>
+                  </div>
+                  <p className="text-3xl font-black text-green-400">{formatCurrency(bot.earnings)}</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-green-500" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 pt-5 border-t border-white/5 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-8 py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg transition font-bold text-sm"
+          >
+            Yopish
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default Profile;
