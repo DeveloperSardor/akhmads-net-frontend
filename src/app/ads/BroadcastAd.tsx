@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Select, Spin } from "antd";
 import {
@@ -14,31 +14,43 @@ import {
   Radio,
   AlertCircle,
   CheckCircle2,
+  Smartphone,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import apiClient from "../../api/api";
 import { useTranslations } from "../../hooks/useTranslations";
+import { useUserStore } from "../../store/userStore";
 
 const { Option } = Select;
 
-// ── Tarif sabab: backend $0.50 base + $0.05/user
 const BASE_FEE = 0.5;
 const PRICE_PER_USER = 0.05;
 
 const calcTotal = (count: number) =>
   count > 0 ? BASE_FEE + count * PRICE_PER_USER : 0;
 
-// ── Active days → bot field name
 const dayKey: Record<number, string> = {
-  3:  "activeUsers3d",
-  7:  "activeUsers7d",
+  3: "activeUsers3d",
+  7: "activeUsers7d",
   30: "activeUsers30d",
 };
+
+type BtnColor = "blue" | "green" | "red" | "default";
+
+interface Button {
+  text: string;
+  url: string;
+  color: BtnColor;
+}
+
+type ContentTab = "direct" | "telegram";
 
 const BroadcastAd: React.FC = () => {
   const navigate = useNavigate();
   const { lang } = useParams();
   const t = useTranslations();
+  const tb = t.broadcastAd;
+  const user = useUserStore((s) => s.profile);
 
   // ── Data
   const [publicBots, setPublicBots] = useState<any[]>([]);
@@ -53,11 +65,14 @@ const BroadcastAd: React.FC = () => {
   // ── Content
   const [contentType, setContentType] = useState<"TEXT" | "HTML">("TEXT");
   const [text, setText] = useState("");
-  const [buttons, setButtons] = useState<{ text: string; url: string }[]>([]);
+  const [buttons, setButtons] = useState<Button[]>([]);
+  const [contentTab, setContentTab] = useState<ContentTab>("direct");
+  const [telegramPolling, setTelegramPolling] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── Submit
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [step, setStep] = useState<1 | 2>(1); // 1=targeting, 2=content
+  const [step, setStep] = useState<1 | 2>(1);
 
   // ── Derived
   const selectedBot = useMemo(
@@ -82,7 +97,7 @@ const BroadcastAd: React.FC = () => {
     apiClient
       .get("/bots/public")
       .then((res) => setPublicBots(res.data?.data?.bots ?? []))
-      .catch(() => toast.error("Botlarni yuklashda xatolik"))
+      .catch(() => toast.error(tb.errorLoadingBots))
       .finally(() => setBotsLoading(false));
   }, []);
 
@@ -92,6 +107,38 @@ const BroadcastAd: React.FC = () => {
     setTargetCount(max > 0 ? Math.min(targetCount || max, max) : 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBotId, activeDays]);
+
+  // ── Telegram polling cleanup
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
+
+  const startTelegramPolling = () => {
+    setTelegramPolling(true);
+    pollRef.current = setInterval(async () => {
+      try {
+        const res = await apiClient.get("/ads/broadcast-draft");
+        const draft = res.data?.data;
+        if (draft?.found !== false && draft) {
+          clearInterval(pollRef.current!);
+          setTelegramPolling(false);
+          if (draft.text) setText(draft.text);
+          if (draft.contentType) setContentType(draft.contentType === "HTML" ? "HTML" : "TEXT");
+          setContentTab("direct");
+          toast.success(tb.telegramTab.received);
+        }
+      } catch {
+        // ignore poll errors
+      }
+    }, 5000);
+  };
+
+  const stopTelegramPolling = () => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    setTelegramPolling(false);
+  };
 
   const filteredBots = useMemo(
     () =>
@@ -121,27 +168,41 @@ const BroadcastAd: React.FC = () => {
         activeDays,
         buttons: validButtons,
       });
-      toast.success("Broadcast muvaffaqiyatli ishga tushirildi!");
+      toast.success(tb.successMessage);
       navigate(`/${lang}/my-ads`);
     } catch (err: any) {
-      const msg =
-        err?.response?.data?.message || "Broadcast yaratishda xatolik";
+      const msg = err?.response?.data?.message || tb.errorCreating;
       toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const addButton = () =>
-    setButtons((prev) => [...prev, { text: "", url: "" }]);
+  const addButton = () => {
+    if (buttons.length >= 5) return;
+    setButtons((prev) => [...prev, { text: "", url: "", color: "default" }]);
+  };
   const removeButton = (i: number) =>
     setButtons((prev) => prev.filter((_, idx) => idx !== i));
-  const updateButton = (i: number, field: "text" | "url", val: string) =>
+  const updateButton = (
+    i: number,
+    field: keyof Button,
+    val: string
+  ) =>
     setButtons((prev) =>
       prev.map((b, idx) => (idx === i ? { ...b, [field]: val } : b))
     );
 
-  // ───────────────────────────── Render ──────────────────────────────────────
+  const colorDot: Record<BtnColor, string> = {
+    blue: "bg-blue-500",
+    green: "bg-green-500",
+    red: "bg-red-500",
+    default: "bg-muted-foreground",
+  };
+
+  const platformBotUsername = import.meta.env.VITE_BOT_USERNAME || "akhmadsbot";
+  const deepLink = `https://t.me/${platformBotUsername}?start=bcast_${user?.id || ""}`;
+
   return (
     <div className="min-h-screen bg-background text-foreground pt-20 pb-16 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
@@ -152,7 +213,7 @@ const BroadcastAd: React.FC = () => {
           className="mb-8 mt-4 flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card/50 text-muted-foreground hover:text-foreground hover:bg-card transition-all text-sm font-semibold"
         >
           <ArrowLeft className="w-4 h-4" />
-          Orqaga
+          {tb.back}
         </button>
 
         {/* Header */}
@@ -162,24 +223,27 @@ const BroadcastAd: React.FC = () => {
               <Radio className="w-5 h-5 text-primary" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
-              Broadcast Xabar
+              {tb.title}
             </h1>
           </div>
           <p className="text-muted-foreground text-base max-w-xl mt-2">
-            Botning faol foydalanuvchilariga to'g'ridan-to'g'ri shaxsiy xabar yuboring.
-            100% yetkazish kafolati.
+            {tb.subtitle}
           </p>
         </div>
 
         {/* Steps indicator */}
         <div className="flex items-center gap-3 mb-8">
           {[
-            { n: 1, label: "Auditoriya" },
-            { n: 2, label: "Xabar matni" },
+            { n: 1, label: tb.step1 },
+            { n: 2, label: tb.step2 },
           ].map((s, i, arr) => (
             <React.Fragment key={s.n}>
               <button
-                onClick={() => s.n < step || (s.n === 2 && selectedBotId && targetCount > 0) ? setStep(s.n as 1 | 2) : undefined}
+                onClick={() =>
+                  s.n < step || (s.n === 2 && selectedBotId && targetCount > 0)
+                    ? setStep(s.n as 1 | 2)
+                    : undefined
+                }
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                   step === s.n
                     ? "bg-primary text-primary-foreground"
@@ -188,8 +252,16 @@ const BroadcastAd: React.FC = () => {
                     : "bg-card text-muted-foreground border border-border"
                 }`}
               >
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ${step > s.n ? "bg-primary/30" : "bg-current/20"}`}>
-                  {step > s.n ? <CheckCircle2 className="w-3.5 h-3.5" /> : s.n}
+                <span
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ${
+                    step > s.n ? "bg-primary/30" : "bg-current/20"
+                  }`}
+                >
+                  {step > s.n ? (
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  ) : (
+                    s.n
+                  )}
                 </span>
                 {s.label}
               </button>
@@ -210,33 +282,37 @@ const BroadcastAd: React.FC = () => {
               <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
                 <h2 className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
                   <Users className="w-4 h-4" />
-                  1. Auditoriyani tanlang
+                  1. {tb.step1}
                 </h2>
 
                 {/* Bot select */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Qaysi botning auditoriyasiga?
+                    {tb.selectBotLabel}
                   </label>
                   {botsLoading ? (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
-                      <Spin size="small" /> Botlar yuklanmoqda...
+                      <Spin size="small" /> {tb.botsLoading}
                     </div>
                   ) : publicBots.length === 0 ? (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
                       <AlertCircle className="w-4 h-4" />
-                      Hozircha birorta faol bot yo'q
+                      {tb.noActiveBots}
                     </div>
                   ) : (
                     <Select
                       showSearch
                       value={selectedBotId}
-                      placeholder="Bot qidiring..."
+                      placeholder={tb.searchBotPlaceholder}
                       className="w-full h-12 custom-select-bc"
                       onChange={(v) => setSelectedBotId(v)}
                       onSearch={setSearchTerm}
                       filterOption={false}
-                      notFoundContent={<span className="text-muted-foreground text-sm">Topilmadi</span>}
+                      notFoundContent={
+                        <span className="text-muted-foreground text-sm">
+                          {tb.notFound}
+                        </span>
+                      }
                     >
                       {filteredBots.map((b) => (
                         <Option key={b.id} value={b.id}>
@@ -246,15 +322,21 @@ const BroadcastAd: React.FC = () => {
                               alt=""
                               className="w-6 h-6 rounded-full object-cover bg-primary/20"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = "none";
+                                (e.target as HTMLImageElement).style.display =
+                                  "none";
                               }}
                             />
-                            <span className="font-bold text-sm">@{b.username}</span>
+                            <span className="font-bold text-sm">
+                              @{b.username}
+                            </span>
                             {b.firstName && (
-                              <span className="text-muted-foreground text-xs">· {b.firstName}</span>
+                              <span className="text-muted-foreground text-xs">
+                                · {b.firstName}
+                              </span>
                             )}
                             <span className="ml-auto text-xs font-bold text-primary">
-                              {(b.activeUsers30d ?? 0).toLocaleString()} foydalanuvchi
+                              {(b.activeUsers30d ?? 0).toLocaleString()}{" "}
+                              {tb.usersSuffix}
                             </span>
                           </div>
                         </Option>
@@ -263,12 +345,12 @@ const BroadcastAd: React.FC = () => {
                   )}
                 </div>
 
-                {/* Active days */}
+                {/* Active days + target count */}
                 {selectedBot && (
                   <>
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        Faollik davri (so'nggi N kun ichida aktiv bo'lganlar)
+                        {tb.activeDaysLabel}
                       </label>
                       <div className="grid grid-cols-3 gap-3">
                         {([3, 7, 30] as const).map((d) => {
@@ -283,11 +365,17 @@ const BroadcastAd: React.FC = () => {
                                   : "border-border bg-background hover:border-primary/40"
                               }`}
                             >
-                              <div className={`text-xl font-black ${activeDays === d ? "text-primary" : "text-foreground"}`}>
+                              <div
+                                className={`text-xl font-black ${
+                                  activeDays === d
+                                    ? "text-primary"
+                                    : "text-foreground"
+                                }`}
+                              >
                                 {count.toLocaleString()}
                               </div>
                               <div className="text-xs text-muted-foreground font-semibold mt-0.5">
-                                {d} kun
+                                {d} {tb.daysSuffix}
                               </div>
                             </button>
                           );
@@ -295,29 +383,29 @@ const BroadcastAd: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Target count */}
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        Nechta foydalanuvchiga yuborish?
+                        {tb.targetCountLabel}
                         <span className="ml-2 text-primary font-black">
-                          (max: {activeUsersCount.toLocaleString()})
+                          ({tb.maxPrefix} {activeUsersCount.toLocaleString()})
                         </span>
                       </label>
 
                       {activeUsersCount === 0 ? (
                         <div className="flex items-center gap-2 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-sm text-amber-400">
                           <AlertCircle className="w-4 h-4 shrink-0" />
-                          Bu davr ichida faol foydalanuvchi yo'q. Boshqa davrni tanlang.
+                          {tb.noActiveUsers}
                         </div>
                       ) : (
                         <>
-                          {/* Slider */}
                           <input
                             type="range"
                             min={1}
                             max={activeUsersCount}
                             value={targetCount}
-                            onChange={(e) => setTargetCount(Number(e.target.value))}
+                            onChange={(e) =>
+                              setTargetCount(Number(e.target.value))
+                            }
                             className="w-full accent-primary"
                           />
                           <div className="flex items-center gap-3">
@@ -327,34 +415,42 @@ const BroadcastAd: React.FC = () => {
                               max={activeUsersCount}
                               value={targetCount}
                               onChange={(e) => {
-                                const v = Math.max(1, Math.min(activeUsersCount, Number(e.target.value) || 1));
+                                const v = Math.max(
+                                  1,
+                                  Math.min(
+                                    activeUsersCount,
+                                    Number(e.target.value) || 1
+                                  )
+                                );
                                 setTargetCount(v);
                               }}
                               className="w-36 px-4 py-2.5 bg-background border border-border rounded-xl text-foreground font-bold text-sm focus:border-primary outline-none"
                             />
-                            <span className="text-muted-foreground text-sm">foydalanuvchi</span>
+                            <span className="text-muted-foreground text-sm">
+                              {tb.usersSuffix}
+                            </span>
                             <button
                               onClick={() => setTargetCount(activeUsersCount)}
                               className="ml-auto text-xs font-bold text-primary hover:underline"
                             >
-                              Barchasi ({activeUsersCount.toLocaleString()})
+                              {tb.allUsers} (
+                              {activeUsersCount.toLocaleString()})
                             </button>
                           </div>
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Info className="w-3.5 h-3.5" />
-                            Foydalanuvchilar tasodifiy tanlanadi
+                            {tb.randomHint}
                           </div>
                         </>
                       )}
                     </div>
 
-                    {/* Next step button */}
                     <button
                       disabled={targetCount < 1 || activeUsersCount === 0}
                       onClick={() => setStep(2)}
                       className="w-full h-12 bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl font-bold text-primary-foreground flex items-center justify-center gap-2 transition-all"
                     >
-                      Davom etish
+                      {tb.nextStep}
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </>
@@ -368,99 +464,199 @@ const BroadcastAd: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-black uppercase tracking-widest text-blue-400 flex items-center gap-2">
                     <Zap className="w-4 h-4" />
-                    2. Xabar matni
+                    2. {tb.step2}
                   </h2>
                   <button
                     onClick={() => setStep(1)}
                     className="text-xs text-muted-foreground hover:text-foreground font-semibold flex items-center gap-1"
                   >
-                    <ArrowLeft className="w-3 h-3" /> Orqaga
+                    <ArrowLeft className="w-3 h-3" /> {tb.back}
                   </button>
                 </div>
 
-                {/* Format */}
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Xabar formati
-                  </label>
-                  <div className="flex gap-2">
-                    {(["TEXT", "HTML"] as const).map((f) => (
-                      <button
-                        key={f}
-                        onClick={() => setContentType(f)}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
-                          contentType === f
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border bg-background text-muted-foreground hover:border-primary/30"
-                        }`}
-                      >
-                        {f === "TEXT" ? "Oddiy matn" : "HTML / Formatlangan"}
-                      </button>
-                    ))}
-                  </div>
+                {/* Input method tabs */}
+                <div className="flex gap-2">
+                  {(["direct", "telegram"] as ContentTab[]).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => {
+                        setContentTab(tab);
+                        if (tab === "telegram") startTelegramPolling();
+                        else stopTelegramPolling();
+                      }}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
+                        contentTab === tab
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/30"
+                      }`}
+                    >
+                      {tab === "telegram" && (
+                        <Smartphone className="w-3.5 h-3.5" />
+                      )}
+                      {tab === "direct"
+                        ? tb.telegramTab.directTitle
+                        : tb.telegramTab.telegramTitle}
+                    </button>
+                  ))}
                 </div>
 
-                {/* Text */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Xabar matni *
-                    </label>
-                    <span className={`text-xs font-bold ${text.length > 4000 ? "text-red-400" : "text-muted-foreground"}`}>
-                      {text.length} / 4096
-                    </span>
+                {/* Telegram tab */}
+                {contentTab === "telegram" && (
+                  <div className="p-5 bg-blue-500/5 border border-blue-500/20 rounded-xl space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      {tb.telegramTab.hint}
+                    </p>
+                    <a
+                      href={deepLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold text-sm transition-all"
+                    >
+                      {tb.telegramTab.openInBot}
+                    </a>
+                    {telegramPolling && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Spin size="small" />
+                        {tb.telegramTab.waiting}
+                      </div>
+                    )}
                   </div>
-                  <textarea
-                    rows={8}
-                    maxLength={4096}
-                    placeholder={
-                      contentType === "HTML"
-                        ? "<b>Salom!</b>\n\nMahsulotimizni ko'ring 👇"
-                        : "Salom! Yangi mahsulotimiz chiqdi..."
-                    }
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground/50 text-sm leading-relaxed resize-none focus:border-primary outline-none transition-all font-mono"
-                  />
-                  {text.trim().length < 5 && text.length > 0 && (
-                    <p className="text-xs text-red-400">Kamida 5 ta belgi kiriting</p>
-                  )}
-                </div>
+                )}
 
-                {/* Buttons */}
+                {/* Direct input */}
+                {contentTab === "direct" && (
+                  <>
+                    {/* Format */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        {tb.messageFormat}
+                      </label>
+                      <div className="flex gap-2">
+                        {(["TEXT", "HTML"] as const).map((f) => (
+                          <button
+                            key={f}
+                            onClick={() => setContentType(f)}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
+                              contentType === f
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-background text-muted-foreground hover:border-primary/30"
+                            }`}
+                          >
+                            {f === "TEXT" ? tb.plainText : tb.htmlFormat}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Text */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          {tb.messageText}
+                        </label>
+                        <span
+                          className={`text-xs font-bold ${
+                            text.length > 4000
+                              ? "text-red-400"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {text.length} / 4096
+                        </span>
+                      </div>
+                      <textarea
+                        rows={8}
+                        maxLength={4096}
+                        placeholder={
+                          contentType === "HTML"
+                            ? "<b>Salom!</b>\n\nMahsulotimizni ko'ring 👇"
+                            : "Salom! Yangi mahsulotimiz chiqdi..."
+                        }
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground/50 text-sm leading-relaxed resize-none focus:border-primary outline-none transition-all font-mono"
+                      />
+                      {text.trim().length < 5 && text.length > 0 && (
+                        <p className="text-xs text-red-400">
+                          {tb.minCharsError}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* Buttons — always visible */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Inline tugmalar (ixtiyoriy)
+                      {tb.inlineButtons}
                     </label>
                     <button
                       onClick={addButton}
                       disabled={buttons.length >= 5}
                       className="text-xs font-bold text-primary hover:text-primary/80 flex items-center gap-1 disabled:opacity-40"
                     >
-                      <Plus className="w-3 h-3" /> Qo'shish
+                      <Plus className="w-3 h-3" /> {tb.addButton}
                     </button>
                   </div>
                   {buttons.map((btn, i) => (
-                    <div key={i} className="flex gap-2 animate-in slide-in-from-right-2 duration-200">
-                      <input
-                        placeholder="Tugma matni"
-                        value={btn.text}
-                        onChange={(e) => updateButton(i, "text", e.target.value)}
-                        className="flex-1 px-3 py-2.5 bg-background border border-border rounded-xl text-foreground text-sm placeholder:text-muted-foreground/50 focus:border-primary outline-none"
-                      />
-                      <input
-                        placeholder="https://..."
-                        value={btn.url}
-                        onChange={(e) => updateButton(i, "url", e.target.value)}
-                        className="flex-1 px-3 py-2.5 bg-background border border-border rounded-xl text-foreground text-sm placeholder:text-muted-foreground/50 focus:border-primary outline-none"
-                      />
-                      <button
-                        onClick={() => removeButton(i)}
-                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-all shrink-0"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                    <div
+                      key={i}
+                      className="space-y-2 animate-in slide-in-from-right-2 duration-200"
+                    >
+                      <div className="flex gap-2">
+                        <input
+                          placeholder={tb.buttonTextPlaceholder}
+                          value={btn.text}
+                          onChange={(e) =>
+                            updateButton(i, "text", e.target.value)
+                          }
+                          className="flex-1 px-3 py-2.5 bg-background border border-border rounded-xl text-foreground text-sm placeholder:text-muted-foreground/50 focus:border-primary outline-none"
+                        />
+                        <input
+                          placeholder="https://..."
+                          value={btn.url}
+                          onChange={(e) =>
+                            updateButton(i, "url", e.target.value)
+                          }
+                          className="flex-1 px-3 py-2.5 bg-background border border-border rounded-xl text-foreground text-sm placeholder:text-muted-foreground/50 focus:border-primary outline-none"
+                        />
+                        <button
+                          onClick={() => removeButton(i)}
+                          className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-all shrink-0"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      {/* Color picker */}
+                      <div className="flex items-center gap-2 ml-1">
+                        <span className="text-xs text-muted-foreground">
+                          {tb.buttonColors.color}
+                        </span>
+                        {(
+                          [
+                            { c: "blue" as BtnColor, label: tb.buttonColors.blue },
+                            { c: "green" as BtnColor, label: tb.buttonColors.green },
+                            { c: "red" as BtnColor, label: tb.buttonColors.red },
+                            { c: "default" as BtnColor, label: "—" },
+                          ]
+                        ).map(({ c, label }) => (
+                          <button
+                            key={c}
+                            onClick={() => updateButton(i, "color", c)}
+                            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                              btn.color === c
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border text-muted-foreground hover:border-primary/30"
+                            }`}
+                          >
+                            <span
+                              className={`w-2 h-2 rounded-full ${colorDot[c]}`}
+                            />
+                            {label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -468,16 +664,26 @@ const BroadcastAd: React.FC = () => {
                 {/* Summary before launch */}
                 <div className="p-4 bg-primary/5 border border-primary/15 rounded-xl space-y-1.5 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Bot:</span>
+                    <span className="text-muted-foreground">
+                      {tb.summary.bot}
+                    </span>
                     <span className="font-bold">@{selectedBot?.username}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Foydalanuvchilar:</span>
-                    <span className="font-bold text-primary">{targetCount.toLocaleString()} ta</span>
+                    <span className="text-muted-foreground">
+                      {tb.summary.users}
+                    </span>
+                    <span className="font-bold text-primary">
+                      {targetCount.toLocaleString()} {tb.usersSuffix}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Faollik davri:</span>
-                    <span className="font-bold">So'nggi {activeDays} kun</span>
+                    <span className="text-muted-foreground">
+                      {tb.summary.activeDays}
+                    </span>
+                    <span className="font-bold">
+                      {tb.summary.lastNDays.replace("{{n}}", String(activeDays))}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -487,30 +693,39 @@ const BroadcastAd: React.FC = () => {
           {/* ── Right: Checkout ── */}
           <div className="space-y-4">
             <div className="bg-card border border-border rounded-2xl p-5 sticky top-24">
-              {/* Top bar */}
               <div className="h-1 -mt-5 -mx-5 mb-5 rounded-t-2xl bg-gradient-to-r from-primary via-indigo-500 to-blue-500" />
 
-              <h3 className="font-black text-lg mb-5">Hisob-kitob</h3>
+              <h3 className="font-black text-lg mb-5">{tb.checkout.title}</h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Qabul qiluvchi:</span>
+                  <span className="text-muted-foreground">
+                    {tb.checkout.recipients}
+                  </span>
                   <span className="font-bold text-primary">
-                    {targetCount > 0 ? `${targetCount.toLocaleString()} ta` : "—"}
+                    {targetCount > 0
+                      ? `${targetCount.toLocaleString()} ${tb.usersSuffix}`
+                      : "—"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Narx (har biri):</span>
+                  <span className="text-muted-foreground">
+                    {tb.checkout.pricePerUser}
+                  </span>
                   <span className="font-bold">$0.05</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Xabar narxi:</span>
+                  <span className="text-muted-foreground">
+                    {tb.checkout.messagePrice}
+                  </span>
                   <span className="font-bold">
                     ${(targetCount * PRICE_PER_USER).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Bazaviy to'lov:</span>
+                  <span className="text-muted-foreground">
+                    {tb.checkout.baseFee}
+                  </span>
                   <span className="font-bold">${BASE_FEE.toFixed(2)}</span>
                 </div>
               </div>
@@ -519,22 +734,29 @@ const BroadcastAd: React.FC = () => {
 
               <div className="flex justify-between items-baseline mb-5">
                 <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">
-                  Jami
+                  {tb.checkout.total}
                 </span>
                 <div className="text-right">
-                  <div className="text-4xl font-black">${totalCost.toFixed(2)}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">USD Wallet</div>
+                  <div className="text-4xl font-black">
+                    ${totalCost.toFixed(2)}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    {tb.checkout.walletNote}
+                  </div>
                 </div>
               </div>
 
-              {/* Launch button */}
               {step === 1 ? (
                 <button
-                  disabled={!selectedBotId || targetCount < 1 || activeUsersCount === 0}
+                  disabled={
+                    !selectedBotId ||
+                    targetCount < 1 ||
+                    activeUsersCount === 0
+                  }
                   onClick={() => setStep(2)}
                   className="w-full h-12 bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl font-bold text-primary-foreground flex items-center justify-center gap-2 transition-all"
                 >
-                  Xabar yozing
+                  {tb.checkout.writeMessage}
                   <ChevronRight className="w-4 h-4" />
                 </button>
               ) : (
@@ -548,38 +770,34 @@ const BroadcastAd: React.FC = () => {
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      YUBORISH
+                      {tb.checkout.launch}
                     </>
                   )}
                 </button>
               )}
 
-              {/* Info */}
               <div className="mt-4 flex gap-2 text-xs text-muted-foreground leading-relaxed">
                 <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary" />
-                <span>
-                  Broadcast bir necha daqiqa ichida yetkaziladi.
-                  Xabarlar botingiz orqali to'g'ridan-to'g'ri yuboriladi.
-                </span>
+                <span>{tb.checkout.info}</span>
               </div>
 
-              {/* Stats */}
               {selectedBot && (
                 <div className="mt-4 pt-4 border-t border-border space-y-2">
                   <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                    @{selectedBot.username} statistikasi
+                    @{selectedBot.username} {tb.checkout.botStats}
                   </p>
                   {[
-                    { label: "3 kun", key: "activeUsers3d" },
-                    { label: "7 kun", key: "activeUsers7d" },
-                    { label: "30 kun", key: "activeUsers30d" },
+                    { label: `3 ${tb.daysSuffix}`, key: "activeUsers3d" },
+                    { label: `7 ${tb.daysSuffix}`, key: "activeUsers7d" },
+                    { label: `30 ${tb.daysSuffix}`, key: "activeUsers30d" },
                   ].map((s) => (
                     <div key={s.key} className="flex justify-between text-xs">
                       <span className="text-muted-foreground flex items-center gap-1">
                         <Clock className="w-3 h-3" /> {s.label}
                       </span>
                       <span className="font-bold">
-                        {(selectedBot[s.key] ?? 0).toLocaleString()} foydalanuvchi
+                        {(selectedBot[s.key] ?? 0).toLocaleString()}{" "}
+                        {tb.usersSuffix}
                       </span>
                     </div>
                   ))}
