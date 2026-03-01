@@ -14,7 +14,6 @@ import {
 import { useAdStore } from "../../store/adStore";
 import adService from "../../services/ad.service";
 import type { AdPerformance } from "../../types/ad.types";
-import LivePreview from "../../components/ad/LivePreview";
 import { useTranslations } from "../../hooks/useTranslations";
 
 const AdDetails = () => {
@@ -130,17 +129,8 @@ const AdDetails = () => {
           </div>
         </div>
 
-        {/* 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* LEFT: Ad Preview */}
-          <div className="lg:col-span-1">
-            <LivePreview />
-          </div>
-
-          {/* RIGHT: Stats & Performance */}
-          <div className="lg:col-span-2 flex flex-col gap-8">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="p-6 bg-card border border-border rounded-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2.5 bg-primary/10 rounded-lg">
@@ -289,8 +279,6 @@ const AdDetails = () => {
             </div>
           </div>
         ) : null}
-        </div>
-        </div>
       </div>
     </div>
   );
