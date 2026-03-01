@@ -8,60 +8,64 @@ import {
   Send,
   Archive,
 } from "lucide-react";
+import { useTranslations } from "../../hooks/useTranslations";
 
 interface AdStatusBadgeProps {
   status: string;
 }
 
 const AdStatusBadge = ({ status }: AdStatusBadgeProps) => {
+  const t = useTranslations();
+  const adStatus = t.adStatus || {};
+
   const statusConfig: Record<string, { label: string; icon: any; className: string }> = {
     DRAFT: {
-      label: "Draft",
+      label: adStatus.DRAFT || "Draft",
       icon: Clock,
       className: "bg-gray-500/10 text-gray-400 border-gray-500/20",
     },
     PENDING_REVIEW: {
-      label: "Pending Review",
+      label: adStatus.PENDING_REVIEW || "Pending Review",
       icon: Send,
       className: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
     },
     SUBMITTED: {
-      label: "Pending Review",
+      label: adStatus.SUBMITTED || "Pending Review",
       icon: Send,
       className: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
     },
     APPROVED: {
-      label: "Approved",
+      label: adStatus.APPROVED || "Approved",
       icon: CheckCircle,
       className: "bg-green-500/10 text-green-400 border-green-500/20",
     },
     REJECTED: {
-      label: "Rejected",
+      label: adStatus.REJECTED || "Rejected",
       icon: XCircle,
       className: "bg-red-500/10 text-red-400 border-red-500/20",
     },
     SCHEDULED: {
-      label: "Scheduled",
+      label: adStatus.SCHEDULED || "Scheduled",
       icon: Clock,
       className: "bg-purple-500/10 text-purple-400 border-purple-500/20",
     },
     RUNNING: {
-      label: "Running",
+      label: adStatus.RUNNING || "Running",
       icon: Play,
       className: "bg-blue-500/10 text-blue-400 border-blue-500/20",
     },
     PAUSED: {
-      label: "Paused",
+      label: adStatus.PAUSED || "Paused",
       icon: Pause,
       className: "bg-orange-500/10 text-orange-400 border-orange-500/20",
     },
     COMPLETED: {
-      label: "Completed",
+      label: adStatus.COMPLETED || "Completed",
       icon: CheckCircle,
       className: "bg-green-500/10 text-green-400 border-green-500/20",
     },
     ARCHIVED: {
-      label: "Archived",
+      label: adStatus.ARCHIVED || "Archived",
       icon: Archive,
       className: "bg-gray-500/10 text-gray-400 border-gray-500/20",
     },

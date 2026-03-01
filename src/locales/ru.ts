@@ -223,6 +223,22 @@ export const ru = {
         toastPaused: "Объявление приостановлено",
         toastResumed: "Объявление возобновлено",
         toastError: "Произошла ошибка",
+        rejectedReason: "Отклонено:",
+        editRequested: "Запрошено редактирование:",
+    },
+
+    // Ad Statuses
+    adStatus: {
+        DRAFT: "Черновик",
+        PENDING_REVIEW: "На проверке",
+        SUBMITTED: "На проверке",
+        APPROVED: "Одобрено",
+        REJECTED: "Отклонено",
+        SCHEDULED: "Запланировано",
+        RUNNING: "Активно",
+        PAUSED: "На паузе",
+        COMPLETED: "Завершено",
+        ARCHIVED: "В архиве",
     },
 
     // Add Bot

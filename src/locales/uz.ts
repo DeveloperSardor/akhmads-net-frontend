@@ -222,6 +222,22 @@ export const uz = {
     toastPaused: "E'lon pauza qilindi",
     toastResumed: "E'lon davom etilmoqda",
     toastError: "Xatolik yuz berdi",
+    rejectedReason: "Rad etildi:",
+    editRequested: "Tahrir so'raldi:",
+  },
+
+  // Ad Statuses
+  adStatus: {
+    DRAFT: "Qoralama",
+    PENDING_REVIEW: "Ko'rib chiqilmoqda",
+    SUBMITTED: "Ko'rib chiqilmoqda",
+    APPROVED: "Tasdiqlangan",
+    REJECTED: "Rad etilgan",
+    SCHEDULED: "Rejalashtirilgan",
+    RUNNING: "Faol",
+    PAUSED: "Pauza qilingan",
+    COMPLETED: "Tukallangan",
+    ARCHIVED: "Arxivlangan",
   },
 
   // Add Bot

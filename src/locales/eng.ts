@@ -221,6 +221,22 @@ export const eng = {
         toastPaused: "Ad paused",
         toastResumed: "Ad resumed",
         toastError: "An error occurred",
+        rejectedReason: "Rejected:",
+        editRequested: "Edit requested:",
+    },
+
+    // Ad Statuses
+    adStatus: {
+        DRAFT: "Draft",
+        PENDING_REVIEW: "Pending Review",
+        SUBMITTED: "Pending Review",
+        APPROVED: "Approved",
+        REJECTED: "Rejected",
+        SCHEDULED: "Scheduled",
+        RUNNING: "Running",
+        PAUSED: "Paused",
+        COMPLETED: "Completed",
+        ARCHIVED: "Archived",
     },
 
     // Add Bot

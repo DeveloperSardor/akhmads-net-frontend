@@ -331,6 +331,8 @@ const AdCard = ({
   onTest,
   onToggleSave,
 }: any) => {
+  const t = useTranslations();
+  const m = t.myAds;
   const progress = (ad.deliveredImpressions / ad.targetImpressions) * 100;
   const [isSaved, setIsSaved] = useState(ad.isSaved || false);
 
@@ -384,7 +386,7 @@ const AdCard = ({
           <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
           <div className="text-xs text-amber-600 dark:text-amber-400 leading-relaxed">
             <span className="font-semibold block mb-0.5">
-              {ad.status === "REJECTED" ? "Rad etildi:" : "Tahrirlash so'raldi:"}
+              {ad.status === "REJECTED" ? m?.rejectedReason || "Rad etildi:" : m?.editRequested || "Tahrirlash so'raldi:"}
             </span>
             {String(ad.rejectionReason).replace(/^Edit requested:\s*/i, "")}
           </div>
