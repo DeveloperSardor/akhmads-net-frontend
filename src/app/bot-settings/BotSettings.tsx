@@ -15,6 +15,8 @@ import { useTranslations } from "../../hooks/useTranslations";
 import { API_BASE_URL } from "../../api/api";
 import axios from "axios";
 import AdSelector from "./components/AdSelector";
+import adService from "../../services/ad.service";
+import type { Ad } from "../../types/ad.types";
 
 const BotSettings = () => {
   const { botId } = useParams<{ botId: string }>();
@@ -49,6 +51,8 @@ const BotSettings = () => {
   const [copiedToken, setCopiedToken] = useState(false);
   const [activeTab, setActiveTab] = useState<"released" | "exceptions">("released");
   const [apiCategories, setApiCategories] = useState<any[]>([]);
+  const [blockedAdsDetails, setBlockedAdsDetails] = useState<Partial<Ad>[]>([]);
+  const [isLoadingExceptions, setIsLoadingExceptions] = useState(false);
 
   const getCatName = (cat: any) => {
     if (t.locale === "uz") return cat.nameUz;
@@ -96,6 +100,35 @@ const BotSettings = () => {
       return () => clearTimeout(timer);
     }
   }, [successMessage, clearSuccess]);
+
+  useEffect(() => {
+    if (settings.blockedAdIds.length > 0) {
+      const fetchDetails = async () => {
+        setIsLoadingExceptions(true);
+        try {
+          const details = await Promise.all(
+            settings.blockedAdIds.map(async (id) => {
+              try {
+                const res = await adService.getAdById(id);
+                return res.data.ad;
+              } catch (err) {
+                console.error(`Failed to fetch ad ${id}`, err);
+                return null;
+              }
+            })
+          );
+          setBlockedAdsDetails(details.filter((d): d is Ad => d !== null));
+        } catch (err) {
+          console.error("Failed to fetch blocked ads details", err);
+        } finally {
+          setIsLoadingExceptions(false);
+        }
+      };
+      fetchDetails();
+    } else {
+      setBlockedAdsDetails([]);
+    }
+  }, [settings.blockedAdIds]);
 
   const handleCategoryToggle = (categoryId: string) => {
     setSettings((prev) => ({
@@ -535,8 +568,32 @@ async Task<bool> ShowAd(long chatId) {
                         </div>
                       )
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-gray-500">
-                           <p className="text-sm font-medium">{bs?.noExceptions ?? "No exceptions configured"}</p>
+                        <div className="space-y-3">
+                          {isLoadingExceptions ? (
+                            <div className="flex items-center justify-center p-8">
+                               <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+                            </div>
+                          ) : blockedAdsDetails.length > 0 ? (
+                            blockedAdsDetails.map((ad) => (
+                              <div key={ad.id} className="bg-[#0a0a0a] border border-[#222] rounded-xl p-4 flex gap-3">
+                                 {ad.mediaUrl ? (
+                                   <img src={ad.mediaUrl} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />
+                                 ) : (
+                                   <div className="w-12 h-12 bg-[#1a1a1a] border border-[#333] rounded-xl flex items-center justify-center text-gray-500 shrink-0 font-bold">
+                                      {ad.title?.[0]?.toUpperCase() || "A"}
+                                   </div>
+                                 )}
+                                 <div className="min-w-0 flex-1">
+                                    <h4 className="text-sm font-semibold text-white truncate mb-1">{ad.title || "Ad Without Title"}</h4>
+                                    <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">{ad.text || "No description provided"}</p>
+                                 </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-gray-500 py-10">
+                               <p className="text-sm font-medium">{bs?.noExceptions ?? "No exceptions configured"}</p>
+                            </div>
+                          )}
                         </div>
                     )}
                  </div>
