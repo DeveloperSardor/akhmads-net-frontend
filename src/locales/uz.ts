@@ -273,10 +273,16 @@ export const uz = {
       tableHeaders: {
         bot: "Bot",
         performance: "Ko'rsatkichlar",
-        members: "A'zolar",
         earnings: "Daromad",
         status: "Holat",
         actions: "Amallar",
+      },
+      statusText: {
+        ACTIVE: "Faol",
+        PENDING: "Kutilmoqda",
+        REJECTED: "Rad etilgan",
+        BANNED: "Bloklangan",
+        PAUSED: "To'xtatilgan"
       },
       views: "ko'rishlar",
       active: "faol",

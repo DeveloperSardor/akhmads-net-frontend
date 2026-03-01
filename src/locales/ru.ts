@@ -274,10 +274,16 @@ export const ru = {
             tableHeaders: {
                 bot: "Бот",
                 performance: "Показатели",
-                members: "Участники",
                 earnings: "Доход",
                 status: "Статус",
                 actions: "Действия",
+            },
+            statusText: {
+                ACTIVE: "Активен",
+                PENDING: "Ожидает",
+                REJECTED: "Отклонен",
+                BANNED: "Заблокирован",
+                PAUSED: "Приостановлен"
             },
             views: "просмотров",
             active: "активных",
