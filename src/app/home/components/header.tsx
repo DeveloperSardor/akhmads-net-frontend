@@ -8,7 +8,7 @@ import { useUserStore } from "../../../store/userStore";
 import { useEffect } from "react";
 import { useTranslations } from "../../../hooks/useTranslations";
 
-const GAP = "w-24";
+
 
 const Header = () => {
   const navigate = useNavigate();
@@ -51,52 +51,50 @@ const Header = () => {
           {isAuthenticated ? t.homeHeader?.ctaLaunch : t.homeHeader?.ctaStart}
         </button>
 
-        {/* === SEAMLESS MARQUEE WITH GAP === */}
+        {/* === SEAMLESS MARQUEE === */}
         <div className="mt-20 w-full">
-          <p className="text-xs uppercase tracking-widest text-white/30 mb-6">
+          <p className="text-xs uppercase tracking-widest text-white/30 mb-6 font-medium">
             Trusted by
           </p>
           <div className="relative w-full overflow-hidden">
             {/* Left fade */}
-            <div className="pointer-events-none absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-black to-transparent" />
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-32 z-10 bg-gradient-to-r from-black via-black/80 to-transparent" />
             {/* Right fade */}
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l from-black to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-32 z-10 bg-gradient-to-l from-black via-black/80 to-transparent" />
 
-            <div className="relative flex w-max animate-marquee">
+            <div className="relative flex w-max animate-marquee py-4">
               {/* Track A */}
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-8 px-4">
                 {brandIcons.map((icon, i) => (
                   <div
                     key={`a-${i}`}
-                    className="flex items-center justify-center px-5 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-default"
+                    className="flex items-center justify-center px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500 cursor-default group"
                   >
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      className="h-7 md:h-8 opacity-70 hover:opacity-100 transition-opacity duration-300 select-none"
+                      className="h-8 md:h-10 w-auto object-contain opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 select-none brightness-0 invert"
                       draggable={false}
                     />
                   </div>
                 ))}
-                <div className={GAP} />
               </div>
 
               {/* Track B (clone) */}
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-8 px-4">
                 {brandIcons.map((icon, i) => (
                   <div
                     key={`b-${i}`}
-                    className="flex items-center justify-center px-5 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-default"
+                    className="flex items-center justify-center px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500 cursor-default group"
                   >
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      className="h-7 md:h-8 opacity-70 hover:opacity-100 transition-opacity duration-300 select-none"
+                      className="h-8 md:h-10 w-auto object-contain opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 select-none brightness-0 invert"
                       draggable={false}
                     />
                   </div>
                 ))}
-                <div className={GAP} />
               </div>
             </div>
           </div>
@@ -115,7 +113,7 @@ const Header = () => {
         }
 
         .animate-marquee {
-          animation: marquee 32s linear infinite;
+          animation: marquee 40s linear infinite;
         }
 
         .animate-marquee:hover {
