@@ -267,6 +267,10 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
         else if (Array.isArray(response?.ads?.ads)) fetchedAds = response.ads.ads;
       }
 
+      if (params?.saved) {
+        fetchedAds = fetchedAds.map(ad => ({ ...ad, isSaved: true }));
+      }
+
       set({
         ads: fetchedAds,
         isLoading: false,
