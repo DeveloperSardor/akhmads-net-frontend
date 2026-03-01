@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Select, Spin } from "antd";
 import {
@@ -14,12 +14,10 @@ import {
   Radio,
   AlertCircle,
   CheckCircle2,
-  Smartphone,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import apiClient from "../../api/api";
 import { useTranslations } from "../../hooks/useTranslations";
-import { useUserStore } from "../../store/userStore";
 
 const { Option } = Select;
 
@@ -43,14 +41,11 @@ interface Button {
   color: BtnColor;
 }
 
-type ContentTab = "direct" | "telegram";
-
 const BroadcastAd: React.FC = () => {
   const navigate = useNavigate();
   const { lang } = useParams();
   const t = useTranslations();
   const tb = t.broadcastAd;
-  const user = useUserStore((s) => s.profile);
 
   // ── Data
   const [publicBots, setPublicBots] = useState<any[]>([]);
@@ -66,9 +61,6 @@ const BroadcastAd: React.FC = () => {
   const [contentType, setContentType] = useState<"TEXT" | "HTML">("TEXT");
   const [text, setText] = useState("");
   const [buttons, setButtons] = useState<Button[]>([]);
-  const [contentTab, setContentTab] = useState<ContentTab>("direct");
-  const [telegramPolling, setTelegramPolling] = useState(false);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── Submit
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -107,38 +99,6 @@ const BroadcastAd: React.FC = () => {
     setTargetCount(max > 0 ? Math.min(targetCount || max, max) : 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBotId, activeDays]);
-
-  // ── Telegram polling cleanup
-  useEffect(() => {
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
-  }, []);
-
-  const startTelegramPolling = () => {
-    setTelegramPolling(true);
-    pollRef.current = setInterval(async () => {
-      try {
-        const res = await apiClient.get("/ads/broadcast-draft");
-        const draft = res.data?.data;
-        if (draft?.found !== false && draft) {
-          clearInterval(pollRef.current!);
-          setTelegramPolling(false);
-          if (draft.text) setText(draft.text);
-          if (draft.contentType) setContentType(draft.contentType === "HTML" ? "HTML" : "TEXT");
-          setContentTab("direct");
-          toast.success(tb.telegramTab.received);
-        }
-      } catch {
-        // ignore poll errors
-      }
-    }, 5000);
-  };
-
-  const stopTelegramPolling = () => {
-    if (pollRef.current) clearInterval(pollRef.current);
-    setTelegramPolling(false);
-  };
 
   const filteredBots = useMemo(
     () =>
@@ -199,9 +159,6 @@ const BroadcastAd: React.FC = () => {
     red: "bg-red-500",
     default: "bg-muted-foreground",
   };
-
-  const platformBotUsername = import.meta.env.VITE_BOT_USERNAME || "akhmadsbot";
-  const deepLink = `https://t.me/${platformBotUsername}?start=bcast_${user?.id || ""}`;
 
   return (
     <div className="min-h-screen bg-background text-foreground pt-20 pb-16 px-4 sm:px-6">
@@ -474,116 +431,62 @@ const BroadcastAd: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Input method tabs */}
-                <div className="flex gap-2">
-                  {(["direct", "telegram"] as ContentTab[]).map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => {
-                        setContentTab(tab);
-                        if (tab === "telegram") startTelegramPolling();
-                        else stopTelegramPolling();
-                      }}
-                      className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
-                        contentTab === tab
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border bg-background text-muted-foreground hover:border-primary/30"
-                      }`}
-                    >
-                      {tab === "telegram" && (
-                        <Smartphone className="w-3.5 h-3.5" />
-                      )}
-                      {tab === "direct"
-                        ? tb.telegramTab.directTitle
-                        : tb.telegramTab.telegramTitle}
-                    </button>
-                  ))}
+                {/* Format */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    {tb.messageFormat}
+                  </label>
+                  <div className="flex gap-2">
+                    {(["TEXT", "HTML"] as const).map((f) => (
+                      <button
+                        key={f}
+                        onClick={() => setContentType(f)}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
+                          contentType === f
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-background text-muted-foreground hover:border-primary/30"
+                        }`}
+                      >
+                        {f === "TEXT" ? tb.plainText : tb.htmlFormat}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Telegram tab */}
-                {contentTab === "telegram" && (
-                  <div className="p-5 bg-blue-500/5 border border-blue-500/20 rounded-xl space-y-4">
-                    <p className="text-sm text-muted-foreground">
-                      {tb.telegramTab.hint}
-                    </p>
-                    <a
-                      href={deepLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold text-sm transition-all"
+                {/* Text */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      {tb.messageText}
+                    </label>
+                    <span
+                      className={`text-xs font-bold ${
+                        text.length > 4000
+                          ? "text-red-400"
+                          : "text-muted-foreground"
+                      }`}
                     >
-                      {tb.telegramTab.openInBot}
-                    </a>
-                    {telegramPolling && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Spin size="small" />
-                        {tb.telegramTab.waiting}
-                      </div>
-                    )}
+                      {text.length} / 4096
+                    </span>
                   </div>
-                )}
-
-                {/* Direct input */}
-                {contentTab === "direct" && (
-                  <>
-                    {/* Format */}
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        {tb.messageFormat}
-                      </label>
-                      <div className="flex gap-2">
-                        {(["TEXT", "HTML"] as const).map((f) => (
-                          <button
-                            key={f}
-                            onClick={() => setContentType(f)}
-                            className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
-                              contentType === f
-                                ? "border-primary bg-primary/10 text-primary"
-                                : "border-border bg-background text-muted-foreground hover:border-primary/30"
-                            }`}
-                          >
-                            {f === "TEXT" ? tb.plainText : tb.htmlFormat}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Text */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          {tb.messageText}
-                        </label>
-                        <span
-                          className={`text-xs font-bold ${
-                            text.length > 4000
-                              ? "text-red-400"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {text.length} / 4096
-                        </span>
-                      </div>
-                      <textarea
-                        rows={8}
-                        maxLength={4096}
-                        placeholder={
-                          contentType === "HTML"
-                            ? "<b>Salom!</b>\n\nMahsulotimizni ko'ring 👇"
-                            : "Salom! Yangi mahsulotimiz chiqdi..."
-                        }
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground/50 text-sm leading-relaxed resize-none focus:border-primary outline-none transition-all font-mono"
-                      />
-                      {text.trim().length < 5 && text.length > 0 && (
-                        <p className="text-xs text-red-400">
-                          {tb.minCharsError}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                )}
+                  <textarea
+                    rows={8}
+                    maxLength={4096}
+                    placeholder={
+                      contentType === "HTML"
+                        ? "<b>Salom!</b>\n\nMahsulotimizni ko'ring 👇"
+                        : "Salom! Yangi mahsulotimiz chiqdi..."
+                    }
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground/50 text-sm leading-relaxed resize-none focus:border-primary outline-none transition-all font-mono"
+                  />
+                  {text.trim().length < 5 && text.length > 0 && (
+                    <p className="text-xs text-red-400">
+                      {tb.minCharsError}
+                    </p>
+                  )}
+                </div>
 
                 {/* Buttons — always visible */}
                 <div className="space-y-3">
