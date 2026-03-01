@@ -428,6 +428,26 @@ export const ru = {
             cancel: "Отмена",
             save: "Сохранить",
         },
+        loading: "Загрузка...",
+close: "Закрыть",
+budget: "Бюджет",
+latestImpressions: "Последние показы",
+latestClicks: "Последние клики",
+activeUsers: "Последние активные пользователи",
+noImpressions: "Показов пока нет",
+noClicks: "Кликов пока нет",
+noUsers: "Пользователей пока нет",
+exporting: "Подготовка...",
+exportBtn: "Excel (CSV)",
+exportEmpty: "Нет данных для экспорта",
+exportError: "Ошибка при экспорте",
+tableUser: "Пользователь",
+tableCountry: "Страна",
+tableTime: "Время",
+tableLanguage: "Язык",
+tableLastSeen: "Последний визит",
+tableBot: "Бот",
+tableDevice: "Устройство/IP",
     },
 
     // Launch Ad
@@ -499,6 +519,8 @@ export const ru = {
         summaryButtons: "кнопки",
         addViaBot: "Добавить через Telegram бот",
         addViaBotHint: "Создайте рекламу, просто отправив сообщение боту (Текст, Фото, Видео)",
+        sendPreviewTitle: "Отправьте себе тестовое сообщение",
+sendPreviewDesc: "Проверьте, как выглядит реклама через бота",
     },
 
     // Live Preview
@@ -701,6 +723,33 @@ export const ru = {
         description: "Отправляйте массовые сообщения всем активным пользователям бота. Высокая эффективность и мгновенная доставка.",
         button: "Начать",
     },
+
+    budgetPricing: {
+        walletBalance: "Баланс кошелька",
+        insufficientBalanceText1: "Недостаточно средств. Вам нужно еще",
+        insufficientBalanceText2: "для запуска кампании.",
+        addFunds: "Пополнить",
+        costBreakdown: "Распределение расходов",
+        baseCampaign: "Базовая кампания",
+        per1k: "за 1000 показов",
+        targetImpressions: "Целевые показы",
+        expectedReach: "Ожидаемый охват",
+        platformFee: "Комиссия платформы",
+        serviceCharge: "Плата за услуги",
+        totalInvestment: "Общие инвестиции",
+        campaignCost: "Стоимость кампании",
+        calculatingPricing: "Рассчитываем стоимость...",
+        whatHappensNext: "Что дальше?",
+        submitWait: "Отправка: Реклама уходит на модерацию",
+        reviewText: "Проверка: Мы проверяем контент (обычно <24ч)",
+        approvedText: "Одобрено: Кампания запускается автоматически",
+        paymentText: "Оплата: Списание только после одобрения",
+        submitting: "Отправка...",
+        savingAndResending: "Сохранение и повторная отправка...",
+        submitForReview: "Отправить на модерацию",
+        saveAndResend: "Сохранить и отправить снова",
+        fundsReservedNote: "Средства будут зарезервированы. Списание произойдет только после одобрения."
+    }
 };
 
 

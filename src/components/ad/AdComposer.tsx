@@ -245,8 +245,9 @@ const AdComposer = () => {
         {/* Send Preview Section */}
         <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
            <div className="space-y-1">
-              <h4 className="text-xs font-bold text-foreground">O'zingizga sinov xabarini yuboring</h4>
-              <p className="text-[10px] text-muted-foreground">Bot orqali reklama qanday ko'rinishini tekshiring</p>
+             <h4 className="text-xs font-bold text-foreground">{ac?.sendPreviewTitle ?? "Send a test message to yourself"}</h4>
+<p className="text-[10px] text-muted-foreground">{ac?.sendPreviewDesc ?? "Check how the ad looks via the bot"}</p>
+
            </div>
            <button
             onClick={handleSendPreview}

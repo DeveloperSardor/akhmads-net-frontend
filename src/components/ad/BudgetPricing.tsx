@@ -15,6 +15,7 @@ import {
 import { useAdStore } from "../../store/adStore";
 import walletService from "../../services/wallet.service";
 import { useNavigate } from "react-router-dom";
+import { useTranslations } from "../../hooks/useTranslations";
 
 const BudgetPricing = () => {
   const navigate = useNavigate();
@@ -29,10 +30,9 @@ const BudgetPricing = () => {
     editAdId,
     updateAndSubmitAd,
   } = useAdStore();
+  const t = useTranslations();
+  const bp = t.budgetPricing;
 
-  const [promoInput, setPromoInput] = useState("");
-  const [promoApplied, setPromoApplied] = useState(false);
-  const [promoError, setPromoError] = useState("");
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [loadingWallet, setLoadingWallet] = useState(true);
 
@@ -50,23 +50,6 @@ const BudgetPricing = () => {
     } finally {
       setLoadingWallet(false);
     }
-  };
-
-  const handleApplyPromo = () => {
-    if (!promoInput.trim()) {
-      setPromoError("Please enter a promo code");
-      return;
-    }
-
-    if (promoInput.trim().length < 4) {
-      setPromoError("Invalid promo code");
-      return;
-    }
-
-    updateFormData({ promoCode: promoInput });
-    setPromoApplied(true);
-    setPromoError("");
-    fetchPricingEstimate();
   };
 
   const handleLaunch = async () => {
@@ -100,7 +83,7 @@ const BudgetPricing = () => {
           <div className="flex items-center gap-2">
             <Wallet className="w-5 h-5 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">
-              Wallet Balance
+              {bp?.walletBalance ?? "Wallet Balance"}
             </h3>
           </div>
           {loadingWallet ? (
@@ -116,14 +99,13 @@ const BudgetPricing = () => {
           <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
             <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
             <div className="text-xs text-destructive">
-              <strong>Insufficient balance.</strong> You need{" "}
-              {formatCurrency(totalCost - walletBalance)} more to launch this
-              campaign.
+              <strong>{bp?.insufficientBalanceText1 ?? "Insufficient balance. You need"} </strong> 
+              {formatCurrency(totalCost - walletBalance)} {bp?.insufficientBalanceText2 ?? "more to launch this campaign."}
               <button
                 onClick={() => navigate("/wallet")}
                 className="ml-2 underline font-semibold hover:no-underline"
               >
-                Add Funds
+                {bp?.addFunds ?? "Add Funds"}
               </button>
             </div>
           </div>
@@ -135,7 +117,7 @@ const BudgetPricing = () => {
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-4 h-4 text-muted-foreground" />
           <label className="text-sm font-semibold text-foreground">
-            Cost Breakdown
+            {bp?.costBreakdown ?? "Cost Breakdown"}
           </label>
         </div>
 
@@ -149,10 +131,10 @@ const BudgetPricing = () => {
                 </div>
                 <div>
                   <div className="text-sm font-medium text-foreground">
-                    Base Campaign
+                    {bp?.baseCampaign ?? "Base Campaign"}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    ${pricingEstimate.pricing.baseCPM} per 1K impressions
+                    ${pricingEstimate.pricing.baseCPM} {bp?.per1k ?? "per 1K impressions"}
                   </div>
                 </div>
               </div>
@@ -173,10 +155,10 @@ const BudgetPricing = () => {
                 </div>
                 <div>
                   <div className="text-sm font-medium text-foreground">
-                    Target Impressions
+                    {bp?.targetImpressions ?? "Target Impressions"}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Expected reach
+                    {bp?.expectedReach ?? "Expected reach"}
                   </div>
                 </div>
               </div>
@@ -193,10 +175,10 @@ const BudgetPricing = () => {
                 </div>
                 <div>
                   <div className="text-sm font-medium text-foreground">
-                    Platform Fee
+                    {bp?.platformFee ?? "Platform Fee"}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Service charge
+                    {bp?.serviceCharge ?? "Service charge"}
                   </div>
                 </div>
               </div>
@@ -205,37 +187,15 @@ const BudgetPricing = () => {
               </span>
             </div>
 
-            {/* Promo Discount */}
-            {pricingEstimate.pricing.discount > 0 && (
-              <div className="flex items-center justify-between p-4 bg-green-500/5 border border-green-500/20 rounded-xl">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-500/10 rounded-lg">
-                    <Tag className="w-4 h-4 text-green-500" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-foreground">
-                      Promo Discount
-                    </div>
-                    <div className="text-xs text-muted-foreground font-mono">
-                      {formData.promoCode}
-                    </div>
-                  </div>
-                </div>
-                <span className="text-sm font-semibold text-green-600 tabular-nums">
-                  -{formatCurrency(pricingEstimate.pricing.discount)}
-                </span>
-              </div>
-            )}
-
             {/* Total */}
             <div className="p-6 bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/20 rounded-xl">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">
-                    Total Investment
+                    {bp?.totalInvestment ?? "Total Investment"}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Campaign cost
+                    {bp?.campaignCost ?? "Campaign cost"}
                   </div>
                 </div>
                 <div className="text-4xl font-bold text-primary tabular-nums">
@@ -248,45 +208,9 @@ const BudgetPricing = () => {
           <div className="p-16 bg-card border border-border rounded-xl text-center">
             <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-3" />
             <p className="text-sm text-muted-foreground">
-              Calculating pricing...
+              {bp?.calculatingPricing ?? "Calculating pricing..."}
             </p>
           </div>
-        )}
-      </div>
-
-      {/* Promo Code */}
-      <div>
-        <label className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
-          <Tag className="w-4 h-4 text-muted-foreground" />
-          Promo Code (Optional)
-        </label>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={promoInput}
-            onChange={(e) => {
-              setPromoInput(e.target.value.toUpperCase());
-              setPromoError("");
-              setPromoApplied(false);
-            }}
-            placeholder="ENTER CODE"
-            className="flex-1 px-4 py-3 bg-input border border-border focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-sm font-mono text-foreground placeholder:text-muted-foreground transition-all outline-none"
-          />
-          <button
-            onClick={handleApplyPromo}
-            disabled={!promoInput.trim()}
-            className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-          >
-            Apply
-          </button>
-        </div>
-        {promoError && (
-          <p className="text-xs text-destructive mt-2">{promoError}</p>
-        )}
-        {promoApplied && (
-          <p className="text-xs text-green-600 mt-2">
-            ✓ Promo code applied! Recalculating...
-          </p>
         )}
       </div>
 
@@ -296,26 +220,26 @@ const BudgetPricing = () => {
           <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-2">
-              What Happens Next?
+              {bp?.whatHappensNext ?? "What Happens Next?"}
             </h4>
             <ul className="space-y-1.5 text-xs text-muted-foreground">
               <li>
-                • <span className="font-semibold text-foreground">Submit:</span>{" "}
-                Your ad goes to moderation
+                • <span className="font-semibold text-foreground">{bp?.submitWait ? bp.submitWait.split(':')[0] + ':' : 'Submit:'}</span>{" "}
+                {bp?.submitWait ? bp.submitWait.split(':')[1] : 'Your ad goes to moderation'}
               </li>
               <li>
-                • <span className="font-semibold text-foreground">Review:</span>{" "}
-                We check content (usually &lt;24h)
-              </li>
-              <li>
-                •{" "}
-                <span className="font-semibold text-foreground">Approved:</span>{" "}
-                Campaign goes live automatically
+                • <span className="font-semibold text-foreground">{bp?.reviewText ? bp.reviewText.split(':')[0] + ':' : 'Review:'}</span>{" "}
+                {bp?.reviewText ? bp.reviewText.split(':')[1] : 'We check content (usually <24h)'}
               </li>
               <li>
                 •{" "}
-                <span className="font-semibold text-foreground">Payment:</span>{" "}
-                Charged only after approval
+                <span className="font-semibold text-foreground">{bp?.approvedText ? bp.approvedText.split(':')[0] + ':' : 'Approved:'}</span>{" "}
+                {bp?.approvedText ? bp.approvedText.split(':')[1] : 'Campaign goes live automatically'}
+              </li>
+              <li>
+                •{" "}
+                <span className="font-semibold text-foreground">{bp?.paymentText ? bp.paymentText.split(':')[0] + ':' : 'Payment:'}</span>{" "}
+                {bp?.paymentText ? bp.paymentText.split(':')[1] : 'Charged only after approval'}
               </li>
             </ul>
           </div>
@@ -333,19 +257,18 @@ const BudgetPricing = () => {
         {isSubmitting ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>{editAdId ? "Saqlanmoqda..." : "Submitting for Review..."}</span>
+            <span>{editAdId ? (bp?.savingAndResending ?? "Saving and resending...") : (bp?.submitting ?? "Submitting...")}</span>
           </>
         ) : (
           <>
             <Rocket className="w-5 h-5" />
-            <span>{editAdId ? "Saqlash va qayta yuborish" : "Submit for Review"}</span>
+            <span>{editAdId ? (bp?.saveAndResend ?? "Save and resend") : (bp?.submitForReview ?? "Submit for Review")}</span>
           </>
         )}
       </button>
 
       <p className="text-xs text-center text-muted-foreground">
-        Funds will be reserved from your wallet. You'll be charged only after
-        approval.
+        {bp?.fundsReservedNote ?? "Funds will be reserved from your wallet. You'll be charged only after approval."}
       </p>
     </div>
   );
