@@ -20,6 +20,7 @@ import {
   Send,
   Pencil,
   AlertTriangle,
+  Radio,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAdStore } from "../../store/adStore";
@@ -28,8 +29,9 @@ import AdCardSkeleton from "../../components/ad/AdCardSkeleton";
 import ScheduleModal from "../../components/ad/ScheduleModal";
 import TestBotModal from "../../components/ad/TestBotModal";
 import { useTranslations } from "../../hooks/useTranslations";
+import adService from "../../services/ad.service";
 
-type TabType = "all" | "active" | "saved" | "archived" | "scheduled";
+type TabType = "all" | "active" | "saved" | "archived" | "scheduled" | "broadcasts";
 type StatusFilter = "all" | "DRAFT" | "SUBMITTED" | "RUNNING" | "PAUSED" | "COMPLETED";
 
 const MyAds = () => {
@@ -59,12 +61,27 @@ const MyAds = () => {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showTestModal, setShowTestModal] = useState(false);
   const [selectedAd, setSelectedAd] = useState<any>(null);
+  const [broadcasts, setBroadcasts] = useState<any[]>([]);
+  const [broadcastsLoading, setBroadcastsLoading] = useState(false);
 
   useEffect(() => {
     loadAds();
   }, [activeTab, statusFilter]);
 
   const loadAds = async () => {
+    if (activeTab === "broadcasts") {
+      setBroadcastsLoading(true);
+      try {
+        const res = await adService.getMyBroadcasts({ limit: 50 });
+        setBroadcasts(res?.data?.broadcasts ?? (res as any)?.broadcasts ?? []);
+      } catch {
+        setBroadcasts([]);
+      } finally {
+        setBroadcastsLoading(false);
+      }
+      return;
+    }
+
     const params: any = {};
 
     if (statusFilter !== "all") {
@@ -181,6 +198,7 @@ const MyAds = () => {
     { id: "saved", label: m?.tabs.saved ?? "Saved", icon: Heart },
     { id: "scheduled", label: m?.tabs.scheduled ?? "Scheduled", icon: Clock },
     { id: "archived", label: m?.tabs.archived ?? "Archived", icon: Archive },
+    { id: "broadcasts", label: m?.tabs.broadcasts ?? "Broadcasts", icon: Radio },
   ];
 
   const statusFilters = [
@@ -232,37 +250,46 @@ const MyAds = () => {
           })}
         </div>
 
-        {/* Search & Filter */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={m?.searchPlaceholder}
-              className="w-full pl-9 sm:pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
-            />
-          </div>
+        {/* Search & Filter — hidden for broadcasts tab */}
+        {activeTab !== "broadcasts" && (
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={m?.searchPlaceholder}
+                className="w-full pl-9 sm:pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+              />
+            </div>
 
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-              className="w-full sm:w-auto pl-9 sm:pl-10 pr-8 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer"
-            >
-              {statusFilters.map((filter) => (
-                <option key={filter.value} value={filter.value}>
-                  {filter.label}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+                className="w-full sm:w-auto pl-9 sm:pl-10 pr-8 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer"
+              >
+                {statusFilters.map((filter) => (
+                  <option key={filter.value} value={filter.value}>
+                    {filter.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Content */}
-        {isLoading ? (
+        {/* Broadcasts Tab Content */}
+        {activeTab === "broadcasts" ? (
+          <BroadcastsList
+            broadcasts={broadcasts}
+            loading={broadcastsLoading}
+            onNew={() => navigate(`/${lang}/broadcasts/new`)}
+            lang={lang}
+          />
+        ) : isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <AdCardSkeleton key={i} />
@@ -336,6 +363,112 @@ const MyAds = () => {
   );
 };
 
+// ── Broadcasts status badge ───────────────────────────────────────────────────
+const broadcastStatusMap: Record<string, { label: string; color: string }> = {
+  PENDING:   { label: "Kutilmoqda",   color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" },
+  APPROVED:  { label: "Tasdiqlandi",  color: "text-purple-400 bg-purple-400/10 border-purple-400/20" },
+  RUNNING:   { label: "Yuborilmoqda", color: "text-cyan-400 bg-cyan-400/10 border-cyan-400/20" },
+  COMPLETED: { label: "Yakunlandi",   color: "text-green-400 bg-green-400/10 border-green-400/20" },
+  PAUSED:    { label: "To'xtatildi",  color: "text-gray-400 bg-gray-400/10 border-gray-400/20" },
+  FAILED:    { label: "Xatolik",      color: "text-red-400 bg-red-400/10 border-red-400/20" },
+};
+
+const BroadcastsList = ({ broadcasts, loading, onNew, lang }: { broadcasts: any[]; loading: boolean; onNew: () => void; lang?: string }) => {
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3].map(i => <AdCardSkeleton key={i} />)}
+      </div>
+    );
+  }
+
+  if (broadcasts.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
+          <Radio className="w-10 h-10 text-muted-foreground" />
+        </div>
+        <h3 className="text-xl font-semibold text-foreground mb-2">Broadcast topilmadi</h3>
+        <p className="text-muted-foreground mb-6">Hali birorta broadcast kampaniyasi yaratilmagan</p>
+        <button
+          onClick={onNew}
+          className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all"
+        >
+          Broadcast yaratish
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={onNew}
+          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold text-sm transition-all"
+        >
+          <Plus className="w-4 h-4" />
+          Yangi Broadcast
+        </button>
+      </div>
+      {broadcasts.map((b: any) => {
+        const st = broadcastStatusMap[b.status] ?? { label: b.status, color: "text-gray-400 bg-gray-400/10 border-gray-400/20" };
+        const sentPct = b.targetCount > 0 ? Math.round((b.sentCount ?? 0) / b.targetCount * 100) : 0;
+        return (
+          <div key={b.id} className="bg-card border border-border rounded-xl p-4 sm:p-5 hover:border-primary/30 transition-all">
+            <div className="flex items-start justify-between gap-4 mb-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-foreground font-medium line-clamp-2">{b.text?.slice(0, 100) || "—"}</p>
+                {b.bot?.username && (
+                  <p className="text-xs text-muted-foreground mt-1">Bot: @{b.bot.username}</p>
+                )}
+              </div>
+              <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${st.color}`}>
+                {st.label}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 text-center mb-3">
+              <div className="bg-background/50 rounded-lg p-2">
+                <div className="text-sm font-bold text-foreground">{(b.targetCount ?? 0).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground">Maqsad</div>
+              </div>
+              <div className="bg-background/50 rounded-lg p-2">
+                <div className="text-sm font-bold text-green-400">{(b.sentCount ?? 0).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground">Yuborildi</div>
+              </div>
+              <div className="bg-background/50 rounded-lg p-2">
+                <div className="text-sm font-bold text-red-400">{(b.failedCount ?? 0).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground">Xatolik</div>
+              </div>
+            </div>
+
+            {b.status === "RUNNING" || b.status === "COMPLETED" ? (
+              <div className="mb-3">
+                <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                  <span>Progress</span>
+                  <span>{sentPct}%</span>
+                </div>
+                <div className="h-1.5 bg-border rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-primary to-indigo-500 rounded-full transition-all"
+                    style={{ width: `${sentPct}%` }}
+                  />
+                </div>
+              </div>
+            ) : null}
+
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>${parseFloat(b.totalCost ?? 0).toFixed(2)} sarflandi</span>
+              <span>{b.createdAt ? new Date(b.createdAt).toLocaleDateString("uz-UZ") : "—"}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const AdCard = ({
   ad,
   actions,
@@ -384,13 +517,13 @@ const AdCard = ({
         <div className="flex items-center gap-2 ml-3">
           <button
             onClick={handleToggleSave}
-            className={`p-2 rounded-lg transition-all ${isSaved
-              ? "bg-red-500/20 text-red-500 hover:bg-red-500/30"
+            className={`p-2.5 rounded-xl transition-all duration-300 transform active:scale-90 ${isSaved
+              ? "bg-red-500 text-white shadow-lg shadow-red-500/40 rotate-[360deg]"
               : "bg-card hover:bg-muted border border-border text-muted-foreground hover:text-red-500"
               }`}
             title={isSaved ? (actions?.unsave ?? "Unsave") : (actions?.save ?? "Save")}
           >
-            <Heart className={`w-5 h-5 transition-all ${isSaved ? "fill-red-500 text-red-500" : ""}`} />
+            <Heart className={`w-5 h-5 transition-all ${isSaved ? "fill-white text-white" : ""}`} />
           </button>
 
           {ad.mediaUrl && (

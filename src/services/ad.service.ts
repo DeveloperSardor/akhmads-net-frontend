@@ -243,6 +243,31 @@ class AdService {
     const response = await apiClient.get('/ads/public/search', { params: { q: query } });
     return response.data;
   }
+
+  /**
+   * Get my broadcast campaigns
+   */
+  async getMyBroadcasts(params?: { limit?: number; offset?: number }): Promise<{ success: boolean; data: { broadcasts: any[]; total: number } }> {
+    const response = await apiClient.get('/ads/broadcasts', { params });
+    return response.data;
+  }
+
+  /**
+   * Create/launch a broadcast campaign
+   */
+  async createBroadcast(data: {
+    botId: string;
+    contentType: string;
+    text: string;
+    targetCount: number;
+    activeDays?: number;
+    buttons?: { text: string; url: string }[];
+    mediaUrl?: string;
+    mediaType?: string;
+  }): Promise<{ success: boolean; data: { broadcast: any } }> {
+    const response = await apiClient.post('/ads/broadcasts', data);
+    return response.data;
+  }
 }
 
 export default new AdService();
