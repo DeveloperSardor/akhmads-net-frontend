@@ -263,7 +263,7 @@ const Navbar = () => {
                   {!isAuthenticated ? (
                     <button
                       onClick={() => navigate(`/${lang}/login`)}
-                      className="flex items-center gap-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 text-sm font-medium transition"
+                      className="flex items-center gap-1.5 xl:gap-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white px-4 xl:px-6 py-2 text-[12.5px] xl:text-sm font-medium transition active:scale-95 shadow-[0_4px_15px_rgba(147,51,234,0.3)]"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -276,7 +276,7 @@ const Navbar = () => {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => navigate(`/${lang}/wallet`)}
-                          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-2 text-sm text-white/80 hover:text-white transition"
+                          className="flex items-center gap-1 xl:gap-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 px-2.5 xl:px-4 py-2 text-[12.5px] xl:text-sm text-white/80 hover:text-white transition active:scale-95"
                         >
                           <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
@@ -308,7 +308,7 @@ const Navbar = () => {
                       {(user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
                         <button
                           onClick={() => navigate(`/${lang}/launch-ad`)}
-                          className="flex items-center gap-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 text-sm font-medium transition"
+                          className="flex items-center gap-1.5 xl:gap-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white px-4 xl:px-6 py-2 text-[12.5px] xl:text-sm font-medium transition active:scale-95 shadow-[0_4px_15px_rgba(147,51,234,0.3)]"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
