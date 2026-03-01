@@ -257,10 +257,10 @@ async Task<bool> ShowAd(long chatId) {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pb-20 font-sans">
+    <div className="min-h-screen bg-[#050505] text-white pt-32 pb-20 font-sans">
       
-      {/* Top Navigation Bar */}
-      <div className="bg-[#0a0a0a] border-b border-[#1f1f1f] sticky top-0 z-30">
+      {/* Top Navigation Bar — Adjusted for fixed main Navbar */}
+      <div className="bg-[#0a0a0a] border-b border-[#1f1f1f] sticky top-[104px] z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}

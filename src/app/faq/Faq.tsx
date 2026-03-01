@@ -87,7 +87,7 @@ const Faq = () => {
   const sections = faqT?.sections ?? [];
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-26 text-white">
+    <div className="mx-auto max-w-4xl px-4 pt-32 pb-26 text-white">
       <div className="mb-16 text-center">
         <h1 className="mb-2 text-4xl font-semibold">{faqT?.pageTitle}</h1>
         <p className="text-white/60">{faqT?.pageSubtitle}</p>

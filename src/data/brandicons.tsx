@@ -1,7 +1,7 @@
 // src/data/brandIcons.ts
 import aCrypto from "@/assets/images/a-crypto.png";
 import atmos from "@/assets/images/atmos.png";
-import click from "@/assets/images/click.png";
+import click from "@/assets/images/click.jpg"
 import cryptobot from "@/assets/images/cryptoboy.png";
 import mastercard from "@/assets/images/mastercard.png";
 import pay from "@/assets/images/pay.png";

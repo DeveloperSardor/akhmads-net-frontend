@@ -171,7 +171,7 @@ const MyAds = () => {
 
   return (
     <div className="min-h-screen bg-background px-4 py-6 sm:px-6">
-      <div className="max-w-7xl mx-auto mt-16 sm:mt-20">
+      <div className="max-w-7xl mx-auto mt-24 sm:mt-32">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">

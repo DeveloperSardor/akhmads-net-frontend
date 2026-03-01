@@ -116,7 +116,7 @@ const AddBot = () => {
   };
 
   return (
-    <section className="main-container my-26 text-white">
+    <section className="main-container mt-32 mb-20 text-white">
       <h1 className="mb-8 text-xl font-semibold">{ab?.pageTitle}</h1>
 
       {/* Error Alert */}
