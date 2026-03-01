@@ -219,6 +219,9 @@ export const uz = {
       save: "Saqlash",
       unsave: "Saqlamash",
     },
+    toastPaused: "E'lon pauza qilindi",
+    toastResumed: "E'lon davom etilmoqda",
+    toastError: "Xatolik yuz berdi",
   },
 
   // Add Bot

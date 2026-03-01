@@ -220,6 +220,9 @@ export const ru = {
             save: "Сохранить",
             unsave: "Убрать",
         },
+        toastPaused: "Объявление приостановлено",
+        toastResumed: "Объявление возобновлено",
+        toastError: "Произошла ошибка",
     },
 
     // Add Bot

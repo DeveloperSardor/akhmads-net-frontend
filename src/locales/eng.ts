@@ -218,6 +218,9 @@ export const eng = {
             save: "Save",
             unsave: "Unsave",
         },
+        toastPaused: "Ad paused",
+        toastResumed: "Ad resumed",
+        toastError: "An error occurred",
     },
 
     // Add Bot

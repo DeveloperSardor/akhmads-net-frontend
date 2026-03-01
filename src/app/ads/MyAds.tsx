@@ -98,14 +98,14 @@ const MyAds = () => {
     try {
       if (ad.status === "RUNNING") {
         await pauseAd(ad.id);
-        toast.success("E'lon pauza qilindi");
+        toast.success(m?.toastPaused || "E'lon pauza qilindi");
       } else if (ad.status === "PAUSED") {
         await resumeAd(ad.id);
-        toast.success("E'lon davom etilmoqda");
+        toast.success(m?.toastResumed || "E'lon davom etilmoqda");
       }
       loadAds();
     } catch (error) {
-      toast.error("Xatolik yuz berdi");
+      toast.error(m?.toastError || "Xatolik yuz berdi");
     }
   };
 
