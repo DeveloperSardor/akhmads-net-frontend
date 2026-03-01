@@ -251,13 +251,13 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       if (params?.saved) {
         const response = await adService.getSavedAds();
         set({
-          ads: response.data?.ads || [],
+          ads: response.data.ads || [],
           isLoading: false,
         });
       } else {
         const response = await adService.getMyAds(params);
         set({
-          ads: response.data || [],
+          ads: (response as any).data || [],
           isLoading: false,
         });
       }
