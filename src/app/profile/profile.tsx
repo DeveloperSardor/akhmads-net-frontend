@@ -126,6 +126,40 @@ const Profile = () => {
     return `${numValue.toFixed(1)}%`;
   };
 
+  const getAdStatusStyles = (status: string) => {
+    switch (status) {
+      case "RUNNING": return "bg-green-500/10 text-green-400 border border-green-500/20";
+      case "PAUSED": return "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20";
+      case "REJECTED": return "bg-red-500/10 text-red-400 border border-red-500/20";
+      case "APPROVED": return "bg-blue-500/10 text-blue-400 border border-blue-500/20";
+      case "DRAFT": return "bg-gray-500/10 text-gray-400 border border-gray-500/20";
+      case "SUBMITTED":
+      case "PENDING_REVIEW": return "bg-orange-500/10 text-orange-400 border border-orange-500/20";
+      case "COMPLETED": return "bg-purple-500/10 text-purple-400 border border-purple-500/20";
+      case "ARCHIVED": return "bg-white/5 text-white/40 border border-white/10";
+      case "SCHEDULED": return "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20";
+      default: return "bg-gray-500/10 text-gray-400 border border-gray-500/20";
+    }
+  };
+
+  const getBotStatusStyles = (status: string) => {
+    switch (status) {
+      case "ACTIVE": return "bg-green-500/10 text-green-400 border border-green-500/20";
+      case "PENDING": return "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20";
+      case "REJECTED": return "bg-red-500/10 text-red-400 border border-red-500/20";
+      case "BANNED": return "bg-red-900/20 text-red-500 border border-red-900/30";
+      case "PAUSED": return "bg-gray-500/10 text-gray-400 border border-gray-500/20";
+      default: return "bg-gray-500/10 text-gray-400 border border-gray-500/20";
+    }
+  };
+
+  const calculateAdSpent = (ad: any): number => {
+    if (ad.spent !== undefined) return Number(ad.spent);
+    const total = Number(ad.totalCost) || 0;
+    const remaining = Number(ad.remainingBudget) || 0;
+    return Math.max(0, total - remaining);
+  };
+
   if (isLoading && !profile) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
@@ -377,17 +411,14 @@ const Profile = () => {
                     ) : (
                       ads.map((ad) => (
                         <tr key={ad.id} className="border-b border-white/5 hover:bg-white/[0.02] transition">
-                          <td className="py-3 px-3 max-w-[160px] truncate">{ad.text?.slice(0, 40)}</td>
-                          <td className="py-3 px-3">{formatNumber(ad.impressions)}</td>
+                          <td className="py-3 px-3 max-w-[160px] truncate">{ad.title || ad.text?.slice(0, 40)}</td>
+                          <td className="py-3 px-3">{formatNumber(ad.deliveredImpressions ?? ad.impressions)}</td>
                           <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
-                          <td className="py-3 px-3">{formatPercent(ad.ctr)}</td>
-                          <td className="py-3 px-3 text-red-400">{formatCurrency(ad.spent)}</td>
+                          <td className="py-3 px-3">{formatNumber(ad.conversions)}</td>
+                          <td className="py-3 px-3 text-red-400">{formatCurrency(calculateAdSpent(ad))}</td>
                           <td className="py-3 px-3">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
-                              ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
-                                "bg-gray-500/20 text-gray-400"
-                              }`}>
-                              {ad.status === "RUNNING" ? p?.statusActive : ad.status === "PAUSED" ? p?.statusPending : ad.status}
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getAdStatusStyles(ad.status)}`}>
+                              {p?.statusText?.[ad.status] || t.adStatus[ad.status] || ad.status}
                             </span>
                           </td>
                           <td className="py-3 px-3">
@@ -415,26 +446,23 @@ const Profile = () => {
                   ads.map((ad) => (
                     <div key={ad.id} className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="text-sm font-medium truncate">{ad.text?.slice(0, 60)}</p>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${ad.status === "RUNNING" ? "bg-green-500/20 text-green-400" :
-                          ad.status === "PAUSED" ? "bg-yellow-500/20 text-yellow-400" :
-                            "bg-gray-500/20 text-gray-400"
-                          }`}>
-                          {ad.status === "RUNNING" ? p?.statusActive : ad.status === "PAUSED" ? p?.statusPending : ad.status}
+                        <p className="text-sm font-medium truncate">{ad.title || ad.text?.slice(0, 60)}</p>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${getAdStatusStyles(ad.status)}`}>
+                          {p?.statusText?.[ad.status] || t.adStatus[ad.status] || ad.status}
                         </span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs text-white/50 mb-3">
                         <div>
                           <p className="text-white/30 mb-0.5">{p?.adsTableHeaders.impressions}</p>
-                          <p className="text-white/70">{formatNumber(ad.impressions)}</p>
+                          <p className="text-white/70">{formatNumber(ad.deliveredImpressions ?? ad.impressions)}</p>
                         </div>
                         <div>
-                          <p className="text-white/30 mb-0.5">{p?.adsTableHeaders.ctr}</p>
-                          <p className="text-white/70">{formatPercent(ad.ctr)}</p>
+                          <p className="text-white/30 mb-0.5">{p?.adsTableHeaders.conversions}</p>
+                          <p className="text-white/70">{formatNumber(ad.conversions)}</p>
                         </div>
                         <div>
                           <p className="text-white/30 mb-0.5">{p?.adsTableHeaders.spent}</p>
-                          <p className="text-red-400">{formatCurrency(ad.spent)}</p>
+                          <p className="text-red-400">{formatCurrency(calculateAdSpent(ad))}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 justify-end">
@@ -481,10 +509,7 @@ const Profile = () => {
                           <td className="py-3 px-3">{formatNumber(bot.impressionsServed)}</td>
                           <td className="py-3 px-3 text-green-400">{formatCurrency(bot.earnings)}</td>
                           <td className="py-3 px-3">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bot.status === "ACTIVE" ? "bg-green-500/20 text-green-400" :
-                              bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
-                                "bg-red-500/20 text-red-400"
-                              }`}>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getBotStatusStyles(bot.status)}`}>
                               {p?.statusText?.[bot.status] || bot.status}
                             </span>
                           </td>
@@ -514,10 +539,7 @@ const Profile = () => {
                     <div key={bot.id} className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <p className="text-sm font-medium">@{bot.username}</p>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${bot.status === "ACTIVE" ? "bg-green-500/20 text-green-400" :
-                          bot.status === "PENDING" ? "bg-yellow-500/20 text-yellow-400" :
-                            "bg-red-500/20 text-red-400"
-                          }`}>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${getBotStatusStyles(bot.status)}`}>
                           {p?.statusText?.[bot.status] || bot.status}
                         </span>
                       </div>

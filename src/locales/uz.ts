@@ -217,7 +217,7 @@ export const uz = {
       duplicate: "Nusxa olish",
       delete: "O'chirish",
       save: "Saqlash",
-      unsave: "Saqlamash",
+      unsave: "Saqlamaslik",
       archive: "Arxivlash",
     },
     archiveConfirm: "Rostdan ham bu e'lonni arxivlamoqchimisiz?",
@@ -402,7 +402,13 @@ export const uz = {
         PENDING: "Kutilmoqda",
         REJECTED: "Rad etilgan",
         PAUSED: "To'xtatilgan",
-        BANNED: "Bloklangan"
+        BANNED: "Bloklangan",
+        COMPLETED: "Tugallangan",
+        ARCHIVED: "Arxivlangan",
+        DRAFT: "Qoralama",
+        SUBMITTED: "Yuborilgan",
+        APPROVED: "Tasdiqlangan",
+        SCHEDULED: "Rejalashtirilgan"
     },
     adsTableHeaders: {
       title: "Reklama nomi",
@@ -415,7 +421,7 @@ export const uz = {
     },
     botsTableHeaders: {
       name: "Bot nomi",
-      subscribers: "Obunachillar",
+      subscribers: "Obunachilar",
       impressions: "Ko'rishlar",
       earnings: "Daromad",
       status: "Holat",
@@ -428,6 +434,7 @@ export const uz = {
       cancel: "Bekor qilish",
       save: "Saqlash",
     },
+    // Adding ad status styles and text unified here or used from t.adStatus
   },
 
   // Launch Ad
