@@ -1,370 +1,617 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Input, Select, message, Spin, Tag, Avatar } from "antd";
-import { SendOutlined, InfoCircleOutlined, UserOutlined } from "@ant-design/icons";
-import { ArrowLeft } from "lucide-react";
-import axios from "axios";
-import { useAuthStore } from "../../store/authStore";
+import { Select, Spin } from "antd";
+import {
+  ArrowLeft,
+  Send,
+  Users,
+  Zap,
+  Clock,
+  Plus,
+  Trash2,
+  Info,
+  ChevronRight,
+  Radio,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import apiClient from "../../api/api";
 import { useTranslations } from "../../hooks/useTranslations";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-
-dayjs.extend(relativeTime);
 
 const { Option } = Select;
-const { TextArea } = Input;
+
+// ── Tarif sabab: backend $0.50 base + $0.05/user
+const BASE_FEE = 0.5;
+const PRICE_PER_USER = 0.05;
+
+const calcTotal = (count: number) =>
+  count > 0 ? BASE_FEE + count * PRICE_PER_USER : 0;
+
+// ── Active days → bot field name
+const dayKey: Record<number, string> = {
+  3:  "activeUsers3d",
+  7:  "activeUsers7d",
+  30: "activeUsers30d",
+};
 
 const BroadcastAd: React.FC = () => {
   const navigate = useNavigate();
   const { lang } = useParams();
   const t = useTranslations();
-  const ba = t.broadcastAd;
-  
-  const { accessToken } = useAuthStore();
-  const [publicBots, setPublicBots] = useState([]);
+
+  // ── Data
+  const [publicBots, setPublicBots] = useState<any[]>([]);
+  const [botsLoading, setBotsLoading] = useState(false);
+
+  // ── Selection
+  const [selectedBotId, setSelectedBotId] = useState<string | null>(null);
+  const [activeDays, setActiveDays] = useState<3 | 7 | 30>(30);
+  const [targetCount, setTargetCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Selection state
-  const [selectedBot, setSelectedBot] = useState<string | null>(null);
-  const [activeDays, setActiveDays] = useState(30);
-  const [activeUsersCount, setActiveUsersCount] = useState(0);
-  const [targetCount, setTargetCount] = useState(100);
-  
-  // Content state
-  const [contentType, setContentType] = useState("TEXT");
+
+  // ── Content
+  const [contentType, setContentType] = useState<"TEXT" | "HTML">("TEXT");
   const [text, setText] = useState("");
   const [buttons, setButtons] = useState<{ text: string; url: string }[]>([]);
-  
-  const [pricePerUser, setPricePerUser] = useState(0.05);
 
-  useEffect(() => {
-    const fetchBots = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/bots/public`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        setPublicBots(res.data.data.bots);
-      } catch (err) {
-        message.error("Failed to load public bots");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBots();
-  }, [accessToken]);
+  // ── Submit
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1); // 1=targeting, 2=content
 
-  const filteredBots = publicBots.filter((b: any) => 
-    b.username.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    b.firstName.toLowerCase().includes(searchTerm.toLowerCase())
+  // ── Derived
+  const selectedBot = useMemo(
+    () => publicBots.find((b) => b.id === selectedBotId) ?? null,
+    [publicBots, selectedBotId]
   );
 
+  const activeUsersCount: number = selectedBot
+    ? (selectedBot[dayKey[activeDays]] ?? 0)
+    : 0;
+
+  const totalCost = calcTotal(targetCount);
+  const canLaunch =
+    !!selectedBotId &&
+    targetCount > 0 &&
+    targetCount <= activeUsersCount &&
+    text.trim().length >= 5;
+
+  // ── Load bots
   useEffect(() => {
-    if (selectedBot) {
-        const bot = publicBots.find((b: any) => b.id === selectedBot);
-        if (bot) {
-            setActiveUsersCount((bot as any).activeUsers30d || 0);
-            setPricePerUser((bot as any).broadcastPricePerUser || 0.05);
-            setTargetCount(Math.min(100, (bot as any).activeUsers30d || 0));
-        }
-    }
-  }, [selectedBot, publicBots]);
+    setBotsLoading(true);
+    apiClient
+      .get("/bots/public")
+      .then((res) => setPublicBots(res.data?.data?.bots ?? []))
+      .catch(() => toast.error("Botlarni yuklashda xatolik"))
+      .finally(() => setBotsLoading(false));
+  }, []);
+
+  // ── When bot or activeDays change → reset targetCount
+  useEffect(() => {
+    const max = activeUsersCount;
+    setTargetCount(max > 0 ? Math.min(targetCount || max, max) : 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBotId, activeDays]);
+
+  const filteredBots = useMemo(
+    () =>
+      publicBots.filter((b) => {
+        const q = searchTerm.toLowerCase();
+        return (
+          b.username?.toLowerCase().includes(q) ||
+          b.firstName?.toLowerCase().includes(q) ||
+          b.category?.toLowerCase().includes(q)
+        );
+      }),
+    [publicBots, searchTerm]
+  );
 
   const handleLaunch = async () => {
-    if (!selectedBot || !text) {
-        return message.warning("Please fill required fields");
-    }
-    
+    if (!canLaunch) return;
+
+    const validButtons = buttons.filter((b) => b.text.trim() && b.url.trim());
+
     setIsSubmitting(true);
     try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/ads/broadcasts`, {
-            botId: selectedBot,
-            contentType,
-            text,
-            targetCount,
-            activeDays,
-            buttons: buttons.filter(b => b.text && b.url)
-        }, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        message.success("Broadcast campaign launched successfully!");
-        navigate(`/${lang}/my-ads`);
+      await apiClient.post("/ads/broadcasts", {
+        botId: selectedBotId,
+        contentType,
+        text: text.trim(),
+        targetCount,
+        activeDays,
+        buttons: validButtons,
+      });
+      toast.success("Broadcast muvaffaqiyatli ishga tushirildi!");
+      navigate(`/${lang}/my-ads`);
     } catch (err: any) {
-        message.error(err.response?.data?.message || "Failed to launch broadcast");
+      const msg =
+        err?.response?.data?.message || "Broadcast yaratishda xatolik";
+      toast.error(msg);
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
-  const subtotal = targetCount * pricePerUser;
-  const protocolFee = subtotal * 0.05;
-  const totalCost = subtotal + protocolFee;
+  const addButton = () =>
+    setButtons((prev) => [...prev, { text: "", url: "" }]);
+  const removeButton = (i: number) =>
+    setButtons((prev) => prev.filter((_, idx) => idx !== i));
+  const updateButton = (i: number, field: "text" | "url", val: string) =>
+    setButtons((prev) =>
+      prev.map((b, idx) => (idx === i ? { ...b, [field]: val } : b))
+    );
 
+  // ───────────────────────────── Render ──────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#0a0a0b] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        <button 
-            onClick={() => navigate(-1)} 
-            className="mb-8 flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-white/60 hover:text-white hover:bg-white/10 transition-all text-sm font-bold"
+    <div className="min-h-screen bg-background text-foreground pt-20 pb-16 px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto">
+
+        {/* Back */}
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-8 mt-4 flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card/50 text-muted-foreground hover:text-foreground hover:bg-card transition-all text-sm font-semibold"
         >
-            <ArrowLeft className="w-4 h-4" />
-            {ba?.back ?? 'Back'}
+          <ArrowLeft className="w-4 h-4" />
+          Orqaga
         </button>
 
-        <header className="mb-10">
-          <h2 className="text-5xl font-black mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-400">
-            {ba?.title ?? 'Message Broadcast'}
-          </h2>
-          <p className="text-white/50 text-xl font-medium max-w-2xl leading-relaxed">
-            {ba?.subtitle ?? 'Reach thousands of active bot users instantly.'}
+        {/* Header */}
+        <div className="mb-10">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-2xl bg-primary/15 flex items-center justify-center">
+              <Radio className="w-5 h-5 text-primary" />
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
+              Broadcast Xabar
+            </h1>
+          </div>
+          <p className="text-muted-foreground text-base max-w-xl mt-2">
+            Botning faol foydalanuvchilariga to'g'ridan-to'g'ri shaxsiy xabar yuboring.
+            100% yetkazish kafolati.
           </p>
-        </header>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-card/30 border border-border/50 backdrop-blur-3xl rounded-[2.5rem] p-8 lg:p-10 shadow-3xl">
-              <div className="space-y-10">
-                {/* Targeting Section */}
-                <div>
-                   <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-8 flex items-center gap-3">
-                     <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]"></span>
-                     {ba?.targeting?.title ?? '1. Audience Targeting'}
-                   </h3>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-white/30 ml-1">{ba?.targeting?.selectBot ?? 'Select Target Bot'}</label>
-                        <Select
-                          showSearch
-                          placeholder={ba?.targeting?.searchBot ?? "Search bot..."}
-                          className="w-full h-14 custom-select"
-                          onChange={setSelectedBot}
-                          onSearch={setSearchTerm}
-                          filterOption={false}
-                        >
-                          {filteredBots.map((b: any) => (
-                            <Option key={b.id} value={b.id}>
-                               <div className="flex items-center gap-3 py-1">
-                                 <Avatar size="small" src={`${import.meta.env.VITE_API_URL}/bots/avatar/${b.username}`} className="ring-1 ring-white/10" />
-                                 <span className="font-bold">@{b.username}</span>
-                                 <Tag color="purple" className="text-[9px] font-black uppercase m-0 border-none bg-primary/20 text-primary">
-                                    {(b as any).activeUsers30d} {ba?.targeting?.users ?? 'users'}
-                                 </Tag>
-                               </div>
-                            </Option>
-                          ))}
-                        </Select>
-                      </div>
+        {/* Steps indicator */}
+        <div className="flex items-center gap-3 mb-8">
+          {[
+            { n: 1, label: "Auditoriya" },
+            { n: 2, label: "Xabar matni" },
+          ].map((s, i, arr) => (
+            <React.Fragment key={s.n}>
+              <button
+                onClick={() => s.n < step || (s.n === 2 && selectedBotId && targetCount > 0) ? setStep(s.n as 1 | 2) : undefined}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  step === s.n
+                    ? "bg-primary text-primary-foreground"
+                    : step > s.n
+                    ? "bg-primary/20 text-primary cursor-pointer"
+                    : "bg-card text-muted-foreground border border-border"
+                }`}
+              >
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ${step > s.n ? "bg-primary/30" : "bg-current/20"}`}>
+                  {step > s.n ? <CheckCircle2 className="w-3.5 h-3.5" /> : s.n}
+                </span>
+                {s.label}
+              </button>
+              {i < arr.length - 1 && (
+                <ChevronRight className="w-4 h-4 text-muted-foreground/40 shrink-0" />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
 
-                      <div className="space-y-3">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-white/30 ml-1">{ba?.targeting?.activityFilter ?? 'Activity Filter'}</label>
-                        <Select
-                          defaultValue={30}
-                          className="w-full h-14 custom-select"
-                          onChange={setActiveDays}
-                        >
-                          <Option value={7}>{ba?.targeting?.last7Days ?? 'Last 7 days'}</Option>
-                          <Option value={30}>{ba?.targeting?.last30Days ?? 'Last 30 days'}</Option>
-                          <Option value={90}>{ba?.targeting?.last90Days ?? 'Last 90 days'}</Option>
-                        </Select>
-                      </div>
-                   </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                   {selectedBot && (
-                     <div className="mt-8 p-6 bg-primary/5 border border-primary/10 rounded-3xl animate-in fade-in zoom-in duration-500 shadow-inner">
-                       <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                         <div className="flex items-center gap-5">
-                           <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center text-primary shadow-lg border border-primary/20">
-                             <UserOutlined style={{ fontSize: 28 }} />
-                           </div>
-                           <div>
-                             <div className="text-[11px] font-bold uppercase tracking-wider text-white/30 mb-1">{ba?.targeting?.availableAudience ?? 'Available Audience'}</div>
-                             <div className="text-3xl font-black">{loading ? <Spin size="small" /> : `${activeUsersCount.toLocaleString()}`}</div>
-                           </div>
-                         </div>
-                         <div className="text-right bg-white/5 py-3 px-6 rounded-2xl border border-white/5">
-                            <div className="text-[11px] font-bold uppercase tracking-wider text-white/30 mb-1">{ba?.targeting?.unitPrice ?? 'Unit Price'}</div>
-                            <div className="text-primary text-xl font-black">${pricePerUser} <span className="text-[10px] text-white/20 uppercase">/ user</span></div>
-                         </div>
-                       </div>
+          {/* ── Left: Main form ── */}
+          <div className="lg:col-span-2 space-y-5">
 
-                       <div className="mt-8 pt-8 border-t border-white/5">
-                          <label className="text-[11px] font-bold uppercase tracking-wider text-white/30 mb-3 block">{ba?.targeting?.confirmCount ?? 'Confirm Target Count'}</label>
-                          <div className="relative group">
-                            <Input 
-                                type="number"
-                                max={activeUsersCount}
-                                min={1}
-                                value={targetCount}
-                                onChange={(e) => setTargetCount(Math.min(activeUsersCount, Math.max(0, parseInt(e.target.value) || 0)))}
-                                className="bg-white/5 border-white/10 text-white h-14 w-full rounded-2xl text-lg font-bold px-6 focus:border-primary/50 transition-all"
+            {/* ═══ STEP 1: Audience ═══ */}
+            {step === 1 && (
+              <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
+                <h2 className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  1. Auditoriyani tanlang
+                </h2>
+
+                {/* Bot select */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Qaysi botning auditoriyasiga?
+                  </label>
+                  {botsLoading ? (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
+                      <Spin size="small" /> Botlar yuklanmoqda...
+                    </div>
+                  ) : publicBots.length === 0 ? (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
+                      <AlertCircle className="w-4 h-4" />
+                      Hozircha birorta faol bot yo'q
+                    </div>
+                  ) : (
+                    <Select
+                      showSearch
+                      value={selectedBotId}
+                      placeholder="Bot qidiring..."
+                      className="w-full h-12 custom-select-bc"
+                      onChange={(v) => setSelectedBotId(v)}
+                      onSearch={setSearchTerm}
+                      filterOption={false}
+                      notFoundContent={<span className="text-muted-foreground text-sm">Topilmadi</span>}
+                    >
+                      {filteredBots.map((b) => (
+                        <Option key={b.id} value={b.id}>
+                          <div className="flex items-center gap-2 py-0.5">
+                            <img
+                              src={`${import.meta.env.VITE_API_URL}/bots/avatar/${b.username}`}
+                              alt=""
+                              className="w-6 h-6 rounded-full object-cover bg-primary/20"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = "none";
+                              }}
                             />
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-primary opacity-50 uppercase">{ba?.targeting?.users}</div>
+                            <span className="font-bold text-sm">@{b.username}</span>
+                            {b.firstName && (
+                              <span className="text-muted-foreground text-xs">· {b.firstName}</span>
+                            )}
+                            <span className="ml-auto text-xs font-bold text-primary">
+                              {(b.activeUsers30d ?? 0).toLocaleString()} foydalanuvchi
+                            </span>
                           </div>
-                       </div>
-                     </div>
-                   )}
+                        </Option>
+                      ))}
+                    </Select>
+                  )}
                 </div>
 
-                {/* Content Section */}
-                <div className="pt-10 border-t border-white/5">
-                   <h3 className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 mb-8 flex items-center gap-3">
-                     <span className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.5)]"></span>
-                     {ba?.content?.title ?? '2. Message Content'}
-                   </h3>
-                   <div className="space-y-8">
-                      <div className="space-y-3">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-white/30 ml-1">{ba?.content?.editorType ?? 'Editor Type'}</label>
-                        <Select 
-                          defaultValue="TEXT" 
-                          className="w-full h-12 custom-select" 
-                          onChange={setContentType}
-                        >
-                          <Option value="TEXT">{ba?.content?.plainText ?? 'Plain Text'}</Option>
-                          <Option value="HTML">{ba?.content?.htmlFormatted ?? 'HTML / Formatted'}</Option>
-                        </Select>
+                {/* Active days */}
+                {selectedBot && (
+                  <>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Faollik davri (so'nggi N kun ichida aktiv bo'lganlar)
+                      </label>
+                      <div className="grid grid-cols-3 gap-3">
+                        {([3, 7, 30] as const).map((d) => {
+                          const count = selectedBot[dayKey[d]] ?? 0;
+                          return (
+                            <button
+                              key={d}
+                              onClick={() => setActiveDays(d)}
+                              className={`rounded-xl p-3 text-center border transition-all ${
+                                activeDays === d
+                                  ? "border-primary bg-primary/10"
+                                  : "border-border bg-background hover:border-primary/40"
+                              }`}
+                            >
+                              <div className={`text-xl font-black ${activeDays === d ? "text-primary" : "text-foreground"}`}>
+                                {count.toLocaleString()}
+                              </div>
+                              <div className="text-xs text-muted-foreground font-semibold mt-0.5">
+                                {d} kun
+                              </div>
+                            </button>
+                          );
+                        })}
                       </div>
+                    </div>
 
-                      <div className="space-y-3">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-white/30 ml-1">{ba?.content?.composeMessage ?? 'Compose Message'}</label>
-                        <TextArea
-                          rows={8}
-                          placeholder={ba?.content?.placeholder ?? "Your message starts here..."}
-                          className="bg-white/5 border-white/10 text-white rounded-3xl p-6 text-base leading-relaxed focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all custom-scrollbar"
-                          value={text}
-                          onChange={(e) => setText(e.target.value)}
-                        />
-                      </div>
+                    {/* Target count */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Nechta foydalanuvchiga yuborish?
+                        <span className="ml-2 text-primary font-black">
+                          (max: {activeUsersCount.toLocaleString()})
+                        </span>
+                      </label>
 
-                      <div className="space-y-5">
-                        <div className="flex items-center justify-between">
-                           <label className="text-[11px] font-bold uppercase tracking-wider text-white/30 ml-1">{ba?.content?.ctaButtons ?? 'Call-to-Action Buttons'}</label>
-                           <button 
-                               onClick={() => setButtons([...buttons, { text: "", url: "" }])}
-                               className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-all"
-                           >
-                            {ba?.content?.addNew ?? "+ Add New"}
-                           </button>
+                      {activeUsersCount === 0 ? (
+                        <div className="flex items-center gap-2 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-sm text-amber-400">
+                          <AlertCircle className="w-4 h-4 shrink-0" />
+                          Bu davr ichida faol foydalanuvchi yo'q. Boshqa davrni tanlang.
                         </div>
-                        <div className="space-y-4">
-                          {buttons.map((btn, idx) => (
-                            <div key={idx} className="flex flex-col sm:flex-row gap-3 animate-in slide-in-from-right-4 duration-300">
-                              <Input 
-                                  placeholder={ba?.content?.label ?? "Label"} 
-                                  value={btn.text} 
-                                  className="h-12 bg-white/5 border-white/10 rounded-2xl px-5 font-bold"
-                                  onChange={e => {
-                                      const newBtns = [...buttons];
-                                      newBtns[idx].text = e.target.value;
-                                      setButtons(newBtns);
-                                  }}
-                              />
-                              <Input 
-                                  placeholder={ba?.content?.url ?? "URL"} 
-                                  value={btn.url} 
-                                  className="h-12 bg-white/5 border-white/10 rounded-2xl px-5"
-                                  onChange={e => {
-                                      const newBtns = [...buttons];
-                                      newBtns[idx].url = e.target.value;
-                                      setButtons(newBtns);
-                                  }}
-                              />
-                              <button 
-                                className="h-12 w-12 flex items-center justify-center rounded-2xl bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 transition-all shrink-0 font-black"
-                                onClick={() => setButtons(buttons.filter((_, i) => i !== idx))}
-                              >×</button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                   </div>
+                      ) : (
+                        <>
+                          {/* Slider */}
+                          <input
+                            type="range"
+                            min={1}
+                            max={activeUsersCount}
+                            value={targetCount}
+                            onChange={(e) => setTargetCount(Number(e.target.value))}
+                            className="w-full accent-primary"
+                          />
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="number"
+                              min={1}
+                              max={activeUsersCount}
+                              value={targetCount}
+                              onChange={(e) => {
+                                const v = Math.max(1, Math.min(activeUsersCount, Number(e.target.value) || 1));
+                                setTargetCount(v);
+                              }}
+                              className="w-36 px-4 py-2.5 bg-background border border-border rounded-xl text-foreground font-bold text-sm focus:border-primary outline-none"
+                            />
+                            <span className="text-muted-foreground text-sm">foydalanuvchi</span>
+                            <button
+                              onClick={() => setTargetCount(activeUsersCount)}
+                              className="ml-auto text-xs font-bold text-primary hover:underline"
+                            >
+                              Barchasi ({activeUsersCount.toLocaleString()})
+                            </button>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Info className="w-3.5 h-3.5" />
+                            Foydalanuvchilar tasodifiy tanlanadi
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Next step button */}
+                    <button
+                      disabled={targetCount < 1 || activeUsersCount === 0}
+                      onClick={() => setStep(2)}
+                      className="w-full h-12 bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl font-bold text-primary-foreground flex items-center justify-center gap-2 transition-all"
+                    >
+                      Davom etish
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* ═══ STEP 2: Message content ═══ */}
+            {step === 2 && (
+              <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-black uppercase tracking-widest text-blue-400 flex items-center gap-2">
+                    <Zap className="w-4 h-4" />
+                    2. Xabar matni
+                  </h2>
+                  <button
+                    onClick={() => setStep(1)}
+                    className="text-xs text-muted-foreground hover:text-foreground font-semibold flex items-center gap-1"
+                  >
+                    <ArrowLeft className="w-3 h-3" /> Orqaga
+                  </button>
+                </div>
+
+                {/* Format */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Xabar formati
+                  </label>
+                  <div className="flex gap-2">
+                    {(["TEXT", "HTML"] as const).map((f) => (
+                      <button
+                        key={f}
+                        onClick={() => setContentType(f)}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
+                          contentType === f
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-background text-muted-foreground hover:border-primary/30"
+                        }`}
+                      >
+                        {f === "TEXT" ? "Oddiy matn" : "HTML / Formatlangan"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Text */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Xabar matni *
+                    </label>
+                    <span className={`text-xs font-bold ${text.length > 4000 ? "text-red-400" : "text-muted-foreground"}`}>
+                      {text.length} / 4096
+                    </span>
+                  </div>
+                  <textarea
+                    rows={8}
+                    maxLength={4096}
+                    placeholder={
+                      contentType === "HTML"
+                        ? "<b>Salom!</b>\n\nMahsulotimizni ko'ring 👇"
+                        : "Salom! Yangi mahsulotimiz chiqdi..."
+                    }
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground/50 text-sm leading-relaxed resize-none focus:border-primary outline-none transition-all font-mono"
+                  />
+                  {text.trim().length < 5 && text.length > 0 && (
+                    <p className="text-xs text-red-400">Kamida 5 ta belgi kiriting</p>
+                  )}
+                </div>
+
+                {/* Buttons */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Inline tugmalar (ixtiyoriy)
+                    </label>
+                    <button
+                      onClick={addButton}
+                      disabled={buttons.length >= 5}
+                      className="text-xs font-bold text-primary hover:text-primary/80 flex items-center gap-1 disabled:opacity-40"
+                    >
+                      <Plus className="w-3 h-3" /> Qo'shish
+                    </button>
+                  </div>
+                  {buttons.map((btn, i) => (
+                    <div key={i} className="flex gap-2 animate-in slide-in-from-right-2 duration-200">
+                      <input
+                        placeholder="Tugma matni"
+                        value={btn.text}
+                        onChange={(e) => updateButton(i, "text", e.target.value)}
+                        className="flex-1 px-3 py-2.5 bg-background border border-border rounded-xl text-foreground text-sm placeholder:text-muted-foreground/50 focus:border-primary outline-none"
+                      />
+                      <input
+                        placeholder="https://..."
+                        value={btn.url}
+                        onChange={(e) => updateButton(i, "url", e.target.value)}
+                        className="flex-1 px-3 py-2.5 bg-background border border-border rounded-xl text-foreground text-sm placeholder:text-muted-foreground/50 focus:border-primary outline-none"
+                      />
+                      <button
+                        onClick={() => removeButton(i)}
+                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-all shrink-0"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Summary before launch */}
+                <div className="p-4 bg-primary/5 border border-primary/15 rounded-xl space-y-1.5 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Bot:</span>
+                    <span className="font-bold">@{selectedBot?.username}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Foydalanuvchilar:</span>
+                    <span className="font-bold text-primary">{targetCount.toLocaleString()} ta</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Faollik davri:</span>
+                    <span className="font-bold">So'nggi {activeDays} kun</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-card border border-border/50 backdrop-blur-3xl sticky top-24 rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col p-10">
-              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-blue-500 to-indigo-600"></div>
-              <h3 className="font-black text-2xl mb-8 tracking-tight">{ba?.checkout?.title ?? 'Checkout'}</h3>
-              
-              <div className="space-y-5">
-                <div className="flex justify-between items-center text-sm">
-                   <span className="text-white/40 font-bold uppercase tracking-widest text-[10px]">{ba?.checkout?.recipients ?? 'Recipients:'}</span>
-                   <span className="font-black text-primary bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">{targetCount.toLocaleString()} {ba?.targeting?.users}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                   <span className="text-white/40 font-bold uppercase tracking-widest text-[10px]">{ba?.checkout?.reachPeriod ?? 'Reach Period:'}</span>
-                   <span className="font-bold flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                      Last {activeDays} days
-                   </span>
-                </div>
+          {/* ── Right: Checkout ── */}
+          <div className="space-y-4">
+            <div className="bg-card border border-border rounded-2xl p-5 sticky top-24">
+              {/* Top bar */}
+              <div className="h-1 -mt-5 -mx-5 mb-5 rounded-t-2xl bg-gradient-to-r from-primary via-indigo-500 to-blue-500" />
 
-                <div className="h-px bg-white/10 my-4"></div>
+              <h3 className="font-black text-lg mb-5">Hisob-kitob</h3>
 
-                <div className="flex justify-between items-center text-sm">
-                   <span className="text-white/40 font-bold uppercase tracking-widest text-[10px]">{ba?.checkout?.advertisingCost ?? 'Advertising Cost:'}</span>
-                   <span className="font-black text-lg">${subtotal.toFixed(2)}</span>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Qabul qiluvchi:</span>
+                  <span className="font-bold text-primary">
+                    {targetCount > 0 ? `${targetCount.toLocaleString()} ta` : "—"}
+                  </span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                   <span className="text-white/40 font-bold uppercase tracking-widest text-[10px]">{ba?.checkout?.serviceFee ?? 'Service Fee (5%):'}</span>
-                   <span className="text-blue-400 font-black">+${protocolFee.toFixed(2)}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Narx (har biri):</span>
+                  <span className="font-bold">$0.05</span>
                 </div>
-                
-                <div className="mt-10 pt-8 border-t border-white/10">
-                  <div className="flex justify-between items-baseline mb-8">
-                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">{ba?.checkout?.total ?? 'Total'}</span>
-                     <div className="text-right">
-                        <span className="text-5xl font-black text-white leading-none">${totalCost.toFixed(2)}</span>
-                        <div className="text-[10px] text-white/20 mt-1 uppercase font-bold tracking-widest">USD Wallet</div>
-                     </div>
-                  </div>
-                  
-                  <button 
-                      disabled={isSubmitting || !selectedBot || !text}
-                      onClick={handleLaunch}
-                      className="w-full h-16 bg-gradient-to-r from-primary to-indigo-600 disabled:opacity-30 disabled:grayscale rounded-2xl shadow-xl shadow-primary/30 text-base font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-[1.03] active:scale-95 transition-all text-white"
-                  >
-                      {isSubmitting ? <Spin size="small" /> : <SendOutlined />}
-                      {ba?.checkout?.launchNow ?? 'LAUNCH NOW'}
-                  </button>
-                  
-                  <div className="mt-8 p-5 bg-white/5 border border-white/5 rounded-2xl text-[11px] leading-relaxed text-white/40 flex gap-3 italic">
-                     <InfoCircleOutlined className="mt-0.5 text-primary" />
-                     {ba?.checkout?.info ?? 'Broadcasts are usually delivered instantly or within minutes. Real-time tracking will be available in your dashboard.'}
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Xabar narxi:</span>
+                  <span className="font-bold">
+                    ${(targetCount * PRICE_PER_USER).toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Bazaviy to'lov:</span>
+                  <span className="font-bold">${BASE_FEE.toFixed(2)}</span>
                 </div>
               </div>
+
+              <div className="h-px bg-border my-4" />
+
+              <div className="flex justify-between items-baseline mb-5">
+                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                  Jami
+                </span>
+                <div className="text-right">
+                  <div className="text-4xl font-black">${totalCost.toFixed(2)}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">USD Wallet</div>
+                </div>
+              </div>
+
+              {/* Launch button */}
+              {step === 1 ? (
+                <button
+                  disabled={!selectedBotId || targetCount < 1 || activeUsersCount === 0}
+                  onClick={() => setStep(2)}
+                  className="w-full h-12 bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl font-bold text-primary-foreground flex items-center justify-center gap-2 transition-all"
+                >
+                  Xabar yozing
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  disabled={isSubmitting || !canLaunch}
+                  onClick={handleLaunch}
+                  className="w-full h-12 bg-gradient-to-r from-primary to-indigo-600 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/25"
+                >
+                  {isSubmitting ? (
+                    <Spin size="small" />
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      YUBORISH
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Info */}
+              <div className="mt-4 flex gap-2 text-xs text-muted-foreground leading-relaxed">
+                <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary" />
+                <span>
+                  Broadcast bir necha daqiqa ichida yetkaziladi.
+                  Xabarlar botingiz orqali to'g'ridan-to'g'ri yuboriladi.
+                </span>
+              </div>
+
+              {/* Stats */}
+              {selectedBot && (
+                <div className="mt-4 pt-4 border-t border-border space-y-2">
+                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                    @{selectedBot.username} statistikasi
+                  </p>
+                  {[
+                    { label: "3 kun", key: "activeUsers3d" },
+                    { label: "7 kun", key: "activeUsers7d" },
+                    { label: "30 kun", key: "activeUsers30d" },
+                  ].map((s) => (
+                    <div key={s.key} className="flex justify-between text-xs">
+                      <span className="text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {s.label}
+                      </span>
+                      <span className="font-bold">
+                        {(selectedBot[s.key] ?? 0).toLocaleString()} foydalanuvchi
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       <style>{`
-        .custom-select .ant-select-selector { 
-          background: rgba(255,255,255,0.04) !important; 
-          border-color: rgba(255,255,255,0.1) !important; 
-          border-radius: 16px !important;
-          padding: 0 20px !important;
-          color: white !important; 
+        .custom-select-bc .ant-select-selector {
+          background: var(--card) !important;
+          border-color: var(--border) !important;
+          border-radius: 12px !important;
+          height: 48px !important;
+          display: flex !important;
+          align-items: center !important;
+          color: var(--foreground) !important;
         }
-        .custom-select .ant-select-selection-placeholder {
-          color: rgba(255,255,255,0.3) !important;
+        .custom-select-bc .ant-select-selection-placeholder {
+          color: var(--muted-foreground) !important;
         }
+        .custom-select-bc .ant-select-arrow { color: var(--muted-foreground) !important; }
         .ant-select-dropdown {
-          background-color: #1a1a1e !important;
-          border: 1px solid rgba(255, 255, 255, 0.1) !important;
-          border-radius: 16px !important;
-          overflow: hidden !important;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+          background: var(--card) !important;
+          border: 1px solid var(--border) !important;
+          border-radius: 12px !important;
         }
-        .ant-select-item { color: rgba(255,255,255,0.7) !important; }
-        .ant-select-item-option-active { background: rgba(255,255,255,0.06) !important; color: white !important; }
-        .ant-select-item-option-selected { background: rgba(139, 92, 246, 0.2) !important; color: #a78bfa !important; }
-        .ant-input { border-radius: 16px !important; background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.1) !important; color: white !important; }
-        .ant-input:focus { border-color: rgba(139, 92, 246, 0.5) !important; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important; }
+        .ant-select-item { color: var(--foreground) !important; }
+        .ant-select-item-option-active { background: rgba(139,92,246,0.08) !important; }
+        .ant-select-item-option-selected { background: rgba(139,92,246,0.15) !important; color: #a78bfa !important; }
       `}</style>
     </div>
   );
