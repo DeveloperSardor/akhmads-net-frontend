@@ -217,8 +217,8 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
       const response = await adService.createAd({
         contentType: formData.contentType,
-        title: formData.title || undefined,
-        text: formData.text,
+        title: formData.title || '',
+        text: formData.text || '',
         buttons: formData.buttons,
         mediaUrl: formData.mediaUrl,
         targetImpressions: formData.targetImpressions,
@@ -248,19 +248,25 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
+      let fetchedAds: any[] = [];
       if (params?.saved) {
         const response = await adService.getSavedAds();
-        set({
-          ads: response.data.ads || [],
-          isLoading: false,
-        });
+        if (Array.isArray(response)) fetchedAds = response;
+        else if (response?.data && Array.isArray(response.data)) fetchedAds = response.data;
+        else if (response?.data?.ads && Array.isArray(response.data.ads)) fetchedAds = response.data.ads;
+        else if ((response as any)?.ads && Array.isArray((response as any).ads)) fetchedAds = (response as any).ads;
       } else {
-        const response = await adService.getMyAds(params);
-        set({
-          ads: (response as any).data || [],
-          isLoading: false,
-        });
+        const response: any = await adService.getMyAds(params);
+        if (Array.isArray(response)) fetchedAds = response;
+        else if (response?.data && Array.isArray(response.data)) fetchedAds = response.data;
+        else if (response?.data?.ads && Array.isArray(response.data.ads)) fetchedAds = response.data.ads;
+        else if (response?.ads && Array.isArray(response.ads)) fetchedAds = response.ads;
       }
+
+      set({
+        ads: fetchedAds,
+        isLoading: false,
+      });
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch ads',

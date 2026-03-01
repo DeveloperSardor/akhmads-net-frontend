@@ -46,6 +46,7 @@ const MyAds = () => {
     resumeAd,
     deleteAd,
     archiveAd,
+    unarchiveAd,
     resetForm,
     toggleSaveAd,
     updateFormData,
@@ -148,6 +149,13 @@ const MyAds = () => {
   const handleArchive = async (adId: string) => {
     if (confirm(m?.archiveConfirm ?? "Are you sure you want to archive this ad?")) {
       await archiveAd(adId);
+      loadAds();
+    }
+  };
+
+  const handleUnarchive = async (adId: string) => {
+    if (confirm(m?.unarchiveConfirm ?? "Are you sure you want to unarchive this ad?")) {
+      await unarchiveAd(adId);
       loadAds();
     }
   };
@@ -296,6 +304,7 @@ const MyAds = () => {
                 onSchedule={() => handleSchedule(ad)}
                 onTest={() => handleTest(ad)}
                 onArchive={() => handleArchive(ad.id)}
+                onUnarchive={() => handleUnarchive(ad.id)}
                 onToggleSave={handleToggleSave}
               />
             ))}
@@ -339,6 +348,7 @@ const AdCard = ({
   onSchedule,
   onTest,
   onArchive,
+  onUnarchive,
   onToggleSave,
 }: any) => {
   const t = useTranslations();
@@ -510,13 +520,23 @@ const AdCard = ({
           </button>
         )}
 
-        {!["DRAFT", "ARCHIVED", "PENDING_REVIEW", "SUBMITTED"].includes(ad.status) && (
+        {!["DRAFT", "PENDING_REVIEW", "SUBMITTED"].includes(ad.status) && !ad.isArchived && (
           <button
             onClick={onArchive}
             className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
             title={actions?.archive ?? "Archive"}
           >
             <Archive className="w-4 h-4 text-muted-foreground" />
+          </button>
+        )}
+
+        {ad.isArchived && (
+          <button
+            onClick={onUnarchive}
+            className="px-3 py-2 bg-card hover:bg-primary/20 border border-border rounded-lg transition-all text-primary"
+            title={actions?.unarchive ?? "Unarchive"}
+          >
+            <Archive className="w-4 h-4" />
           </button>
         )}
       </div>
