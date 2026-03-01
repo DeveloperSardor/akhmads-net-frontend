@@ -116,7 +116,7 @@ const Navbar = () => {
   };
 
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
-    `px-4 py-2 rounded-[30px] transition whitespace-nowrap ${isActive ? "bg-white/20 text-white" : "text-white/70 hover:text-white"
+    `px-3 lg:px-2.5 xl:px-4 py-1.5 lg:py-2 rounded-[30px] transition-all duration-300 whitespace-nowrap ${isActive ? "bg-white/15 text-white shadow-[0_0_10px_rgba(255,255,255,0.05)]" : "text-white/70 hover:text-white hover:bg-white/5"
     }`;
 
   const isLoginPage = location.pathname.includes("/login");
@@ -201,7 +201,7 @@ const Navbar = () => {
 
 
             {/* 🔹 Center links — desktop only */}
-            <div className="hidden lg:flex border border-white/10 px-2 py-1.5 rounded-[40px] items-center gap-1 text-[13px] lg:text-sm">
+            <div className="hidden lg:flex bg-white/[0.03] border border-white/10 px-1.5 py-1 rounded-[40px] items-center gap-0.5 text-[12.5px] xl:text-sm backdrop-blur-md">
               <NavLink to={`/${lang}`} end className={navItemClass}>
                 {nav?.home ?? "Home"}
               </NavLink>
@@ -224,7 +224,7 @@ const Navbar = () => {
             </div>
 
             {/* 🔹 Right side — desktop */}
-            <div className="hidden md:flex items-center gap-2 lg:gap-4 shrink-0">
+            <div className="hidden md:flex items-center gap-1.5 xl:gap-4 shrink-0">
               {/* 🌍 Language switcher */}
               <div ref={desktopLangRef} className="relative">
                 <button
