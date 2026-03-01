@@ -389,36 +389,36 @@ const WithdrawModal = ({
   const [address, setAddress] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleWithdraw = async () => {
-    if (!amount || parseFloat(amount) < 10) {
-      alert(wm?.minAlert ?? "Minimum withdrawal: $10");
-      return;
-    }
-    if (parseFloat(amount) > parseFloat(String(availableBalance))) {
-      alert("Insufficient balance");
-      return;
-    }
-    if (!address || address.length < 10) {
-      alert("Please enter a valid wallet address");
-      return;
-    }
+const handleWithdraw = async () => {
+  if (!amount || parseFloat(amount) < 10) {
+    alert(wm?.minAlert ?? "Minimum withdrawal: $10");
+    return;
+  }
+  if (parseFloat(amount) > parseFloat(String(availableBalance))) {
+    alert("Insufficient balance");
+    return;
+  }
+  if (!address.trim()) {
+    alert("Please enter a wallet address");
+    return;
+  }
 
-    setIsSubmitting(true);
-    try {
-      await walletService.requestWithdraw({
-        amount: parseFloat(amount),
-        bep20Address: address,
-      });
+  setIsSubmitting(true);
+  try {
+    await walletService.requestWithdraw({
+      amount: parseFloat(amount),
+      bep20Address: address.trim(),
+    });
 
-      alert(wm?.successMsg ?? "✅ Withdrawal requested successfully!");
-      onSuccess();
-      onClose();
-    } catch (error: any) {
-      alert(error.response?.data?.message || wm?.failMsg || "Withdrawal failed");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    alert(wm?.successMsg ?? "✅ Withdrawal requested successfully!");
+    onSuccess();
+    onClose();
+  } catch (error: any) {
+    alert(error.response?.data?.message || wm?.failMsg || "Withdrawal failed");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
