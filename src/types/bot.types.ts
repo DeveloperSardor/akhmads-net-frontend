@@ -92,17 +92,30 @@ export interface BotCategory {
   nameUz: string;
   nameRu: string;
   nameEn: string;
+  icon: string;
 }
 
 export const BOT_CATEGORIES: BotCategory[] = [
-  { id: 'technology', nameUz: 'Texnologiya', nameRu: 'Технология', nameEn: 'Technology' },
-  { id: 'education', nameUz: 'Ta\'lim', nameRu: 'Образование', nameEn: 'Education' },
-  { id: 'news', nameUz: 'Yangiliklar', nameRu: 'Новости', nameEn: 'News' },
-  { id: 'entertainment', nameUz: 'Ko\'ngilochar', nameRu: 'Развлечения', nameEn: 'Entertainment' },
-  { id: 'music', nameUz: 'Musiqa', nameRu: 'Музыка', nameEn: 'Music' },
-  { id: 'download', nameUz: 'Yuklab olish', nameRu: 'Скачивалки', nameEn: 'Downloads' },
-  { id: 'shopping', nameUz: 'Xarid', nameRu: 'Покупки', nameEn: 'Shopping' },
-  { id: 'finance', nameUz: 'Moliya', nameRu: 'Финансы', nameEn: 'Finance' },
+  { id: 'music', nameUz: 'Musiqa', nameRu: 'Музыка', nameEn: 'Music', icon: '🎵' },
+  { id: 'download', nameUz: 'Yuklab olish', nameRu: 'Скачивалки', nameEn: 'Downloads', icon: '📥' },
+  { id: 'tools', nameUz: 'Asboblar', nameRu: 'Инструменты', nameEn: 'Tools', icon: '🛠' },
+  { id: 'chat', nameUz: 'Chat va tanishuvlar', nameRu: 'Чаты и знакомства', nameEn: 'Chats & Dating', icon: '💬' },
+  { id: 'gdz', nameUz: 'GDZ', nameRu: 'ГДЗ', nameEn: 'Homework Help', icon: '📚' },
+  { id: 'vpn', nameUz: 'VPN / Proksi', nameRu: 'VPN / Proxy', nameEn: 'VPN / Proxy', icon: '🔒' },
+  { id: 'movies', nameUz: 'Filmlar', nameRu: 'Фильмы', nameEn: 'Movies', icon: '🎬' },
+  { id: 'tests', nameUz: 'Testlar', nameRu: 'Тесты', nameEn: 'Tests', icon: '📝' },
+  { id: 'currency', nameUz: 'Valyuta kurslari', nameRu: 'Курсы валют', nameEn: 'Currency Rates', icon: '💱' },
+  { id: 'games', nameUz: 'O\'yinlar', nameRu: 'Игры', nameEn: 'Games', icon: '🎮' },
+  { id: 'stickers', nameUz: 'Stikerlar', nameRu: 'Стикеры', nameEn: 'Stickers', icon: '🎨' },
+  { id: 'ai', nameUz: 'AI / Neyrotarmoqlar', nameRu: 'AI / Нейросети', nameEn: 'AI / Neural Networks', icon: '🤖' },
+  { id: 'voice', nameUz: 'Ovozli', nameRu: 'Голосовые', nameEn: 'Voice', icon: '🎙' },
+  { id: 'fitness', nameUz: 'Fitnes / Salomatlik', nameRu: 'Фитнес / Здоровье', nameEn: 'Fitness / Health', icon: '💪' },
+  { id: 'group', nameUz: 'Guruh-botlar', nameRu: 'Групповые / Чат-боты', nameEn: 'Group / Chat Bots', icon: '👥' },
+  { id: 'books', nameUz: 'Kitoblar', nameRu: 'Книги', nameEn: 'Books', icon: '📖' },
+  { id: 'themes', nameUz: 'Temalar', nameRu: 'Темы', nameEn: 'Themes', icon: '🎭' },
+  { id: 'converter', nameUz: 'Fayl konverterlari', nameRu: 'Конвертеры файлов', nameEn: 'File Converters', icon: '🔄' },
+  { id: 'horoscope', nameUz: 'Goroskoplar', nameRu: 'Гороскопы', nameEn: 'Horoscopes', icon: '🔮' },
+  { id: 'other', nameUz: 'Boshqa', nameRu: 'Другое', nameEn: 'Other', icon: '📌' },
 ];
 
 export const BOT_LANGUAGES = [

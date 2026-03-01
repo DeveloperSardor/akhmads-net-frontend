@@ -1,12 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, Users, Target } from "lucide-react";
 import { useAdStore } from "../../store/adStore";
+import { useTranslations } from "../../hooks/useTranslations";
+import axios from "axios";
+
+interface CategoryFromApi {
+  id: string;
+  slug: string;
+  nameUz: string;
+  nameRu: string;
+  nameEn: string;
+  icon: string;
+  sortOrder: number;
+}
 
 const AudienceReach = () => {
-  const { formData, updateFormData, targetingOptions } = useAdStore();
+  const { formData, updateFormData } = useAdStore();
   const [selectedSegments, setSelectedSegments] = useState<string[]>(
     formData.targeting?.aiSegments || []
   );
+  const [categories, setCategories] = useState<CategoryFromApi[]>([]);
+
+  // Fetch categories from public API
+  useEffect(() => {
+    axios.get("https://api.akhmads.net/api/categories")
+      .then(res => setCategories(res.data.data || []))
+      .catch(() => {});
+  }, []);
+
+  const { locale } = useTranslations();
+
+  const getCatName = (cat: CategoryFromApi) => {
+    if (locale === "uz") return cat.nameUz;
+    if (locale === "eng") return cat.nameEn;
+    return cat.nameRu;
+  };
 
   const quickReaches = [
     { value: 1000, label: "1K" },
@@ -25,6 +53,7 @@ const AudienceReach = () => {
       targeting: {
         ...formData.targeting,
         aiSegments: newSegments,
+        categories: newSegments,
       },
     });
   };
@@ -43,39 +72,11 @@ const AudienceReach = () => {
 
   const percentage = ((formData.targetImpressions - 100) / (100000 - 100)) * 100;
 
-  // ✅ Default segments if API not loaded
-  const defaultSegments = [
-    {
-      id: "tech",
-      nameEn: "Tech Enthusiasts",
-      description: "Users who frequently interact with technology-related content and news",
-      estimatedReach: 45000,
-      multiplier: 1.4,
-    },
-    {
-      id: "shoppers",
-      nameEn: "Active Shoppers",
-      description: "Users who have shown high engagement with e-commerce and shopping bots",
-      estimatedReach: 32000,
-      multiplier: 1.3,
-    },
-    {
-      id: "gamers",
-      nameEn: "Gamers",
-      description: "Users interested in gaming content, game bots, and gaming communities",
-      estimatedReach: 28000,
-      multiplier: 1.35,
-    },
-    {
-      id: "crypto",
-      nameEn: "Crypto Traders",
-      description: "Users who engage with cryptocurrency news, trading bots, and blockchain content",
-      estimatedReach: 19000,
-      multiplier: 1.5,
-    },
-  ];
-
-  const segments = targetingOptions?.aiSegments || defaultSegments;
+  // ✅ Categories from API
+  const segments = categories.map(cat => ({
+    id: cat.slug,
+    name: `${cat.icon} ${getCatName(cat)}`,
+  }));
 
   return (
     <div className="space-y-8">
@@ -183,21 +184,18 @@ const AudienceReach = () => {
         </div>
       </div>
 
-      {/* AI Targeting */}
+      {/* Category Targeting */}
       <div>
         <div className="flex items-center gap-2 mb-4">
           <Target className="w-4 h-4 text-muted-foreground" />
-          <h3 className="text-sm font-semibold text-foreground">AI-Powered Targeting</h3>
-          <span className="px-2 py-0.5 bg-gradient-to-r from-primary to-purple-500 text-white text-xs font-bold rounded uppercase tracking-wide">
-            Smart
-          </span>
+          <h3 className="text-sm font-semibold text-foreground">Kategoriya tanlash</h3>
         </div>
 
-        <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
-          Reach the right audience with AI-driven behavioral segmentation
+        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+          Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang
         </p>
 
-        <div className="space-y-3">
+        <div className="flex flex-wrap gap-2">
           {segments.map((segment) => {
             const isSelected = selectedSegments.includes(segment.id);
 
@@ -205,38 +203,13 @@ const AudienceReach = () => {
               <button
                 key={segment.id}
                 onClick={() => handleSegmentToggle(segment.id)}
-                className={`w-full p-4 rounded-xl border text-left transition-all ${
+                className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
                   isSelected
-                    ? "border-primary bg-primary/5"
-                    : "border-border bg-card hover:border-border/80"
+                    ? "border-primary bg-primary/10 text-primary shadow-sm shadow-primary/10"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                 }`}
               >
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                      isSelected
-                        ? "bg-primary border-primary"
-                        : "border-border"
-                    }`}
-                  >
-                    {isSelected && (
-                      <Check className="w-3 h-3 text-primary-foreground" />
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-sm text-foreground mb-1">
-                      {segment.nameEn}
-                    </div>
-                    <div className="text-xs text-muted-foreground leading-relaxed mb-2">
-                      {segment.description}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Users className="w-3.5 h-3.5" />
-                      <span>~{formatNumber(segment.estimatedReach)} potential users</span>
-                    </div>
-                  </div>
-                </div>
+                <span>{segment.name}</span>
               </button>
             );
           })}
@@ -244,21 +217,14 @@ const AudienceReach = () => {
 
         {/* Summary */}
         {selectedSegments.length > 0 && (
-          <div className="mt-5 p-4 bg-primary/5 border border-primary/20 rounded-xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-semibold text-foreground mb-0.5">
-                  {selectedSegments.length} segment{selectedSegments.length > 1 ? "s" : ""} selected
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Expected +{selectedSegments.length * 15}% conversion boost
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-xs text-primary font-medium mb-0.5">Est. Reach</div>
-                <div className="text-2xl font-bold text-foreground tabular-nums">
-                  {formatNumber(estimatedReach)}
-                </div>
+          <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
+            <div className="text-sm font-medium text-foreground">
+              {selectedSegments.length} ta kategoriya tanlandi
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-primary font-medium">Taxminiy qamrov</div>
+              <div className="text-lg font-bold text-foreground tabular-nums">
+                {formatNumber(estimatedReach)}
               </div>
             </div>
           </div>

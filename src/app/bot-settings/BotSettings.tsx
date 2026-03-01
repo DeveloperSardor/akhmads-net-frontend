@@ -17,9 +17,9 @@ import {
   Info,
 } from "lucide-react";
 import { useBotStore } from "../../store/botStore";
-import { BOT_CATEGORIES } from "../../types/bot.types";
 import { useTranslations } from "../../hooks/useTranslations";
 import { API_BASE_URL } from "../../api/api";
+import axios from "axios";
 
 const BotSettings = () => {
   const { botId } = useParams<{ botId: string }>();
@@ -53,6 +53,19 @@ const BotSettings = () => {
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
   const [activeTab, setActiveTab] = useState<"released" | "exceptions">("released");
+  const [apiCategories, setApiCategories] = useState<any[]>([]);
+
+  const getCatName = (cat: any) => {
+    if (t.locale === "uz") return cat.nameUz;
+    if (t.locale === "eng") return cat.nameEn;
+    return cat.nameRu;
+  };
+
+  useEffect(() => {
+    axios.get("https://api.akhmads.net/api/categories")
+      .then((res: any) => setApiCategories(res.data.data || []))
+      .catch(() => {});
+  }, []);
   const [showRulesModal, setShowRulesModal] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
 
@@ -278,14 +291,13 @@ async Task<bool> ShowAd(long chatId) {
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-4">{bs?.allowedCategories ?? "Allowed Categories"}</h2>
           <div className="flex flex-wrap gap-3">
-            {BOT_CATEGORIES.map((category) => {
-              const isAllowed = settings.allowedCategories.includes(category.id);
-              const isHighRate = ["betting", "gambling"].includes(category.id);
+            {apiCategories.map((category) => {
+              const isAllowed = settings.allowedCategories.includes(category.slug);
 
               return (
                 <button
-                  key={category.id}
-                  onClick={() => handleCategoryToggle(category.id)}
+                  key={category.slug}
+                  onClick={() => handleCategoryToggle(category.slug)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${isAllowed
                     ? "bg-green-500/20 border-green-500/50 text-green-400"
                     : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
@@ -296,10 +308,7 @@ async Task<bool> ShowAd(long chatId) {
                   ) : (
                     <div className="w-4 h-4 border-2 border-current rounded" />
                   )}
-                  <span className="text-sm">{category.nameEn}</span>
-                  {isHighRate && (
-                    <span className="text-xs text-yellow-400">{bs?.highRate ?? "(x2 rate)"}</span>
-                  )}
+                  <span className="text-sm">{category.icon} {getCatName(category)}</span>
                 </button>
               );
             })}

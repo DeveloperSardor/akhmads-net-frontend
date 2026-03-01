@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Loader2, CheckCircle, Copy, AlertCircle, X, ShieldCheck } from "lucide-react";
 import { useBotStore } from "../../store/botStore";
 import botService from "../../services/bot.service";
-import { BOT_CATEGORIES, BOT_LANGUAGES } from "../../types/bot.types";
+import { BOT_LANGUAGES } from "../../types/bot.types";
+import axios from "axios";
 import Steps from "./steps";
 import Bots from "./bots";
 import { useTranslations } from "../../hooks/useTranslations";
@@ -25,6 +26,19 @@ const AddBot = () => {
   const [apiKey, setApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [copiedApiKey, setCopiedApiKey] = useState(false);
+  const [apiCategories, setApiCategories] = useState<any[]>([]);
+
+  const getCatName = (cat: any) => {
+    if (t.locale === "uz") return cat.nameUz;
+    if (t.locale === "eng") return cat.nameEn;
+    return cat.nameRu;
+  };
+
+  useEffect(() => {
+    axios.get("https://api.akhmads.net/api/categories")
+      .then((res: any) => setApiCategories(res.data.data || []))
+      .catch(() => {});
+  }, []);
 
   const { registerBot, isSubmitting, error, successMessage, clearError, clearSuccess } = useBotStore();
 
@@ -261,8 +275,8 @@ const AddBot = () => {
                   required
                 >
                   <option value="">{ab?.categoryPlaceholder}</option>
-                  {BOT_CATEGORIES.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.nameEn}</option>
+                  {apiCategories.map((cat) => (
+                    <option key={cat.slug} value={cat.slug}>{cat.icon} {getCatName(cat)}</option>
                   ))}
                 </select>
               </div>
