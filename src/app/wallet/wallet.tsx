@@ -398,8 +398,13 @@ const handleWithdraw = async () => {
     alert("Insufficient balance");
     return;
   }
+  const bep20Regex = /^0x[a-fA-F0-9]{40}$/;
   if (!address.trim()) {
     alert("Please enter a wallet address");
+    return;
+  }
+  if (!bep20Regex.test(address.trim())) {
+    alert("Invalid BEP20 address format. It should start with 0x and be 42 characters long.");
     return;
   }
 
