@@ -56,7 +56,7 @@ export const routes = createBrowserRouter([
           {
             path: "add-bot",
             element: (
-              <ProtectedRoute allowedRoles={["BOT_OWNER"]}>
+              <ProtectedRoute>
                 <AddBot />
               </ProtectedRoute>
             ),
@@ -64,7 +64,7 @@ export const routes = createBrowserRouter([
           {
             path: "bots/:botId/settings",
             element: (
-              <ProtectedRoute allowedRoles={["BOT_OWNER"]}>
+              <ProtectedRoute>
                 <BotSettings />
               </ProtectedRoute>
             ),
@@ -73,7 +73,7 @@ export const routes = createBrowserRouter([
           {
             path: "launch-ad",
             element: (
-              <ProtectedRoute allowedRoles={["ADVERTISER"]}>
+              <ProtectedRoute>
                 <LaunchAd />
               </ProtectedRoute>
             ),
@@ -81,7 +81,7 @@ export const routes = createBrowserRouter([
           {
             path: "my-ads",
             element: (
-              <ProtectedRoute allowedRoles={["ADVERTISER"]}>
+              <ProtectedRoute>
                 <MyAds />
               </ProtectedRoute>
             ),
@@ -89,7 +89,7 @@ export const routes = createBrowserRouter([
           {
             path: "ads/:adId",
             element: (
-              <ProtectedRoute allowedRoles={["ADVERTISER"]}>
+              <ProtectedRoute>
                 <AdDetails />
               </ProtectedRoute>
             ),
@@ -97,7 +97,7 @@ export const routes = createBrowserRouter([
           {
             path: "broadcasts/new",
             element: (
-              <ProtectedRoute allowedRoles={["ADVERTISER"]}>
+              <ProtectedRoute>
                 <BroadcastAd />
               </ProtectedRoute>
             ),
