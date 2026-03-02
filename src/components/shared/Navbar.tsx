@@ -213,30 +213,26 @@ const Navbar = () => {
                     </>
                   )}
                 </NavLink>
-                {(!isAuthenticated || user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
-                  <NavLink to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`} className={navItemClass}>
-                    {({ isActive }) => (
-                      <>
-                        {isActive && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
-                        )}
-                        {nav?.myAds ?? "My Ads"}
-                      </>
-                    )}
-                  </NavLink>
-                )}
-                {(!isAuthenticated || user?.roles?.includes('BOT_OWNER') || user?.role === 'BOT_OWNER') && (
-                  <NavLink to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`} className={navItemClass}>
-                    {({ isActive }) => (
-                      <>
-                        {isActive && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
-                        )}
-                        {nav?.addBot ?? "Add bot"}
-                      </>
-                    )}
-                  </NavLink>
-                )}
+                <NavLink to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`} className={navItemClass}>
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                      )}
+                      {nav?.myAds ?? "My Ads"}
+                    </>
+                  )}
+                </NavLink>
+                <NavLink to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`} className={navItemClass}>
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                      )}
+                      {nav?.addBot ?? "Add bot"}
+                    </>
+                  )}
+                </NavLink>
                 <NavLink to={`/${lang}/wallet`} className={navItemClass}>
                   {({ isActive }) => (
                     <>
@@ -355,7 +351,7 @@ const Navbar = () => {
                       </div>
 
                       {/* ✅ Launch Ad Button */}
-                      {(user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
+                      {isAuthenticated && (
                         <button
                           onClick={() => navigate(`/${lang}/launch-ad`)}
                           className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-5 xl:px-7 py-2.5 text-[13px] xl:text-sm font-semibold transition-all duration-300 active:scale-95 shadow-[0_4px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.5)]"
@@ -415,12 +411,10 @@ const Navbar = () => {
                               {nav?.profile ?? "Profile"}
                             </button>
 
-                            {(user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
-                              <button onClick={() => navigate(`/${lang}/my-ads`)} className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/10 transition flex items-center gap-2">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                {nav?.myAds ?? "My Ads"}
-                              </button>
-                            )}
+                            <button onClick={() => navigate(`/${lang}/my-ads`)} className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/10 transition flex items-center gap-2">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                              {nav?.myAds ?? "My Ads"}
+                            </button>
 
                             <button onClick={() => navigate(`/${lang}/wallet`)} className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/10 transition flex items-center gap-2">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
@@ -604,29 +598,25 @@ const Navbar = () => {
               {nav?.home ?? "Home"}
             </NavLink>
 
-            {(!isAuthenticated || user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
-              <NavLink
-                to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
-                }
-              >
-                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                {nav?.myAds ?? "My Ads"}
-              </NavLink>
-            )}
+            <NavLink
+              to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+              }
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+              {nav?.myAds ?? "My Ads"}
+            </NavLink>
 
-            {(!isAuthenticated || user?.roles?.includes('BOT_OWNER') || user?.role === 'BOT_OWNER') && (
-              <NavLink
-                to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
-                }
-              >
-                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                {nav?.addBot ?? "Add bot"}
-              </NavLink>
-            )}
+            <NavLink
+              to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+              }
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+              {nav?.addBot ?? "Add bot"}
+            </NavLink>
 
             <NavLink
               to={`/${lang}/wallet`}
@@ -663,15 +653,13 @@ const Navbar = () => {
                   </button>
                 ) : (
                   <>
-                    {(user?.roles?.includes('ADVERTISER') || user?.role === 'ADVERTISER') && (
-                      <button
-                        onClick={() => navigate(`/${lang}/launch-ad`)}
-                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 text-sm font-medium transition"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                        {nav?.launchAd ?? "Launch Ad"}
-                      </button>
-                    )}
+                    <button
+                      onClick={() => navigate(`/${lang}/launch-ad`)}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 text-sm font-medium transition"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                      {nav?.launchAd ?? "Launch Ad"}
+                    </button>
 
                     <button
                       onClick={() => navigate(`/${lang}/profile`)}
