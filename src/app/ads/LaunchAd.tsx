@@ -11,6 +11,7 @@ import LivePreview from "../../components/ad/LivePreview";
 import FeaturedBots from "../../components/ad/FeaturedBots";
 import { useTranslations } from "../../hooks/useTranslations";
 
+
 const LaunchAd = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,6 +84,7 @@ const LaunchAd = () => {
       setStep(currentStep - 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
+      resetForm();
       navigate(-1);
     }
   };
@@ -106,7 +108,7 @@ const LaunchAd = () => {
         {/* Header Section */}
         <div className="mb-12 relative">
           <button
-            onClick={() => { resetForm(); navigate(-1); }}
+            onClick={handleBack}
             className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary transition-all mb-8 group bg-card/50 px-4 py-2 rounded-xl border border-border/50 hover:border-primary/30"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

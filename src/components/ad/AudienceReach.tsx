@@ -189,9 +189,32 @@ const AudienceReach = () => {
 
       {/* Category Targeting */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
-          <Target className="w-4 h-4 text-muted-foreground" />
-          <h3 className="text-sm font-semibold text-foreground">{ar?.categorySelect ?? "Kategoriya tanlash"}</h3>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Target className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">{ar?.categorySelect ?? "Kategoriya tanlash"}</h3>
+          </div>
+          {segments.length > 0 && (
+            <button
+              onClick={() => {
+                const allSelected = segments.every(s => selectedSegments.includes(s.id));
+                const newSegments = allSelected ? [] : segments.map(s => s.id);
+                setSelectedSegments(newSegments);
+                updateFormData({
+                  targeting: {
+                    ...formData.targeting,
+                    aiSegments: newSegments,
+                    categories: newSegments,
+                  },
+                });
+              }}
+              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors px-3 py-1.5 rounded-lg border border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+            >
+              {segments.every(s => selectedSegments.includes(s.id))
+                ? (ar?.deselectAll ?? "Barchasini olib tashlash")
+                : (ar?.selectAll ?? "Barchasini tanlash")}
+            </button>
+          )}
         </div>
 
         <p className="text-sm text-muted-foreground mb-4 leading-relaxed">

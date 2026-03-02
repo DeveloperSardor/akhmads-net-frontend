@@ -209,6 +209,8 @@ export const eng = {
       target: "Target",
       sent: "Sent",
       failed: "Failed",
+      cost: "Cost",
+      progress: "Progress",
       status: {
         PENDING: "Pending",
         APPROVED: "Approved",
@@ -501,6 +503,8 @@ export const eng = {
     targetUsers: "target users",
     categorySelect: "Select Categories",
     categoryDesc: "Select bot categories where your ad will be shown",
+    selectAll: "Select All",
+    deselectAll: "Deselect All",
     categoriesSelected: "categories selected",
     estimatedReach: "Estimated Reach",
     specificBots: "Specific Bots (Optional)",

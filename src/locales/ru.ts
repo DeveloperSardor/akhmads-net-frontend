@@ -210,6 +210,8 @@ export const ru = {
       target: "Цель",
       sent: "Отправлено",
       failed: "Ошибка",
+      cost: "Стоимость",
+      progress: "Прогресс",
       status: {
         PENDING: "Ожидание",
         APPROVED: "Одобрено",
@@ -515,6 +517,8 @@ export const ru = {
     targetUsers: "целевых пользователей",
     categorySelect: "Выбор категории",
     categoryDesc: "Выберите категории ботов для показа рекламы",
+    selectAll: "Выбрать все",
+    deselectAll: "Снять все",
     categoriesSelected: "категорий выбрано",
     estimatedReach: "Примерный охват",
     specificBots: "Выбор конкретных ботов (Необязательно)",

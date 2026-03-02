@@ -209,6 +209,8 @@ export const uz = {
       target: "Maqsad",
       sent: "Yuborildi",
       failed: "Xatolik",
+      cost: "Xarajat",
+      progress: "Jarayon",
       status: {
         PENDING: "Kutilmoqda",
         APPROVED: "Tasdiqlandi",
@@ -532,6 +534,8 @@ export const uz = {
     targetUsers: "target users",
     categorySelect: "Kategoriya tanlash",
     categoryDesc: "Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang",
+    selectAll: "Barchasini tanlash",
+    deselectAll: "Barchasini bekor qilish",
     categoriesSelected: "ta kategoriya tanlandi",
     estimatedReach: "Taxminiy qamrov",
     specificBots: "Maxsus botlarni tanlash (Ixtiyoriy)",
