@@ -42,16 +42,7 @@ const FeaturedBots = () => {
           >
             <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/10 flex items-center justify-center border border-border/50">
               <img
-                src={(() => {
-                  const baseUrl = import.meta.env.VITE_API_URL || "";
-                  const apiPath = baseUrl.endsWith("/")
-                    ? baseUrl.slice(0, -1)
-                    : baseUrl;
-                  // If base URL is empty (production), use relative /api.
-                  // If relative /api, ensure it's /api/v1
-                  const path = apiPath ? `${apiPath}/v1` : "/api/v1";
-                  return `${path}/bots/avatar/@${bot.username}`;
-                })()}
+                src={`${(import.meta.env.VITE_API_URL || "/api/v1").replace(/\/$/, "")}/bots/avatar/@${bot.username}`}
                 alt={bot.firstName}
                 className="w-full h-full object-cover"
                 onError={(e) => {

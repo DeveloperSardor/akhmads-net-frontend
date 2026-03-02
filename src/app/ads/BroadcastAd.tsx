@@ -69,7 +69,7 @@ const BroadcastAd: React.FC = () => {
   // ── Derived
   const selectedBot = useMemo(
     () => publicBots.find((b) => b.id === selectedBotId) ?? null,
-    [publicBots, selectedBotId]
+    [publicBots, selectedBotId],
   );
 
   const activeUsersCount: number = selectedBot
@@ -110,7 +110,7 @@ const BroadcastAd: React.FC = () => {
           b.category?.toLowerCase().includes(q)
         );
       }),
-    [publicBots, searchTerm]
+    [publicBots, searchTerm],
   );
 
   const handleLaunch = async () => {
@@ -144,13 +144,9 @@ const BroadcastAd: React.FC = () => {
   };
   const removeButton = (i: number) =>
     setButtons((prev) => prev.filter((_, idx) => idx !== i));
-  const updateButton = (
-    i: number,
-    field: keyof Button,
-    val: string
-  ) =>
+  const updateButton = (i: number, field: keyof Button, val: string) =>
     setButtons((prev) =>
-      prev.map((b, idx) => (idx === i ? { ...b, [field]: val } : b))
+      prev.map((b, idx) => (idx === i ? { ...b, [field]: val } : b)),
     );
 
   const colorDot: Record<BtnColor, string> = {
@@ -163,7 +159,6 @@ const BroadcastAd: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-foreground pt-20 pb-16 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
-
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
@@ -205,8 +200,8 @@ const BroadcastAd: React.FC = () => {
                   step === s.n
                     ? "bg-primary text-primary-foreground"
                     : step > s.n
-                    ? "bg-primary/20 text-primary cursor-pointer"
-                    : "bg-card text-muted-foreground border border-border"
+                      ? "bg-primary/20 text-primary cursor-pointer"
+                      : "bg-card text-muted-foreground border border-border"
                 }`}
               >
                 <span
@@ -214,11 +209,7 @@ const BroadcastAd: React.FC = () => {
                     step > s.n ? "bg-primary/30" : "bg-current/20"
                   }`}
                 >
-                  {step > s.n ? (
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                  ) : (
-                    s.n
-                  )}
+                  {step > s.n ? <CheckCircle2 className="w-3.5 h-3.5" /> : s.n}
                 </span>
                 {s.label}
               </button>
@@ -230,10 +221,8 @@ const BroadcastAd: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
           {/* ── Left: Main form ── */}
           <div className="lg:col-span-2 space-y-5">
-
             {/* ═══ STEP 1: Audience ═══ */}
             {step === 1 && (
               <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
@@ -275,12 +264,12 @@ const BroadcastAd: React.FC = () => {
                         <Option key={b.id} value={b.id}>
                           <div className="flex items-center gap-2 py-0.5">
                             <img
-                              src={`${import.meta.env.VITE_API_URL}/bots/avatar/${b.username}`}
+                              src={`${(import.meta.env.VITE_API_URL || "/api/v1").replace(/\/$/, "")}/bots/avatar/@${b.username}`}
                               alt=""
                               className="w-6 h-6 rounded-full object-cover bg-primary/20"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).style.display =
-                                  "none";
+                                (e.target as HTMLImageElement).src =
+                                  `https://ui-avatars.com/api/?name=${b.firstName || b.username}&background=random&color=fff&size=128`;
                               }}
                             />
                             <span className="font-bold text-sm">
@@ -376,8 +365,8 @@ const BroadcastAd: React.FC = () => {
                                   1,
                                   Math.min(
                                     activeUsersCount,
-                                    Number(e.target.value) || 1
-                                  )
+                                    Number(e.target.value) || 1,
+                                  ),
                                 );
                                 setTargetCount(v);
                               }}
@@ -390,8 +379,8 @@ const BroadcastAd: React.FC = () => {
                               onClick={() => setTargetCount(activeUsersCount)}
                               className="ml-auto text-xs font-bold text-primary hover:underline"
                             >
-                              {tb.allUsers} (
-                              {activeUsersCount.toLocaleString()})
+                              {tb.allUsers} ({activeUsersCount.toLocaleString()}
+                              )
                             </button>
                           </div>
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -482,9 +471,7 @@ const BroadcastAd: React.FC = () => {
                     className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground/50 text-sm leading-relaxed resize-none focus:border-primary outline-none transition-all font-mono"
                   />
                   {text.trim().length < 5 && text.length > 0 && (
-                    <p className="text-xs text-red-400">
-                      {tb.minCharsError}
-                    </p>
+                    <p className="text-xs text-red-400">{tb.minCharsError}</p>
                   )}
                 </div>
 
@@ -536,14 +523,18 @@ const BroadcastAd: React.FC = () => {
                         <span className="text-xs text-muted-foreground">
                           {tb.buttonColors.color}
                         </span>
-                        {(
-                          [
-                            { c: "blue" as BtnColor, label: tb.buttonColors.blue },
-                            { c: "green" as BtnColor, label: tb.buttonColors.green },
-                            { c: "red" as BtnColor, label: tb.buttonColors.red },
-                            { c: "default" as BtnColor, label: "—" },
-                          ]
-                        ).map(({ c, label }) => (
+                        {[
+                          {
+                            c: "blue" as BtnColor,
+                            label: tb.buttonColors.blue,
+                          },
+                          {
+                            c: "green" as BtnColor,
+                            label: tb.buttonColors.green,
+                          },
+                          { c: "red" as BtnColor, label: tb.buttonColors.red },
+                          { c: "default" as BtnColor, label: "—" },
+                        ].map(({ c, label }) => (
                           <button
                             key={c}
                             onClick={() => updateButton(i, "color", c)}
@@ -585,7 +576,10 @@ const BroadcastAd: React.FC = () => {
                       {tb.summary.activeDays}
                     </span>
                     <span className="font-bold">
-                      {tb.summary.lastNDays.replace("{{n}}", String(activeDays))}
+                      {tb.summary.lastNDays.replace(
+                        "{{n}}",
+                        String(activeDays),
+                      )}
                     </span>
                   </div>
                 </div>
@@ -652,9 +646,7 @@ const BroadcastAd: React.FC = () => {
               {step === 1 ? (
                 <button
                   disabled={
-                    !selectedBotId ||
-                    targetCount < 1 ||
-                    activeUsersCount === 0
+                    !selectedBotId || targetCount < 1 || activeUsersCount === 0
                   }
                   onClick={() => setStep(2)}
                   className="w-full h-12 bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl font-bold text-primary-foreground flex items-center justify-center gap-2 transition-all"
