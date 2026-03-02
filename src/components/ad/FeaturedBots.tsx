@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowRight, TrendingUp } from "lucide-react";
 import botService from "../../services/bot.service";
 import { useTranslations } from "../../hooks/useTranslations";
+import { getBotAvatarUrl } from "../../api/api";
 
 const FeaturedBots = () => {
   const t = useTranslations();
@@ -42,7 +43,7 @@ const FeaturedBots = () => {
           >
             <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/10 flex items-center justify-center border border-border/50">
               <img
-                src={`${(import.meta.env.VITE_API_URL || "/api/v1").replace(/\/$/, "")}/bots/avatar/@${bot.username}`}
+                src={getBotAvatarUrl(bot.username)}
                 alt={bot.firstName}
                 className="w-full h-full object-cover"
                 onError={(e) => {

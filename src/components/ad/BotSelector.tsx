@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Search, Loader2, X, Bot as BotIcon } from "lucide-react";
 import botService from "../../services/bot.service";
 import type { Bot } from "../../types/bot.types";
+import { getBotAvatarUrl } from "../../api/api";
 
 interface BotSelectorProps {
   label: string;
@@ -11,7 +12,13 @@ interface BotSelectorProps {
   placeholder?: string;
 }
 
-const BotSelector = ({ label, description, selectedIds, onChange, placeholder = "Search bots..." }: BotSelectorProps) => {
+const BotSelector = ({
+  label,
+  description,
+  selectedIds,
+  onChange,
+  placeholder = "Search bots...",
+}: BotSelectorProps) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Partial<Bot>[]>([]);
   const [loading, setLoading] = useState(false);
@@ -46,7 +53,10 @@ const BotSelector = ({ label, description, selectedIds, onChange, placeholder = 
   // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -71,7 +81,9 @@ const BotSelector = ({ label, description, selectedIds, onChange, placeholder = 
   return (
     <div className="space-y-3" ref={containerRef}>
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-1">{label}</label>
+        <label className="block text-sm font-semibold text-foreground mb-1">
+          {label}
+        </label>
         <p className="text-xs text-muted-foreground">{description}</p>
       </div>
 
@@ -105,7 +117,9 @@ const BotSelector = ({ label, description, selectedIds, onChange, placeholder = 
             {!loading && results.length === 0 ? (
               <div className="p-8 text-center">
                 <BotIcon className="w-10 h-10 text-muted-foreground/20 mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Hech qanday bot topilmadi</p>
+                <p className="text-sm text-muted-foreground">
+                  Hech qanday bot topilmadi
+                </p>
               </div>
             ) : (
               results.map((bot) => (
@@ -115,31 +129,45 @@ const BotSelector = ({ label, description, selectedIds, onChange, placeholder = 
                   className="w-full flex items-center gap-4 p-3 hover:bg-primary/10 rounded-xl transition-all text-left group"
                 >
                   <div className="relative">
-                    {bot.avatarUrl ? (
-                      <img src={bot.avatarUrl} alt="" className="w-11 h-11 rounded-xl object-cover ring-2 ring-transparent group-hover:ring-primary/30 transition-all" />
-                    ) : (
-                      <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center">
-                        <BotIcon className="w-5 h-5 text-primary" />
-                      </div>
-                    )}
+                    <img
+                      src={getBotAvatarUrl(bot.username || "")}
+                      alt=""
+                      className="w-11 h-11 rounded-xl object-cover ring-2 ring-transparent group-hover:ring-primary/30 transition-all bg-primary/5"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          `https://ui-avatars.com/api/?name=${bot.firstName || bot.username}&background=random&color=fff&size=128`;
+                      }}
+                    />
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-card rounded-full" />
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                       <p className="text-sm font-bold text-foreground truncate">{bot.firstName}</p>
-                       {bot.totalMembers && bot.totalMembers > 10000 && (
-                         <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 text-[8px] font-black uppercase rounded border border-yellow-500/20">Popular</span>
-                       )}
+                      <p className="text-sm font-bold text-foreground truncate">
+                        {bot.firstName}
+                      </p>
+                      {bot.totalMembers && bot.totalMembers > 10000 && (
+                        <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 text-[8px] font-black uppercase rounded border border-yellow-500/20">
+                          Popular
+                        </span>
+                      )}
                     </div>
-                    <p className="text-xs text-muted-foreground truncate opacity-70">@{bot.username}</p>
+                    <p className="text-xs text-muted-foreground truncate opacity-70">
+                      @{bot.username}
+                    </p>
                   </div>
 
                   <div className="text-right">
                     <div className="text-sm font-black text-primary tabular-nums">
-                      {(bot as any).activeUsers30d ? ((bot as any).activeUsers30d >= 1000 ? `${((bot as any).activeUsers30d / 1000).toFixed(1)}K` : (bot as any).activeUsers30d) : "0"}
+                      {(bot as any).activeUsers30d
+                        ? (bot as any).activeUsers30d >= 1000
+                          ? `${((bot as any).activeUsers30d / 1000).toFixed(1)}K`
+                          : (bot as any).activeUsers30d
+                        : "0"}
                     </div>
-                    <div className="text-[9px] text-muted-foreground uppercase font-bold opacity-60">Active Users</div>
+                    <div className="text-[9px] text-muted-foreground uppercase font-bold opacity-60">
+                      Active Users
+                    </div>
                   </div>
                 </button>
               ))
@@ -159,7 +187,11 @@ const BotSelector = ({ label, description, selectedIds, onChange, placeholder = 
                 className="flex items-center gap-2 pl-2 pr-1 py-1 bg-card border border-border rounded-lg"
               >
                 <div className="text-sm font-medium">
-                  {botData ? botData.firstName : <span>ID: {id.substring(0, 6)}...</span>}
+                  {botData ? (
+                    botData.firstName
+                  ) : (
+                    <span>ID: {id.substring(0, 6)}...</span>
+                  )}
                 </div>
                 <button
                   onClick={() => handleRemove(id)}

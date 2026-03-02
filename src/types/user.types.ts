@@ -142,8 +142,12 @@ export interface UserBotsResponse {
 export interface AnalyticsResponse {
   success: boolean;
   data: {
-    revenue: RevenueData[];
-    ctr: CtrData[];
+    overview: {
+      wallet: { available: number; reserved: number; totalSpent: number };
+      ads: { total: number; active: number; totalImpressions: number; totalClicks: number; averageCtr: number; totalSpent: number };
+      revenue: RevenueData[];
+      ctr: CtrData[];
+    };
   };
   timestamp: string;
 }

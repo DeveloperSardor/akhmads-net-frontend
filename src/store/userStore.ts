@@ -124,9 +124,10 @@ export const useUserStore = create<UserState & UserActions>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await userService.getAnalytics({ days, type });
+      const overview = response.data?.overview;
       set({
-        revenueData: response.data.revenue || [],
-        ctrData: response.data.ctr || [],
+        revenueData: overview?.revenue || [],
+        ctrData: overview?.ctr || [],
         isLoading: false,
       });
     } catch (error: any) {

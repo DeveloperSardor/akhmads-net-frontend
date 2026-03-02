@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getBotAvatarUrl } from "../../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -8,11 +9,10 @@ import {
   Loader2,
   ChevronDown,
   X,
-  Info
+  Info,
 } from "lucide-react";
 import { useBotStore } from "../../store/botStore";
 import { useTranslations } from "../../hooks/useTranslations";
-import { API_BASE_URL } from "../../api/api";
 import axios from "axios";
 import AdSelector from "./components/AdSelector";
 import adService from "../../services/ad.service";
@@ -49,7 +49,9 @@ const BotSettings = () => {
   const [activeCodeTab, setActiveCodeTab] = useState("python");
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
-  const [activeTab, setActiveTab] = useState<"released" | "exceptions">("released");
+  const [activeTab, setActiveTab] = useState<"released" | "exceptions">(
+    "released",
+  );
   const [apiCategories, setApiCategories] = useState<any[]>([]);
   const [blockedAdsDetails, setBlockedAdsDetails] = useState<Partial<Ad>[]>([]);
   const [isLoadingExceptions, setIsLoadingExceptions] = useState(false);
@@ -62,11 +64,13 @@ const BotSettings = () => {
   };
 
   useEffect(() => {
-    axios.get("https://api.akhmads.net/api/categories")
+    axios
+      .get("https://api.akhmads.net/api/categories")
       .then((res: any) => setApiCategories(res.data.data || []))
       .catch(() => {});
     // ✅ Admin frequency limitlarini yuklash
-    axios.get("https://api.akhmads.net/api/v1/bots/frequency-limits")
+    axios
+      .get("https://api.akhmads.net/api/v1/bots/frequency-limits")
       .then((res: any) => {
         const { min, max } = res.data?.data || {};
         setFreqBounds({ min: min ?? 0, max: max ?? 10080 });
@@ -123,7 +127,7 @@ const BotSettings = () => {
                 console.error(`Failed to fetch ad ${id}`, err);
                 return null;
               }
-            })
+            }),
           );
           setBlockedAdsDetails(details.filter((d): d is Ad => d !== null));
         } catch (err) {
@@ -266,7 +270,6 @@ async Task<bool> ShowAd(long chatId) {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white pt-32 pb-20 font-sans">
-      
       {/* Top Navigation Bar — Adjusted for fixed main Navbar */}
       <div className="bg-[#0a0a0a] border-b border-[#1f1f1f] sticky top-[104px] z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -277,406 +280,551 @@ async Task<bool> ShowAd(long chatId) {
             <ArrowLeft className="w-4 h-4" />
             {bs?.backToBots ?? "Back to bots"}
           </button>
-          
+
           <div className="flex items-center gap-4">
-             <button
-               onClick={() => setShowRulesModal(true)}
-               className="text-xs font-medium text-gray-400 hover:text-white transition-colors"
-             >
-               {bs?.acceptRules ?? "Rules"}
-             </button>
-             <button
-               onClick={handleSaveSettings}
-               disabled={isSubmitting || settings.allowedCategories.length === 0}
-               className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-             >
-               {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-               {isSubmitting ? (bs?.saving ?? "Saving...") : (bs?.save ?? "Save")}
-             </button>
+            <button
+              onClick={() => setShowRulesModal(true)}
+              className="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+            >
+              {bs?.acceptRules ?? "Rules"}
+            </button>
+            <button
+              onClick={handleSaveSettings}
+              disabled={isSubmitting || settings.allowedCategories.length === 0}
+              className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              {isSubmitting
+                ? (bs?.saving ?? "Saving...")
+                : (bs?.save ?? "Save")}
+            </button>
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-8">
-        
         {/* Header Section */}
         <div className="flex items-center gap-5">
-           <img 
-              src={`${API_BASE_URL}/bots/avatar/${currentBot.username}`} 
-              alt={currentBot.username} 
-              className="w-16 h-16 rounded-full object-cover border border-[#222] bg-[#111]" 
-              onError={(e) => {
-                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentBot.username || "B")}&background=random&color=fff&size=128`;
-              }}
-           />
-           <div>
-             <h1 className="text-3xl font-bold tracking-tight text-white mb-1">{currentBot.firstName}</h1>
-             <p className="text-gray-400 text-sm font-medium">@{currentBot.username}</p>
-           </div>
+          <img
+            src={getBotAvatarUrl(currentBot.username)}
+            alt={currentBot.username}
+            className="w-16 h-16 rounded-full object-cover border border-[#222] bg-[#111]"
+            onError={(e) => {
+              e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentBot.username || "B")}&background=random&color=fff&size=128`;
+            }}
+          />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-white mb-1">
+              {currentBot.firstName}
+            </h1>
+            <p className="text-gray-400 text-sm font-medium">
+              @{currentBot.username}
+            </p>
+          </div>
         </div>
 
         {/* Error/Success Alerts */}
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl p-4 text-sm flex justify-between items-center">
-             <span>{error}</span>
-             <button onClick={clearError} className="hover:opacity-75"><X className="w-4 h-4" /></button>
+            <span>{error}</span>
+            <button onClick={clearError} className="hover:opacity-75">
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
         {successMessage && (
           <div className="bg-green-500/10 border border-green-500/20 text-green-500 rounded-xl p-4 text-sm flex justify-between items-center">
-             <span>{successMessage}</span>
-             <button onClick={clearSuccess} className="hover:opacity-75"><X className="w-4 h-4" /></button>
+            <span>{successMessage}</span>
+            <button onClick={clearSuccess} className="hover:opacity-75">
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-           <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-              <div className="text-sm font-medium text-gray-400 mb-2">{bs?.impressions ?? "Impressions"}</div>
-              <div className="text-3xl font-bold tracking-tight text-white">{formatNumber(currentBot.impressionsServed || 0)}</div>
-           </div>
-           <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-              <div className="text-sm font-medium text-gray-400 mb-2">{bs?.clicks ?? "Clicks"}</div>
-              <div className="text-3xl font-bold tracking-tight text-white">{formatNumber(currentBot.clicks || 0)}</div>
-           </div>
-           <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-              <div className="text-sm font-medium text-gray-400 mb-2">CTR</div>
-              <div className="text-3xl font-bold tracking-tight text-white">{currentBot.ctr || 0}%</div>
-           </div>
-           <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-5">
-                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              </div>
-              <div className="text-sm font-medium text-gray-400 mb-2">{bs?.earnings ?? "Earnings"}</div>
-              <div className="text-3xl font-bold tracking-tight text-green-400">{formatCurrency(currentBot.totalEarnings)}</div>
-           </div>
+          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+            <div className="text-sm font-medium text-gray-400 mb-2">
+              {bs?.impressions ?? "Impressions"}
+            </div>
+            <div className="text-3xl font-bold tracking-tight text-white">
+              {formatNumber(currentBot.impressionsServed || 0)}
+            </div>
+          </div>
+          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+            <div className="text-sm font-medium text-gray-400 mb-2">
+              {bs?.clicks ?? "Clicks"}
+            </div>
+            <div className="text-3xl font-bold tracking-tight text-white">
+              {formatNumber(currentBot.clicks || 0)}
+            </div>
+          </div>
+          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+            <div className="text-sm font-medium text-gray-400 mb-2">CTR</div>
+            <div className="text-3xl font-bold tracking-tight text-white">
+              {currentBot.ctr || 0}%
+            </div>
+          </div>
+          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-5">
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+            </div>
+            <div className="text-sm font-medium text-gray-400 mb-2">
+              {bs?.earnings ?? "Earnings"}
+            </div>
+            <div className="text-3xl font-bold tracking-tight text-green-400">
+              {formatCurrency(currentBot.totalEarnings)}
+            </div>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 items-start">
-           
-           {/* Main Configuration - 2 Columns wide */}
-           <div className="lg:col-span-2 space-y-6">
-              
-              {/* Allowed Categories */}
-              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                 <div className="px-6 py-5 border-b border-[#1f1f1f]">
-                    <h2 className="text-lg font-semibold text-white">{bs?.allowedCategories ?? "Allowed Categories"}</h2>
-                    <p className="text-sm text-gray-400 mt-1">{bs?.allowedCategoriesDesc ?? "Select the types of ads permitted to be shown in your bot. At least one must be selected."}</p>
-                 </div>
-                 <div className="p-6 bg-[#0a0a0a]">
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                       {apiCategories.map((c: any) => {
-                         const isSelected = settings.allowedCategories.includes(c.id);
-                         return (
-                           <button
-                             key={c.id}
-                             onClick={() => handleCategoryToggle(c.id)}
-                             className={`flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left group ${
-                               isSelected 
-                                 ? "bg-[#1a1a1a] border-[#333] text-white" 
-                                 : "bg-transparent border-[#1f1f1f] text-gray-500 hover:border-[#333] hover:text-gray-300"
-                             }`}
-                           >
-                              <div className={`text-xl transition-transform ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>{c.icon}</div>
-                              <span className="text-sm font-medium">{getCatName(c)}</span>
-                           </button>
-                         );
-                       })}
-                    </div>
-                 </div>
+          {/* Main Configuration - 2 Columns wide */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Allowed Categories */}
+            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+              <div className="px-6 py-5 border-b border-[#1f1f1f]">
+                <h2 className="text-lg font-semibold text-white">
+                  {bs?.allowedCategories ?? "Allowed Categories"}
+                </h2>
+                <p className="text-sm text-gray-400 mt-1">
+                  {bs?.allowedCategoriesDesc ??
+                    "Select the types of ads permitted to be shown in your bot. At least one must be selected."}
+                </p>
               </div>
-
-              {/* Advanced Settings */}
-              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-                 <h2 className="text-lg font-semibold mb-6 text-white">{bs?.postingRules ?? "Posting Rules & Limits"}</h2>
-                 
-                 <div className="grid sm:grid-cols-2 gap-6">
-                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                           {bs?.frequencyTitle ?? "Post Frequency"}
-                        </label>
-                        <div className="relative">
-                           <input
-                             type="number"
-                             min={freqBounds.min}
-                             max={freqBounds.max}
-                             value={settings.frequencyMinutes}
-                             onChange={(e) => {
-                               const val = parseInt(e.target.value) || 0;
-                               const clamped = Math.min(Math.max(val, freqBounds.min), freqBounds.max);
-                               setSettings({ ...settings, frequencyMinutes: clamped });
-                             }}
-                             className="w-full pl-4 pr-12 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium focus:outline-none focus:border-[#444] transition-colors"
-                           />
-                           <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium pointer-events-none">
-                             MIN
-                           </div>
+              <div className="p-6 bg-[#0a0a0a]">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {apiCategories.map((c: any) => {
+                    const isSelected = settings.allowedCategories.includes(
+                      c.id,
+                    );
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => handleCategoryToggle(c.id)}
+                        className={`flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left group ${
+                          isSelected
+                            ? "bg-[#1a1a1a] border-[#333] text-white"
+                            : "bg-transparent border-[#1f1f1f] text-gray-500 hover:border-[#333] hover:text-gray-300"
+                        }`}
+                      >
+                        <div
+                          className={`text-xl transition-transform ${isSelected ? "scale-110" : "group-hover:scale-110"}`}
+                        >
+                          {c.icon}
                         </div>
-                        <div className="mt-2 text-xs text-gray-500">
-                          Admin belgilagan diapazon: <span className="text-gray-300 font-medium">{freqBounds.min} — {freqBounds.max} daqiqa</span>
-                        </div>
-                     </div>
-
-                    <div>
-                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                          {bs?.postFilterTitle ?? "Which posts can this bot publish?"}
-                       </label>
-                       <div className="relative">
-                          <select
-                            value={settings.postFilter}
-                            onChange={(e) => setSettings({ ...settings, postFilter: e.target.value as any })}
-                            className="w-full pl-4 pr-10 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium appearance-none focus:outline-none focus:border-[#444] transition-colors"
-                          >
-                            <option value="all">{bs?.postFilterAll ?? "All posts"}</option>
-                            <option value="not_mine">{bs?.postFilterNotMine ?? "All posts but mine"}</option>
-                            <option value="only_mine">{bs?.postFilterOnlyMine ?? "My posts only"}</option>
-                          </select>
-                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                       </div>
-                    </div>
-                 </div>
+                        <span className="text-sm font-medium">
+                          {getCatName(c)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+            </div>
 
-              {/* Blocked Ads */}
-              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-                 <AdSelector
-                    onSelect={(ids) => setSettings({ ...settings, blockedAdIds: ids })}
-                    initialSelectedIds={settings.blockedAdIds}
-                 />
-                 <div className="mt-6 flex justify-end">
-                    <button
-                      onClick={handleSaveSettings}
-                      disabled={isSubmitting}
-                      className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 px-5 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-white/5"
-                    >
-                      {isSubmitting ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Save className="w-4 h-4" />
-                      )}
-                      {isSubmitting ? bs?.saving : bs?.save}
-                    </button>
-                 </div>
-              </div>
+            {/* Advanced Settings */}
+            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+              <h2 className="text-lg font-semibold mb-6 text-white">
+                {bs?.postingRules ?? "Posting Rules & Limits"}
+              </h2>
 
-           </div>
-
-           {/* Right Column - Integration & History */}
-           <div className="space-y-6">
-
-              {/* Integration Card */}
-              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                 <div className="px-5 py-5 border-b border-[#1f1f1f] flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-white">{bs?.integrationCode ?? "Integration Code"}</h2>
-                    <button
-                      onClick={handleCopyCode}
-                      className="text-gray-400 hover:text-white transition-colors"
-                      title="Copy code"
-                    >
-                      {copiedCode ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                 </div>
-                 <div className="p-5">
-                    <div className="flex gap-2 mb-4">
-                       {[
-                         { id: "python", label: "Python" },
-                         { id: "javascript", label: "Node.js" },
-                         { id: "php", label: "PHP" },
-                         { id: "csharp", label: "C#" }
-                       ].map((lang) => (
-                         <button
-                           key={lang.id}
-                           onClick={() => setActiveCodeTab(lang.id)}
-                           className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
-                              activeCodeTab === lang.id
-                              ? "bg-white text-black"
-                              : "bg-[#1a1a1a] border border-[#222] text-gray-400 hover:text-white"
-                           }`}
-                         >
-                            {lang.label}
-                         </button>
-                       ))}
-                    </div>
-                    <div className="bg-[#050505] border border-[#222] rounded-xl relative">
-                       <pre className="p-4 overflow-x-auto text-[11px] font-mono text-gray-400 leading-relaxed scrollbar-none">
-                          <code>{getIntegrationCode(activeCodeTab)}</code>
-                       </pre>
-                    </div>
-                    <button
-                      onClick={() => setShowResultModal(true)}
-                      className="mt-4 text-xs font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
-                    >
-                      <Info className="w-3.5 h-3.5" />
-                      {bs?.viewResultCodes ?? "View API Result Codes"}
-                    </button>
-                 </div>
-              </div>
-
-              {/* Token Update */}
-              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-                 <h2 className="text-sm font-semibold mb-4 text-white">{bs?.updateToken ?? "Update Access Token"}</h2>
-                 <div className="flex gap-3">
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    {bs?.frequencyTitle ?? "Post Frequency"}
+                  </label>
+                  <div className="relative">
                     <input
-                      type="password"
-                      value={settings.newToken}
-                      onChange={(e) => setSettings({ ...settings, newToken: e.target.value })}
-                      placeholder={bs?.newTokenPlaceholder ?? "New token from BotFather..."}
-                      className="flex-1 px-4 py-2.5 bg-[#050505] border border-[#222] rounded-xl text-sm text-white focus:outline-none focus:border-[#444] transition-colors placeholder:text-gray-600"
+                      type="number"
+                      min={freqBounds.min}
+                      max={freqBounds.max}
+                      value={settings.frequencyMinutes}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        const clamped = Math.min(
+                          Math.max(val, freqBounds.min),
+                          freqBounds.max,
+                        );
+                        setSettings({ ...settings, frequencyMinutes: clamped });
+                      }}
+                      className="w-full pl-4 pr-12 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium focus:outline-none focus:border-[#444] transition-colors"
                     />
-                    <button
-                      onClick={handleUpdateToken}
-                      disabled={isSubmitting || !settings.newToken.trim()}
-                      className="px-5 py-2.5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium pointer-events-none">
+                      MIN
+                    </div>
+                  </div>
+                  <div className="mt-2 text-xs text-gray-500">
+                    Admin belgilagan diapazon:{" "}
+                    <span className="text-gray-300 font-medium">
+                      {freqBounds.min} — {freqBounds.max} daqiqa
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    {bs?.postFilterTitle ?? "Which posts can this bot publish?"}
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={settings.postFilter}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          postFilter: e.target.value as any,
+                        })
+                      }
+                      className="w-full pl-4 pr-10 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium appearance-none focus:outline-none focus:border-[#444] transition-colors"
                     >
-                       {bs?.update ?? "Update"}
+                      <option value="all">
+                        {bs?.postFilterAll ?? "All posts"}
+                      </option>
+                      <option value="not_mine">
+                        {bs?.postFilterNotMine ?? "All posts but mine"}
+                      </option>
+                      <option value="only_mine">
+                        {bs?.postFilterOnlyMine ?? "My posts only"}
+                      </option>
+                    </select>
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Blocked Ads */}
+            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+              <AdSelector
+                onSelect={(ids) =>
+                  setSettings({ ...settings, blockedAdIds: ids })
+                }
+                initialSelectedIds={settings.blockedAdIds}
+              />
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={handleSaveSettings}
+                  disabled={isSubmitting}
+                  className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 px-5 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-white/5"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  {isSubmitting ? bs?.saving : bs?.save}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Integration & History */}
+          <div className="space-y-6">
+            {/* Integration Card */}
+            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+              <div className="px-5 py-5 border-b border-[#1f1f1f] flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-white">
+                  {bs?.integrationCode ?? "Integration Code"}
+                </h2>
+                <button
+                  onClick={handleCopyCode}
+                  className="text-gray-400 hover:text-white transition-colors"
+                  title="Copy code"
+                >
+                  {copiedCode ? (
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              <div className="p-5">
+                <div className="flex gap-2 mb-4">
+                  {[
+                    { id: "python", label: "Python" },
+                    { id: "javascript", label: "Node.js" },
+                    { id: "php", label: "PHP" },
+                    { id: "csharp", label: "C#" },
+                  ].map((lang) => (
+                    <button
+                      key={lang.id}
+                      onClick={() => setActiveCodeTab(lang.id)}
+                      className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
+                        activeCodeTab === lang.id
+                          ? "bg-white text-black"
+                          : "bg-[#1a1a1a] border border-[#222] text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      {lang.label}
                     </button>
-                 </div>
+                  ))}
+                </div>
+                <div className="bg-[#050505] border border-[#222] rounded-xl relative">
+                  <pre className="p-4 overflow-x-auto text-[11px] font-mono text-gray-400 leading-relaxed scrollbar-none">
+                    <code>{getIntegrationCode(activeCodeTab)}</code>
+                  </pre>
+                </div>
+                <button
+                  onClick={() => setShowResultModal(true)}
+                  className="mt-4 text-xs font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
+                >
+                  <Info className="w-3.5 h-3.5" />
+                  {bs?.viewResultCodes ?? "View API Result Codes"}
+                </button>
+              </div>
+            </div>
+
+            {/* Token Update */}
+            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+              <h2 className="text-sm font-semibold mb-4 text-white">
+                {bs?.updateToken ?? "Update Access Token"}
+              </h2>
+              <div className="flex gap-3">
+                <input
+                  type="password"
+                  value={settings.newToken}
+                  onChange={(e) =>
+                    setSettings({ ...settings, newToken: e.target.value })
+                  }
+                  placeholder={
+                    bs?.newTokenPlaceholder ?? "New token from BotFather..."
+                  }
+                  className="flex-1 px-4 py-2.5 bg-[#050505] border border-[#222] rounded-xl text-sm text-white focus:outline-none focus:border-[#444] transition-colors placeholder:text-gray-600"
+                />
+                <button
+                  onClick={handleUpdateToken}
+                  disabled={isSubmitting || !settings.newToken.trim()}
+                  className="px-5 py-2.5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                >
+                  {bs?.update ?? "Update"}
+                </button>
+              </div>
+            </div>
+
+            {/* History / Released */}
+            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl flex flex-col h-[400px]">
+              <div className="flex items-center gap-6 p-5 border-b border-[#1f1f1f]">
+                <button
+                  onClick={() => setActiveTab("released")}
+                  className={`text-sm font-semibold transition-colors relative ${
+                    activeTab === "released"
+                      ? "text-white"
+                      : "text-gray-500 hover:text-gray-300"
+                  }`}
+                >
+                  {bs?.releasedAds ?? "Released ads"}
+                  {activeTab === "released" && (
+                    <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab("exceptions")}
+                  className={`text-sm font-semibold transition-colors relative ${
+                    activeTab === "exceptions"
+                      ? "text-white"
+                      : "text-gray-500 hover:text-gray-300"
+                  }`}
+                >
+                  {bs?.exceptions ?? "Exceptions"}
+                  {activeTab === "exceptions" && (
+                    <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
+                  )}
+                </button>
               </div>
 
-              {/* History / Released */}
-              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl flex flex-col h-[400px]">
-                 <div className="flex items-center gap-6 p-5 border-b border-[#1f1f1f]">
-                   <button
-                     onClick={() => setActiveTab("released")}
-                     className={`text-sm font-semibold transition-colors relative ${
-                       activeTab === "released" ? "text-white" : "text-gray-500 hover:text-gray-300"
-                     }`}
-                   >
-                     {bs?.releasedAds ?? "Released ads"}
-                     {activeTab === "released" && (
-                         <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
-                     )}
-                   </button>
-                   <button
-                     onClick={() => setActiveTab("exceptions")}
-                     className={`text-sm font-semibold transition-colors relative ${
-                       activeTab === "exceptions" ? "text-white" : "text-gray-500 hover:text-gray-300"
-                     }`}
-                   >
-                     {bs?.exceptions ?? "Exceptions"}
-                     {activeTab === "exceptions" && (
-                         <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
-                     )}
-                   </button>
-                 </div>
-                 
-                 <div className="flex-1 overflow-y-auto p-4 scrollbar-none">
-                    {activeTab === "released" ? (
-                      history && history.length > 0 ? (
-                        <div className="space-y-3">
-                          {history.map((item) => (
-                            <div key={item.id} className="bg-[#0a0a0a] border border-[#222] rounded-xl p-4">
-                               <div className="flex justify-between items-start mb-2">
-                                  <h4 className="text-sm font-semibold text-white truncate pr-3">{item.ad?.title || "Ad"}</h4>
-                                  <span className="text-sm font-mono text-green-400 font-medium shrink-0">+${parseFloat(item.botOwnerEarns).toFixed(4)}</span>
-                               </div>
-                               <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{item.ad?.text}</p>
-                               <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#1f1f1f]">
-                                  <span className="text-[10px] text-gray-500 font-medium">{new Date(item.createdAt).toLocaleDateString()}</span>
-                                  <span className="text-[10px] font-mono bg-[#1a1a1a] border border-[#333] px-2 py-0.5 rounded-md text-gray-400">@{item.username}</span>
-                               </div>
-                            </div>
-                          ))}
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-none">
+                {activeTab === "released" ? (
+                  history && history.length > 0 ? (
+                    <div className="space-y-3">
+                      {history.map((item) => (
+                        <div
+                          key={item.id}
+                          className="bg-[#0a0a0a] border border-[#222] rounded-xl p-4"
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="text-sm font-semibold text-white truncate pr-3">
+                              {item.ad?.title || "Ad"}
+                            </h4>
+                            <span className="text-sm font-mono text-green-400 font-medium shrink-0">
+                              +${parseFloat(item.botOwnerEarns).toFixed(4)}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
+                            {item.ad?.text}
+                          </p>
+                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#1f1f1f]">
+                            <span className="text-[10px] text-gray-500 font-medium">
+                              {new Date(item.createdAt).toLocaleDateString()}
+                            </span>
+                            <span className="text-[10px] font-mono bg-[#1a1a1a] border border-[#333] px-2 py-0.5 rounded-md text-gray-400">
+                              @{item.username}
+                            </span>
+                          </div>
                         </div>
-                      ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-gray-500">
-                           <p className="text-sm font-medium">{bs?.noReleasedAds ?? "No released ads yet"}</p>
-                        </div>
-                      )
-                    ) : (
-                        <div className="space-y-3">
-                          {isLoadingExceptions ? (
-                            <div className="flex items-center justify-center p-8">
-                               <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
-                            </div>
-                          ) : blockedAdsDetails.length > 0 ? (
-                            blockedAdsDetails.map((ad) => (
-                              <div key={ad.id} className="bg-[#0a0a0a] border border-[#222] rounded-xl p-4 flex gap-3">
-                                 {ad.mediaUrl ? (
-                                   <img src={ad.mediaUrl} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />
-                                 ) : (
-                                   <div className="w-12 h-12 bg-[#1a1a1a] border border-[#333] rounded-xl flex items-center justify-center text-gray-500 shrink-0 font-bold">
-                                      {ad.title?.[0]?.toUpperCase() || "A"}
-                                   </div>
-                                 )}
-                                 <div className="min-w-0 flex-1">
-                                    <h4 className="text-sm font-semibold text-white truncate mb-1">{ad.title || "Ad Without Title"}</h4>
-                                    <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">{ad.text || "No description provided"}</p>
-                                 </div>
-                              </div>
-                            ))
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                      <p className="text-sm font-medium">
+                        {bs?.noReleasedAds ?? "No released ads yet"}
+                      </p>
+                    </div>
+                  )
+                ) : (
+                  <div className="space-y-3">
+                    {isLoadingExceptions ? (
+                      <div className="flex items-center justify-center p-8">
+                        <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+                      </div>
+                    ) : blockedAdsDetails.length > 0 ? (
+                      blockedAdsDetails.map((ad) => (
+                        <div
+                          key={ad.id}
+                          className="bg-[#0a0a0a] border border-[#222] rounded-xl p-4 flex gap-3"
+                        >
+                          {ad.mediaUrl ? (
+                            <img
+                              src={ad.mediaUrl}
+                              alt=""
+                              className="w-12 h-12 object-cover rounded-lg shrink-0"
+                            />
                           ) : (
-                            <div className="h-full flex flex-col items-center justify-center text-gray-500 py-10">
-                               <p className="text-sm font-medium">{bs?.noExceptions ?? "No exceptions configured"}</p>
+                            <div className="w-12 h-12 bg-[#1a1a1a] border border-[#333] rounded-xl flex items-center justify-center text-gray-500 shrink-0 font-bold">
+                              {ad.title?.[0]?.toUpperCase() || "A"}
                             </div>
                           )}
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-sm font-semibold text-white truncate mb-1">
+                              {ad.title || "Ad Without Title"}
+                            </h4>
+                            <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
+                              {ad.text || "No description provided"}
+                            </p>
+                          </div>
                         </div>
+                      ))
+                    ) : (
+                      <div className="h-full flex flex-col items-center justify-center text-gray-500 py-10">
+                        <p className="text-sm font-medium">
+                          {bs?.noExceptions ?? "No exceptions configured"}
+                        </p>
+                      </div>
                     )}
-                 </div>
+                  </div>
+                )}
               </div>
-
-           </div>
+            </div>
+          </div>
         </div>
       </div>
-      
+
       {/* RULES MODAL */}
       {showRulesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-[#0f0f0f] border border-[#222] rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-               <h2 className="text-lg font-bold text-white tracking-tight">{bs?.rulesModal?.title ?? "API Integration Instructions"}</h2>
-               <button onClick={() => setShowRulesModal(false)} className="text-gray-400 hover:text-white transition-colors">
-                  <X className="w-5 h-5"/>
-               </button>
+              <h2 className="text-lg font-bold text-white tracking-tight">
+                {bs?.rulesModal?.title ?? "API Integration Instructions"}
+              </h2>
+              <button
+                onClick={() => setShowRulesModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            
+
             <div className="space-y-6">
-               <div>
-                 <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.rulesModal?.apiTokenLabel ?? "Your API Token"}</h3>
-                 <div className="flex items-center gap-3 bg-[#050505] border border-[#222] rounded-xl p-3">
-                   <code className="flex-1 text-sm text-green-400 break-all font-mono">{currentBot?.apiKey || "Loading..."}</code>
-                   <button onClick={handleCopyToken} className="text-gray-400 hover:text-white p-1 rounded-md hover:bg-[#222] transition-colors">
-                     {copiedToken ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-                   </button>
-                 </div>
-                 <p className="text-xs text-yellow-500/80 mt-2">{bs?.rulesModal?.tokenWarning}</p>
-               </div>
-               
-               <div>
-                  <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.rulesModal?.quickStart ?? "Quick Start"}</h3>
-                  <div className="space-y-2.5 text-sm text-gray-400">
-                    {(bs?.rulesModal?.quickStartSteps ?? [
+              <div>
+                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                  {bs?.rulesModal?.apiTokenLabel ?? "Your API Token"}
+                </h3>
+                <div className="flex items-center gap-3 bg-[#050505] border border-[#222] rounded-xl p-3">
+                  <code className="flex-1 text-sm text-green-400 break-all font-mono">
+                    {currentBot?.apiKey || "Loading..."}
+                  </code>
+                  <button
+                    onClick={handleCopyToken}
+                    className="text-gray-400 hover:text-white p-1 rounded-md hover:bg-[#222] transition-colors"
+                  >
+                    {copiedToken ? (
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-yellow-500/80 mt-2">
+                  {bs?.rulesModal?.tokenWarning}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                  {bs?.rulesModal?.quickStart ?? "Quick Start"}
+                </h3>
+                <div className="space-y-2.5 text-sm text-gray-400">
+                  {(
+                    bs?.rulesModal?.quickStartSteps ?? [
                       "1. Copy your API token above",
                       "2. Choose your programming language from the Integration Code section",
                       "3. Use the provided code to integrate ad requests into your bot",
-                      "4. Call the ad function after completing useful tasks for users"
-                    ]).map((s: string, i: number) => <p key={i}>{s}</p>)}
-                  </div>
-               </div>
+                      "4. Call the ad function after completing useful tasks for users",
+                    ]
+                  ).map((s: string, i: number) => (
+                    <p key={i}>{s}</p>
+                  ))}
+                </div>
+              </div>
 
-               <div>
-                 <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.rulesModal?.importantRules ?? "Important Rules"}</h3>
-                 <ul className="space-y-2.5 text-sm text-gray-400">
-                   {(bs?.rulesModal?.rules ?? [
-                     "Only show ads after completing useful tasks",
-                     "Follow the \"completed task → display ad\" principle",
-                     "Mass mailings are strictly prohibited",
-                     "Violation may result in account ban"
-                   ]).map((rule: string, i: number) => (
-                     <li key={i} className="flex gap-2.5">
-                       <span className={i === 3 ? "text-red-400" : "text-yellow-500"}>•</span>
-                       <span className={i === 3 ? "text-red-400 font-medium" : ""}>{rule}</span>
-                     </li>
-                   ))}
-                 </ul>
-               </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                  {bs?.rulesModal?.importantRules ?? "Important Rules"}
+                </h3>
+                <ul className="space-y-2.5 text-sm text-gray-400">
+                  {(
+                    bs?.rulesModal?.rules ?? [
+                      "Only show ads after completing useful tasks",
+                      'Follow the "completed task → display ad" principle',
+                      "Mass mailings are strictly prohibited",
+                      "Violation may result in account ban",
+                    ]
+                  ).map((rule: string, i: number) => (
+                    <li key={i} className="flex gap-2.5">
+                      <span
+                        className={i === 3 ? "text-red-400" : "text-yellow-500"}
+                      >
+                        •
+                      </span>
+                      <span
+                        className={i === 3 ? "text-red-400 font-medium" : ""}
+                      >
+                        {rule}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-               <button
-                 onClick={() => setShowRulesModal(false)}
-                 className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors mt-4"
-               >
-                 {bs?.rulesModal?.gotIt ?? "Got it!"}
-               </button>
+              <button
+                onClick={() => setShowRulesModal(false)}
+                className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors mt-4"
+              >
+                {bs?.rulesModal?.gotIt ?? "Got it!"}
+              </button>
             </div>
           </div>
         </div>
@@ -687,53 +835,94 @@ async Task<bool> ShowAd(long chatId) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-[#0f0f0f] border border-[#222] rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-               <h2 className="text-lg font-bold text-white tracking-tight">{bs?.resultCodesModal?.title ?? "Result Codes"}</h2>
-               <button onClick={() => setShowResultModal(false)} className="text-gray-400 hover:text-white transition-colors">
-                  <X className="w-5 h-5"/>
-               </button>
+              <h2 className="text-lg font-bold text-white tracking-tight">
+                {bs?.resultCodesModal?.title ?? "Result Codes"}
+              </h2>
+              <button
+                onClick={() => setShowResultModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            
-            <p className="text-sm text-gray-400 mb-6">{bs?.resultCodesModal?.desc}</p>
+
+            <p className="text-sm text-gray-400 mb-6">
+              {bs?.resultCodesModal?.desc}
+            </p>
 
             <div className="space-y-6">
-               <div>
-                  <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.resultCodesModal?.exampleTitle ?? "Example Response (200 OK)"}</h3>
-                  <div className="bg-[#050505] border border-[#222] rounded-xl p-4">
-                    <pre className="text-sm text-green-400 font-mono">{"{\n  \"SendPostResult\": 1\n}"}</pre>
-                  </div>
-               </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                  {bs?.resultCodesModal?.exampleTitle ??
+                    "Example Response (200 OK)"}
+                </h3>
+                <div className="bg-[#050505] border border-[#222] rounded-xl p-4">
+                  <pre className="text-sm text-green-400 font-mono">
+                    {'{\n  "SendPostResult": 1\n}'}
+                  </pre>
+                </div>
+              </div>
 
-               <div>
-                 <h3 className="text-sm font-semibold text-gray-300 mb-2">{bs?.resultCodesModal?.allCodesTitle ?? "All Result Codes"}</h3>
-                 <div className="bg-[#050505] border border-[#222] rounded-xl overflow-hidden">
-                   {[
-                     { code: 0, name: "Undefined", color: "text-gray-500" },
-                     { code: 1, name: "Success", color: "text-green-500" },
-                     { code: 2, name: "RevokedTokenError", color: "text-red-500" },
-                     { code: 3, name: "UserForbiddenError", color: "text-red-500" },
-                     { code: 4, name: "TooManyRequestsError", color: "text-yellow-500" },
-                     { code: 5, name: "OtherBotApiError", color: "text-red-500" },
-                     { code: 6, name: "OtherError", color: "text-red-500" },
-                     { code: 7, name: "AdLimited", color: "text-yellow-500" },
-                     { code: 8, name: "NoAds", color: "text-gray-500" },
-                     { code: 9, name: "BotIsNotEnabled", color: "text-yellow-500" },
-                     { code: 10, name: "Banned", color: "text-red-500" },
-                     { code: 11, name: "InReview", color: "text-yellow-500" },
-                   ].map((item, idx, arr) => (
-                     <div key={item.code} className={`flex items-center justify-between p-3 text-sm ${idx !== arr.length - 1 ? "border-b border-[#1f1f1f]" : ""}`}>
-                       <span className="font-mono text-gray-300">{item.name}</span>
-                       <span className={`font-mono font-bold ${item.color}`}>{item.code}</span>
-                     </div>
-                   ))}
-                 </div>
-               </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                  {bs?.resultCodesModal?.allCodesTitle ?? "All Result Codes"}
+                </h3>
+                <div className="bg-[#050505] border border-[#222] rounded-xl overflow-hidden">
+                  {[
+                    { code: 0, name: "Undefined", color: "text-gray-500" },
+                    { code: 1, name: "Success", color: "text-green-500" },
+                    {
+                      code: 2,
+                      name: "RevokedTokenError",
+                      color: "text-red-500",
+                    },
+                    {
+                      code: 3,
+                      name: "UserForbiddenError",
+                      color: "text-red-500",
+                    },
+                    {
+                      code: 4,
+                      name: "TooManyRequestsError",
+                      color: "text-yellow-500",
+                    },
+                    {
+                      code: 5,
+                      name: "OtherBotApiError",
+                      color: "text-red-500",
+                    },
+                    { code: 6, name: "OtherError", color: "text-red-500" },
+                    { code: 7, name: "AdLimited", color: "text-yellow-500" },
+                    { code: 8, name: "NoAds", color: "text-gray-500" },
+                    {
+                      code: 9,
+                      name: "BotIsNotEnabled",
+                      color: "text-yellow-500",
+                    },
+                    { code: 10, name: "Banned", color: "text-red-500" },
+                    { code: 11, name: "InReview", color: "text-yellow-500" },
+                  ].map((item, idx, arr) => (
+                    <div
+                      key={item.code}
+                      className={`flex items-center justify-between p-3 text-sm ${idx !== arr.length - 1 ? "border-b border-[#1f1f1f]" : ""}`}
+                    >
+                      <span className="font-mono text-gray-300">
+                        {item.name}
+                      </span>
+                      <span className={`font-mono font-bold ${item.color}`}>
+                        {item.code}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-               <button
-                 onClick={() => setShowResultModal(false)}
-                 className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors mt-4"
-               >
-                 {bs?.resultCodesModal?.close ?? "Close"}
-               </button>
+              <button
+                onClick={() => setShowResultModal(false)}
+                className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors mt-4"
+              >
+                {bs?.resultCodesModal?.close ?? "Close"}
+              </button>
             </div>
           </div>
         </div>

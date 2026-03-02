@@ -16,7 +16,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import apiClient from "../../api/api";
+import apiClient, { getBotAvatarUrl } from "../../api/api";
 import { useTranslations } from "../../hooks/useTranslations";
 
 const { Option } = Select;
@@ -264,7 +264,7 @@ const BroadcastAd: React.FC = () => {
                         <Option key={b.id} value={b.id}>
                           <div className="flex items-center gap-2 py-0.5">
                             <img
-                              src={`${(import.meta.env.VITE_API_URL || "/api/v1").replace(/\/$/, "")}/bots/avatar/@${b.username}`}
+                              src={getBotAvatarUrl(b.username)}
                               alt=""
                               className="w-6 h-6 rounded-full object-cover bg-primary/20"
                               onError={(e) => {

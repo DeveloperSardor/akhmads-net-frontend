@@ -85,7 +85,7 @@ const MyAds = () => {
       setBroadcastsLoading(true);
       try {
         const res = await adService.getMyBroadcasts({ limit: 50 });
-        setBroadcasts(res?.data?.broadcasts ?? (res as any)?.broadcasts ?? []);
+        setBroadcasts(Array.isArray(res?.data) ? res.data : []);
       } catch {
         setBroadcasts([]);
       } finally {
@@ -388,47 +388,52 @@ const MyAds = () => {
   );
 };
 
-// ── Broadcasts status badge ───────────────────────────────────────────────────
-const getBroadcastStatusInfo = (status: string, b: any) => {
-  const map: Record<string, { label: string; color: string }> = {
+// ── Broadcasts status config ──────────────────────────────────────────────────
+const getBroadcastStatusInfo = (status: string, statusTrans: any) => {
+  const map: Record<string, { label: string; color: string; dot: string }> = {
     PENDING: {
-      label: b.status.PENDING,
-      color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",
+      label: statusTrans?.PENDING ?? "Pending",
+      color: "text-amber-400 bg-amber-400/10 border-amber-400/25",
+      dot: "bg-amber-400",
+    },
+    PENDING_REVIEW: {
+      label: statusTrans?.PENDING ?? "Pending",
+      color: "text-amber-400 bg-amber-400/10 border-amber-400/25",
+      dot: "bg-amber-400",
     },
     APPROVED: {
-      label: b.status.APPROVED,
-      color: "text-purple-400 bg-purple-400/10 border-purple-400/20",
+      label: statusTrans?.APPROVED ?? "Approved",
+      color: "text-violet-400 bg-violet-400/10 border-violet-400/25",
+      dot: "bg-violet-400",
     },
     RUNNING: {
-      label: b.status.RUNNING,
-      color: "text-cyan-400 bg-cyan-400/10 border-cyan-400/20",
+      label: statusTrans?.RUNNING ?? "Running",
+      color: "text-cyan-400 bg-cyan-400/10 border-cyan-400/25",
+      dot: "bg-cyan-400 animate-pulse",
     },
     COMPLETED: {
-      label: b.status.COMPLETED,
-      color: "text-green-400 bg-green-400/10 border-green-400/20",
+      label: statusTrans?.COMPLETED ?? "Completed",
+      color: "text-emerald-400 bg-emerald-400/10 border-emerald-400/25",
+      dot: "bg-emerald-400",
     },
     PAUSED: {
-      label: b.status.PAUSED,
-      color: "text-gray-400 bg-gray-400/10 border-gray-400/20",
+      label: statusTrans?.PAUSED ?? "Paused",
+      color: "text-slate-400 bg-slate-400/10 border-slate-400/25",
+      dot: "bg-slate-400",
     },
     FAILED: {
-      label: b.status.FAILED,
-      color: "text-red-400 bg-red-400/10 border-red-400/20",
+      label: statusTrans?.FAILED ?? "Failed",
+      color: "text-red-400 bg-red-400/10 border-red-400/25",
+      dot: "bg-red-400",
     },
   };
-  return (
-    map[status] ?? {
-      label: status,
-      color: "text-gray-400 bg-gray-400/10 border-gray-400/20",
-    }
-  );
+  return map[status] ?? { label: status, color: "text-slate-400 bg-slate-400/10 border-slate-400/25", dot: "bg-slate-400" };
 };
 
 const BroadcastsList = ({
   broadcasts,
   loading,
   onNew,
-  lang,
 }: {
   broadcasts: any[];
   loading: boolean;
@@ -440,7 +445,7 @@ const BroadcastsList = ({
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
           <AdCardSkeleton key={i} />
         ))}
@@ -450,18 +455,22 @@ const BroadcastsList = ({
 
   if (broadcasts.length === 0) {
     return (
-      <div className="text-center py-16">
-        <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
-          <Radio className="w-10 h-10 text-muted-foreground" />
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="relative mb-6">
+          <div className="w-24 h-24 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+            <Radio className="w-12 h-12 text-primary/60" />
+          </div>
+          <div className="absolute -top-1 -right-1 w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
+            <Plus className="w-3.5 h-3.5 text-primary" />
+          </div>
         </div>
-        <h3 className="text-xl font-semibold text-foreground mb-2">
-          {bTrans.noBroadcasts}
-        </h3>
-        <p className="text-muted-foreground mb-6">{bTrans.noBroadcastsDesc}</p>
+        <h3 className="text-xl font-bold text-foreground mb-2">{bTrans.noBroadcasts}</h3>
+        <p className="text-sm text-muted-foreground mb-8 max-w-xs leading-relaxed">{bTrans.noBroadcastsDesc}</p>
         <button
           onClick={onNew}
-          className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all"
+          className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold transition-all shadow-lg shadow-primary/25 text-sm"
         >
+          <Plus className="w-4 h-4" />
           {bTrans.createBtn}
         </button>
       </div>
@@ -469,98 +478,138 @@ const BroadcastsList = ({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end mb-2">
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          {broadcasts.length} broadcast{broadcasts.length !== 1 ? "s" : ""}
+        </p>
         <button
           onClick={onNew}
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold text-sm transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold text-sm transition-all shadow-md shadow-primary/20"
         >
           <Plus className="w-4 h-4" />
           {bTrans.newBtn}
         </button>
       </div>
-      {broadcasts.map((b: any) => {
-        const st = getBroadcastStatusInfo(b.status, bTrans);
-        const sentPct =
-          b.targetCount > 0
-            ? Math.round(((b.sentCount ?? 0) / b.targetCount) * 100)
+
+      {/* Cards grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {broadcasts.map((b: any) => {
+          const st = getBroadcastStatusInfo(b.status, bTrans.status);
+          const sentPct = b.targetCount > 0
+            ? Math.min(100, Math.round(((b.sentCount ?? 0) / b.targetCount) * 100))
             : 0;
-        return (
-          <div
-            key={b.id}
-            className="bg-card border border-border rounded-xl p-4 sm:p-5 hover:border-primary/30 transition-all"
-          >
-            <div className="flex items-start justify-between gap-4 mb-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-foreground font-medium line-clamp-2">
-                  {b.text?.slice(0, 100) || "—"}
-                </p>
-                {b.bot?.username && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Bot: @{b.bot.username}
-                  </p>
+          const isActive = b.status === "RUNNING";
+          const isDone = b.status === "COMPLETED";
+
+          return (
+            <div
+              key={b.id}
+              className={`relative bg-card border rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5 ${
+                isActive ? "border-cyan-500/30 shadow-sm shadow-cyan-500/10" : "border-border hover:border-primary/30"
+              }`}
+            >
+              {/* Top accent bar */}
+              <div className={`h-1 w-full ${
+                isActive ? "bg-gradient-to-r from-cyan-500 to-indigo-500" :
+                isDone ? "bg-gradient-to-r from-emerald-500 to-teal-500" :
+                b.status === "FAILED" ? "bg-gradient-to-r from-red-500 to-rose-500" :
+                "bg-gradient-to-r from-primary/60 to-indigo-500/60"
+              }`} />
+
+              <div className="p-5">
+                {/* Header row */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground line-clamp-2 leading-snug mb-1.5">
+                      {b.text?.slice(0, 90) || "—"}
+                    </p>
+                    {b.bot?.username && (
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                          <Radio className="w-2.5 h-2.5 text-primary" />
+                        </div>
+                        <span className="text-xs text-muted-foreground font-mono">@{b.bot.username}</span>
+                      </div>
+                    )}
+                  </div>
+                  <span className={`shrink-0 inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border ${st.color}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${st.dot}`} />
+                    {st.label}
+                  </span>
+                </div>
+
+                {/* Stats row */}
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  <div className="bg-background/60 border border-border/50 rounded-xl p-3 text-center">
+                    <div className="text-base font-black text-foreground tabular-nums">
+                      {(b.targetCount ?? 0).toLocaleString()}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
+                      {bTrans.target}
+                    </div>
+                  </div>
+                  <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3 text-center">
+                    <div className="text-base font-black text-emerald-400 tabular-nums">
+                      {(b.sentCount ?? 0).toLocaleString()}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
+                      {bTrans.sent}
+                    </div>
+                  </div>
+                  <div className={`rounded-xl p-3 text-center border ${
+                    (b.failedCount ?? 0) > 0
+                      ? "bg-red-500/5 border-red-500/20"
+                      : "bg-background/60 border-border/50"
+                  }`}>
+                    <div className={`text-base font-black tabular-nums ${(b.failedCount ?? 0) > 0 ? "text-red-400" : "text-muted-foreground"}`}>
+                      {(b.failedCount ?? 0).toLocaleString()}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
+                      {bTrans.failed}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress bar (RUNNING or COMPLETED) */}
+                {(isActive || isDone) && (
+                  <div className="mb-4">
+                    <div className="flex justify-between text-[11px] mb-1.5">
+                      <span className="text-muted-foreground font-semibold">{bTrans.progress}</span>
+                      <span className={`font-bold ${isDone ? "text-emerald-400" : "text-cyan-400"}`}>{sentPct}%</span>
+                    </div>
+                    <div className="h-2 bg-border/60 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          isDone
+                            ? "bg-gradient-to-r from-emerald-500 to-teal-400"
+                            : "bg-gradient-to-r from-cyan-500 to-indigo-500"
+                        }`}
+                        style={{ width: `${sentPct}%` }}
+                      />
+                    </div>
+                  </div>
                 )}
-              </div>
-              <span
-                className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${st.color}`}
-              >
-                {st.label}
-              </span>
-            </div>
 
-            <div className="grid grid-cols-3 gap-3 text-center mb-3">
-              <div className="bg-background/50 rounded-lg p-2">
-                <div className="text-sm font-bold text-foreground">
-                  {(b.targetCount ?? 0).toLocaleString()}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {bTrans.target}
-                </div>
-              </div>
-              <div className="bg-background/50 rounded-lg p-2">
-                <div className="text-sm font-bold text-green-400">
-                  {(b.sentCount ?? 0).toLocaleString()}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {bTrans.sent}
-                </div>
-              </div>
-              <div className="bg-background/50 rounded-lg p-2">
-                <div className="text-sm font-bold text-red-400">
-                  {(b.failedCount ?? 0).toLocaleString()}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {bTrans.failed}
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                  <div className="flex items-center gap-1.5">
+                    <DollarSign className="w-3.5 h-3.5 text-primary/70" />
+                    <span className="text-sm font-bold text-foreground">
+                      ${parseFloat(b.totalCost ?? "0").toFixed(2)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{bTrans.cost}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground tabular-nums">
+                    {b.createdAt ? new Date(b.createdAt).toLocaleDateString() : "—"}
+                  </span>
                 </div>
               </div>
             </div>
-
-            {b.status === "RUNNING" || b.status === "COMPLETED" ? (
-              <div className="mb-3">
-                <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                  <span>Progress</span>
-                  <span>{sentPct}%</span>
-                </div>
-                <div className="h-1.5 bg-border rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary to-indigo-500 rounded-full transition-all"
-                    style={{ width: `${sentPct}%` }}
-                  />
-                </div>
-              </div>
-            ) : null}
-
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>${parseFloat(b.totalCost ?? 0).toFixed(2)} sarflandi</span>
-              <span>
-                {b.createdAt
-                  ? new Date(b.createdAt).toLocaleDateString("uz-UZ")
-                  : "—"}
-              </span>
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };
@@ -582,7 +631,10 @@ const AdCard = ({
 }: any) => {
   const t = useTranslations();
   const m = t.myAds;
-  const progress = (ad.deliveredImpressions / ad.targetImpressions) * 100;
+  const progress =
+    ad.targetImpressions > 0
+      ? (ad.deliveredImpressions / ad.targetImpressions) * 100
+      : 0;
   const [isSaved, setIsSaved] = useState(ad.isSaved || false);
 
   useEffect(() => {
