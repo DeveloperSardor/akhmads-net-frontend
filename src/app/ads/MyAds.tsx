@@ -31,8 +31,20 @@ import TestBotModal from "../../components/ad/TestBotModal";
 import { useTranslations } from "../../hooks/useTranslations";
 import adService from "../../services/ad.service";
 
-type TabType = "all" | "active" | "saved" | "archived" | "scheduled" | "broadcasts";
-type StatusFilter = "all" | "DRAFT" | "SUBMITTED" | "RUNNING" | "PAUSED" | "COMPLETED";
+type TabType =
+  | "all"
+  | "active"
+  | "saved"
+  | "archived"
+  | "scheduled"
+  | "broadcasts";
+type StatusFilter =
+  | "all"
+  | "DRAFT"
+  | "SUBMITTED"
+  | "RUNNING"
+  | "PAUSED"
+  | "COMPLETED";
 
 const MyAds = () => {
   const { lang } = useParams();
@@ -106,9 +118,7 @@ const MyAds = () => {
 
   const filteredAds = ads.filter((ad) => {
     if (searchQuery) {
-      return (
-        ad.text.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      return ad.text.toLowerCase().includes(searchQuery.toLowerCase());
     }
     return true;
   });
@@ -132,7 +142,7 @@ const MyAds = () => {
     resetForm();
     updateFormData({
       contentType: ad.contentType || "TEXT",
-      title: '',
+      title: "",
       text: ad.text || "",
       buttons: ad.buttons
         ? typeof ad.buttons === "string"
@@ -157,21 +167,29 @@ const MyAds = () => {
   };
 
   const handleDelete = async (adId: string) => {
-    if (confirm(m?.deleteConfirm ?? "Are you sure you want to delete this ad?")) {
+    if (
+      confirm(m?.deleteConfirm ?? "Are you sure you want to delete this ad?")
+    ) {
       await deleteAd(adId);
       loadAds();
     }
   };
 
   const handleArchive = async (adId: string) => {
-    if (confirm(m?.archiveConfirm ?? "Are you sure you want to archive this ad?")) {
+    if (
+      confirm(m?.archiveConfirm ?? "Are you sure you want to archive this ad?")
+    ) {
       await archiveAd(adId);
       loadAds();
     }
   };
 
   const handleUnarchive = async (adId: string) => {
-    if (confirm(m?.unarchiveConfirm ?? "Are you sure you want to unarchive this ad?")) {
+    if (
+      confirm(
+        m?.unarchiveConfirm ?? "Are you sure you want to unarchive this ad?",
+      )
+    ) {
       await unarchiveAd(adId);
       loadAds();
     }
@@ -198,7 +216,11 @@ const MyAds = () => {
     { id: "saved", label: m?.tabs.saved ?? "Saved", icon: Heart },
     { id: "scheduled", label: m?.tabs.scheduled ?? "Scheduled", icon: Clock },
     { id: "archived", label: m?.tabs.archived ?? "Archived", icon: Archive },
-    { id: "broadcasts", label: m?.tabs.broadcasts ?? "Broadcasts", icon: Radio },
+    {
+      id: "broadcasts",
+      label: m?.tabs.broadcasts ?? "Broadcasts",
+      icon: Radio,
+    },
   ];
 
   const statusFilters = [
@@ -238,10 +260,11 @@ const MyAds = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium whitespace-nowrap shrink-0 transition-all text-sm ${isActive
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                  : "bg-card text-muted-foreground hover:text-foreground hover:bg-card/80 border border-border"
-                  }`}
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium whitespace-nowrap shrink-0 transition-all text-sm ${
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                    : "bg-card text-muted-foreground hover:text-foreground hover:bg-card/80 border border-border"
+                }`}
               >
                 <Icon className="w-4 h-4" />
                 {tab.label}
@@ -268,7 +291,9 @@ const MyAds = () => {
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+                onChange={(e) =>
+                  setStatusFilter(e.target.value as StatusFilter)
+                }
                 className="w-full sm:w-auto pl-9 sm:pl-10 pr-8 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer"
               >
                 {statusFilters.map((filter) => (
@@ -364,20 +389,61 @@ const MyAds = () => {
 };
 
 // ── Broadcasts status badge ───────────────────────────────────────────────────
-const broadcastStatusMap: Record<string, { label: string; color: string }> = {
-  PENDING:   { label: "Kutilmoqda",   color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" },
-  APPROVED:  { label: "Tasdiqlandi",  color: "text-purple-400 bg-purple-400/10 border-purple-400/20" },
-  RUNNING:   { label: "Yuborilmoqda", color: "text-cyan-400 bg-cyan-400/10 border-cyan-400/20" },
-  COMPLETED: { label: "Yakunlandi",   color: "text-green-400 bg-green-400/10 border-green-400/20" },
-  PAUSED:    { label: "To'xtatildi",  color: "text-gray-400 bg-gray-400/10 border-gray-400/20" },
-  FAILED:    { label: "Xatolik",      color: "text-red-400 bg-red-400/10 border-red-400/20" },
+const getBroadcastStatusInfo = (status: string, b: any) => {
+  const map: Record<string, { label: string; color: string }> = {
+    PENDING: {
+      label: b.status.PENDING,
+      color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",
+    },
+    APPROVED: {
+      label: b.status.APPROVED,
+      color: "text-purple-400 bg-purple-400/10 border-purple-400/20",
+    },
+    RUNNING: {
+      label: b.status.RUNNING,
+      color: "text-cyan-400 bg-cyan-400/10 border-cyan-400/20",
+    },
+    COMPLETED: {
+      label: b.status.COMPLETED,
+      color: "text-green-400 bg-green-400/10 border-green-400/20",
+    },
+    PAUSED: {
+      label: b.status.PAUSED,
+      color: "text-gray-400 bg-gray-400/10 border-gray-400/20",
+    },
+    FAILED: {
+      label: b.status.FAILED,
+      color: "text-red-400 bg-red-400/10 border-red-400/20",
+    },
+  };
+  return (
+    map[status] ?? {
+      label: status,
+      color: "text-gray-400 bg-gray-400/10 border-gray-400/20",
+    }
+  );
 };
 
-const BroadcastsList = ({ broadcasts, loading, onNew, lang }: { broadcasts: any[]; loading: boolean; onNew: () => void; lang?: string }) => {
+const BroadcastsList = ({
+  broadcasts,
+  loading,
+  onNew,
+  lang,
+}: {
+  broadcasts: any[];
+  loading: boolean;
+  onNew: () => void;
+  lang?: string;
+}) => {
+  const t = useTranslations();
+  const bTrans = t.myAds.broadcasts;
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[1, 2, 3].map(i => <AdCardSkeleton key={i} />)}
+        {[1, 2, 3].map((i) => (
+          <AdCardSkeleton key={i} />
+        ))}
       </div>
     );
   }
@@ -388,13 +454,15 @@ const BroadcastsList = ({ broadcasts, loading, onNew, lang }: { broadcasts: any[
         <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
           <Radio className="w-10 h-10 text-muted-foreground" />
         </div>
-        <h3 className="text-xl font-semibold text-foreground mb-2">Broadcast topilmadi</h3>
-        <p className="text-muted-foreground mb-6">Hali birorta broadcast kampaniyasi yaratilmagan</p>
+        <h3 className="text-xl font-semibold text-foreground mb-2">
+          {bTrans.noBroadcasts}
+        </h3>
+        <p className="text-muted-foreground mb-6">{bTrans.noBroadcastsDesc}</p>
         <button
           onClick={onNew}
           className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all"
         >
-          Broadcast yaratish
+          {bTrans.createBtn}
         </button>
       </div>
     );
@@ -408,38 +476,62 @@ const BroadcastsList = ({ broadcasts, loading, onNew, lang }: { broadcasts: any[
           className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold text-sm transition-all"
         >
           <Plus className="w-4 h-4" />
-          Yangi Broadcast
+          {bTrans.newBtn}
         </button>
       </div>
       {broadcasts.map((b: any) => {
-        const st = broadcastStatusMap[b.status] ?? { label: b.status, color: "text-gray-400 bg-gray-400/10 border-gray-400/20" };
-        const sentPct = b.targetCount > 0 ? Math.round((b.sentCount ?? 0) / b.targetCount * 100) : 0;
+        const st = getBroadcastStatusInfo(b.status, bTrans);
+        const sentPct =
+          b.targetCount > 0
+            ? Math.round(((b.sentCount ?? 0) / b.targetCount) * 100)
+            : 0;
         return (
-          <div key={b.id} className="bg-card border border-border rounded-xl p-4 sm:p-5 hover:border-primary/30 transition-all">
+          <div
+            key={b.id}
+            className="bg-card border border-border rounded-xl p-4 sm:p-5 hover:border-primary/30 transition-all"
+          >
             <div className="flex items-start justify-between gap-4 mb-3">
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-foreground font-medium line-clamp-2">{b.text?.slice(0, 100) || "—"}</p>
+                <p className="text-sm text-foreground font-medium line-clamp-2">
+                  {b.text?.slice(0, 100) || "—"}
+                </p>
                 {b.bot?.username && (
-                  <p className="text-xs text-muted-foreground mt-1">Bot: @{b.bot.username}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Bot: @{b.bot.username}
+                  </p>
                 )}
               </div>
-              <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${st.color}`}>
+              <span
+                className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${st.color}`}
+              >
                 {st.label}
               </span>
             </div>
 
             <div className="grid grid-cols-3 gap-3 text-center mb-3">
               <div className="bg-background/50 rounded-lg p-2">
-                <div className="text-sm font-bold text-foreground">{(b.targetCount ?? 0).toLocaleString()}</div>
-                <div className="text-xs text-muted-foreground">Maqsad</div>
+                <div className="text-sm font-bold text-foreground">
+                  {(b.targetCount ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {bTrans.target}
+                </div>
               </div>
               <div className="bg-background/50 rounded-lg p-2">
-                <div className="text-sm font-bold text-green-400">{(b.sentCount ?? 0).toLocaleString()}</div>
-                <div className="text-xs text-muted-foreground">Yuborildi</div>
+                <div className="text-sm font-bold text-green-400">
+                  {(b.sentCount ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {bTrans.sent}
+                </div>
               </div>
               <div className="bg-background/50 rounded-lg p-2">
-                <div className="text-sm font-bold text-red-400">{(b.failedCount ?? 0).toLocaleString()}</div>
-                <div className="text-xs text-muted-foreground">Xatolik</div>
+                <div className="text-sm font-bold text-red-400">
+                  {(b.failedCount ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {bTrans.failed}
+                </div>
               </div>
             </div>
 
@@ -460,7 +552,11 @@ const BroadcastsList = ({ broadcasts, loading, onNew, lang }: { broadcasts: any[
 
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>${parseFloat(b.totalCost ?? 0).toFixed(2)} sarflandi</span>
-              <span>{b.createdAt ? new Date(b.createdAt).toLocaleDateString("uz-UZ") : "—"}</span>
+              <span>
+                {b.createdAt
+                  ? new Date(b.createdAt).toLocaleDateString("uz-UZ")
+                  : "—"}
+              </span>
             </div>
           </div>
         );
@@ -517,53 +613,74 @@ const AdCard = ({
         <div className="flex items-center gap-2 ml-3">
           <button
             onClick={handleToggleSave}
-            className={`p-2.5 rounded-xl transition-all duration-300 transform active:scale-90 ${isSaved
-              ? "bg-red-500 text-white shadow-lg shadow-red-500/40 rotate-[360deg]"
-              : "bg-card hover:bg-muted border border-border text-muted-foreground hover:text-red-500"
-              }`}
-            title={isSaved ? (actions?.unsave ?? "Unsave") : (actions?.save ?? "Save")}
+            className={`p-2.5 rounded-xl transition-all duration-300 transform active:scale-90 ${
+              isSaved
+                ? "bg-red-500 text-white shadow-lg shadow-red-500/40 rotate-[360deg]"
+                : "bg-card hover:bg-muted border border-border text-muted-foreground hover:text-red-500"
+            }`}
+            title={
+              isSaved
+                ? (actions?.unsave ?? "Unsave")
+                : (actions?.save ?? "Save")
+            }
           >
-            <Heart className={`w-5 h-5 transition-all ${isSaved ? "fill-white text-white" : ""}`} />
+            <Heart
+              className={`w-5 h-5 transition-all ${isSaved ? "fill-white text-white" : ""}`}
+            />
           </button>
 
           {ad.mediaUrl && (
             <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted">
-              <img src={ad.mediaUrl} alt="" className="w-full h-full object-cover" />
+              <img
+                src={ad.mediaUrl}
+                alt=""
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
         </div>
       </div>
 
-      {ad.rejectionReason && (ad.status === "DRAFT" || ad.status === "REJECTED") && (
-        <div className="mb-4 flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-amber-600 dark:text-amber-400 leading-relaxed">
-            <span className="font-semibold block mb-0.5">
-              {ad.status === "REJECTED" ? m?.rejectedReason || "Rad etildi:" : m?.editRequested || "Tahrirlash so'raldi:"}
-            </span>
-            {String(ad.rejectionReason).replace(/^Edit requested:\s*/i, "")}
+      {ad.rejectionReason &&
+        (ad.status === "DRAFT" || ad.status === "REJECTED") && (
+          <div className="mb-4 flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+            <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-amber-600 dark:text-amber-400 leading-relaxed">
+              <span className="font-semibold block mb-0.5">
+                {ad.status === "REJECTED"
+                  ? m?.rejectedReason || "Rad etildi:"
+                  : m?.editRequested || "Tahrirlash so'raldi:"}
+              </span>
+              {String(ad.rejectionReason).replace(/^Edit requested:\s*/i, "")}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="flex items-center gap-2 text-sm">
           <Eye className="w-4 h-4 text-blue-400" />
           <span className="text-muted-foreground">
-            {ad.deliveredImpressions?.toLocaleString() || 0} / {ad.targetImpressions?.toLocaleString() || 0}
+            {ad.deliveredImpressions?.toLocaleString() || 0} /{" "}
+            {ad.targetImpressions?.toLocaleString() || 0}
           </span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <MousePointer className="w-4 h-4 text-green-400" />
-          <span className="text-muted-foreground">{ad.clicks || 0} ({ad.ctr || 0}%)</span>
+          <span className="text-muted-foreground">
+            {ad.clicks || 0} ({ad.ctr || 0}%)
+          </span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <DollarSign className="w-4 h-4 text-yellow-400" />
-          <span className="text-muted-foreground">${parseFloat(ad.totalCost || 0).toFixed(2)}</span>
+          <span className="text-muted-foreground">
+            ${parseFloat(ad.totalCost || 0).toFixed(2)}
+          </span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <TrendingUp className="w-4 h-4 text-purple-400" />
-          <span className="text-muted-foreground">${parseFloat(ad.remainingBudget || 0).toFixed(2)}</span>
+          <span className="text-muted-foreground">
+            ${parseFloat(ad.remainingBudget || 0).toFixed(2)}
+          </span>
         </div>
       </div>
 
@@ -595,7 +712,11 @@ const AdCard = ({
           <button
             onClick={onPauseResume}
             className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
-            title={ad.status === "RUNNING" ? (actions?.pause ?? "Pause") : (actions?.resume ?? "Resume")}
+            title={
+              ad.status === "RUNNING"
+                ? (actions?.pause ?? "Pause")
+                : (actions?.resume ?? "Resume")
+            }
           >
             {ad.status === "RUNNING" ? (
               <Pause className="w-4 h-4 text-yellow-400" />
@@ -653,15 +774,16 @@ const AdCard = ({
           </button>
         )}
 
-        {!["DRAFT", "PENDING_REVIEW", "SUBMITTED"].includes(ad.status) && !ad.isArchived && (
-          <button
-            onClick={onArchive}
-            className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
-            title={actions?.archive ?? "Archive"}
-          >
-            <Archive className="w-4 h-4 text-muted-foreground" />
-          </button>
-        )}
+        {!["DRAFT", "PENDING_REVIEW", "SUBMITTED"].includes(ad.status) &&
+          !ad.isArchived && (
+            <button
+              onClick={onArchive}
+              className="px-3 py-2 bg-card hover:bg-muted border border-border rounded-lg transition-all"
+              title={actions?.archive ?? "Archive"}
+            >
+              <Archive className="w-4 h-4 text-muted-foreground" />
+            </button>
+          )}
 
         {ad.isArchived && (
           <button
