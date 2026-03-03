@@ -60,8 +60,8 @@ const Header = () => {
   return (
     <header className="relative min-h-screen overflow-hidden flex items-center justify-center bg-black">
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-4 w-full">
-        <h1 className="text-[42px] md:text-[52px] leading-tight font-medium text-white">
+      <div className="relative z-10 flex flex-col items-center text-center px-4 w-full pt-28 md:pt-0">
+        <h1 className="text-4xl md:text-[52px] leading-tight font-bold text-white tracking-tight">
           {t.homeHeader?.title}
         </h1>
 
