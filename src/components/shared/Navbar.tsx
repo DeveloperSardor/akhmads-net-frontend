@@ -9,6 +9,7 @@ import {
 import { useAuthStore } from "../../store/authStore";
 import { useUserStore } from "../../store/userStore";
 import { useTranslations } from "../../hooks/useTranslations";
+import { BASE_URL } from "../../api/api";
 import walletService from "../../services/wallet.service";
 
 const languages = ["uz", "eng", "ru"] as const;
@@ -139,7 +140,9 @@ const Navbar = () => {
   const getAvatarUrl = () => {
     const avatarUrl = profile?.avatarUrl || user?.avatarUrl;
     if (avatarUrl) {
-      return avatarUrl;
+      return avatarUrl.startsWith("http")
+        ? avatarUrl
+        : `${BASE_URL}${avatarUrl}`;
     }
 
     const name = profile?.firstName || user?.firstName || "U";

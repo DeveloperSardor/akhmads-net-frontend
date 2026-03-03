@@ -3,7 +3,7 @@ import { useTranslations } from "../../../hooks/useTranslations";
 import Marquee from "react-fast-marquee";
 import { motion } from "motion/react";
 import botService from "../../../services/bot.service";
-import { API_BASE_URL, getBotAvatarUrl } from "../../../api/api";
+import { getBotAvatarUrl } from "../../../api/api";
 import type { Bot } from "../../../types/bot.types";
 
 const FEATURED_BOTS: Partial<Bot>[] = [
@@ -50,11 +50,7 @@ const ConnectedBots = () => {
   }, []);
 
   const getAvatar = (bot: Partial<Bot>) => {
-    if (bot.avatarUrl) {
-      return bot.avatarUrl.startsWith("http")
-        ? bot.avatarUrl
-        : `${API_BASE_URL.replace("/api/v1", "")}${bot.avatarUrl}`;
-    }
+    // Force use our backend proxy to handle scraping/caching/HTTPS properly
     return getBotAvatarUrl(bot.username || "");
   };
 
