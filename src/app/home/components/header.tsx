@@ -1,14 +1,13 @@
-// src/app/home/components/Header.tsx
+// src/app/home/components/header.tsx
 "use client";
 
 import { brandIcons } from "@/data/brandicons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "../../../store/authStore";
 import { useUserStore } from "../../../store/userStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "../../../hooks/useTranslations";
-
-
+import { API_BASE_URL } from "@/api/api";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -17,16 +16,42 @@ const Header = () => {
   const { profile, fetchProfile } = useUserStore();
   const t = useTranslations();
 
+  const [priceSettings, setPriceSettings] = useState<{
+    baseCpm: string;
+  } | null>(null);
+
   // ✅ Fetch profile once on mount if authenticated
   useEffect(() => {
     if (isAuthenticated && !profile) {
       fetchProfile();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, profile, fetchProfile]);
+
+  // ✅ Fetch platform settings from public endpoint
+  useEffect(() => {
+    // API_BASE_URL is /api/v1, but settings are at /api/settings
+    const publicApiUrl = API_BASE_URL.replace("/v1", "");
+    fetch(`${publicApiUrl}/settings`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setPriceSettings(data.data);
+        }
+      })
+      .catch((err) => console.error("Error fetching settings:", err));
+  }, []);
 
   const handleCTAClick = () => {
     if (isAuthenticated) {
       navigate(`/${lang}/launch-ad`);
+    } else {
+      navigate(`/${lang}/login`);
+    }
+  };
+
+  const handleMonetizeClick = () => {
+    if (isAuthenticated) {
+      navigate(`/${lang}/add-bot`);
     } else {
       navigate(`/${lang}/login`);
     }
@@ -44,12 +69,34 @@ const Header = () => {
           {t.homeHeader?.subtitle}
         </p>
 
-        <button
-          onClick={handleCTAClick}
-          className="mt-8 px-7 py-3 rounded-full bg-white text-black text-sm font-medium hover:bg-white/90 transition cursor-pointer"
-        >
-          {isAuthenticated ? t.homeHeader?.ctaLaunch : t.homeHeader?.ctaStart}
-        </button>
+        {/* Dynamic Price Display */}
+        {priceSettings && (
+          <div className="mt-8 flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 font-medium animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            <span role="img" aria-label="megaphone">
+              📢
+            </span>
+            {t.homeHeader?.cpmPrice?.replace(
+              "${price}",
+              `$${priceSettings.baseCpm}`,
+            )}
+          </div>
+        )}
+
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <button
+            onClick={handleCTAClick}
+            className="px-7 py-3 rounded-full bg-white text-black text-sm font-medium hover:bg-white/90 transition cursor-pointer"
+          >
+            {isAuthenticated ? t.homeHeader?.ctaLaunch : t.homeHeader?.ctaStart}
+          </button>
+
+          <button
+            onClick={handleMonetizeClick}
+            className="px-7 py-3 rounded-full bg-transparent text-white border border-white/20 text-sm font-medium hover:bg-white/5 transition cursor-pointer"
+          >
+            {t.footer?.links?.addBot || "Monetize Bots"}
+          </button>
+        </div>
 
         {/* === SEAMLESS MARQUEE === */}
         <div className="mt-20 w-full">

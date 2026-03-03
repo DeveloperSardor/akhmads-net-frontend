@@ -19,6 +19,7 @@ export const uz = {
       "Telegram — 13 mlrd aktiv foydalanuvchiga ega. Nega sizning reklamangiz ular ko'radigan joyda bo'lmasligi kerak?",
     ctaStart: "Boshlash",
     ctaLaunch: "Reklama berish",
+    cpmPrice: "${price} — 1000 ta ko'rsatish uchun",
   },
 
   // Home WhyUs

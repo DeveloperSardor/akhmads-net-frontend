@@ -19,6 +19,7 @@ export const eng = {
       "Telegram has 13 billion active users. Why shouldn't your ad be where they're looking?",
     ctaStart: "Get Started",
     ctaLaunch: "Launch Ad",
+    cpmPrice: "${price} per 1000 impressions",
   },
 
   // Home WhyUs

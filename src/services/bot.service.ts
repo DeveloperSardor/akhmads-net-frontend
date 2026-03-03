@@ -1,4 +1,4 @@
-import apiClient from '../api/api';
+import apiClient from "../api/api";
 import type {
   Bot,
   RegisterBotRequest,
@@ -6,22 +6,27 @@ import type {
   GetBotsResponse,
   UpdateBotRequest,
   DeleteBotResponse,
-} from '../types/bot.types';
+} from "../types/bot.types";
 
 class BotService {
   /**
    * 🤖 Register Bot - Botni ro'yxatdan o'tkazish
    */
   async registerBot(data: RegisterBotRequest): Promise<RegisterBotResponse> {
-    const response = await apiClient.post<RegisterBotResponse>('/bots', data);
+    const response = await apiClient.post<RegisterBotResponse>("/bots", data);
     return response.data;
   }
 
   /**
    * ✅ Verify Bot Token - Preview info before registration
    */
-  async verifyBotToken(token: string): Promise<{ success: boolean; data: any }> {
-    const response = await apiClient.post<{ success: boolean; data: any }>('/bots/verify-token', { token });
+  async verifyBotToken(
+    token: string,
+  ): Promise<{ success: boolean; data: any }> {
+    const response = await apiClient.post<{ success: boolean; data: any }>(
+      "/bots/verify-token",
+      { token },
+    );
     return response.data;
   }
 
@@ -33,7 +38,7 @@ class BotService {
     limit?: number;
     offset?: number;
   }): Promise<GetBotsResponse> {
-    const response = await apiClient.get<GetBotsResponse>('/bots', { params });
+    const response = await apiClient.get<GetBotsResponse>("/bots", { params });
     return response.data;
   }
 
@@ -41,15 +46,23 @@ class BotService {
    * 🔍 Get Bot By ID - Bitta botni olish
    */
   async getBotById(botId: string): Promise<{ success: boolean; data: Bot }> {
-    const response = await apiClient.get<{ success: boolean; data: Bot }>(`/bots/${botId}`);
+    const response = await apiClient.get<{ success: boolean; data: Bot }>(
+      `/bots/${botId}`,
+    );
     return response.data;
   }
 
   /**
    * ✏️ Update Bot - Botni yangilash
    */
-  async updateBot(botId: string, data: UpdateBotRequest): Promise<{ success: boolean; data: Bot }> {
-    const response = await apiClient.put<{ success: boolean; data: Bot }>(`/bots/${botId}`, data);
+  async updateBot(
+    botId: string,
+    data: UpdateBotRequest,
+  ): Promise<{ success: boolean; data: Bot }> {
+    const response = await apiClient.put<{ success: boolean; data: Bot }>(
+      `/bots/${botId}`,
+      data,
+    );
     return response.data;
   }
 
@@ -57,7 +70,9 @@ class BotService {
    * 🗑️ Delete Bot - Botni o'chirish
    */
   async deleteBot(botId: string): Promise<DeleteBotResponse> {
-    const response = await apiClient.delete<DeleteBotResponse>(`/bots/${botId}`);
+    const response = await apiClient.delete<DeleteBotResponse>(
+      `/bots/${botId}`,
+    );
     return response.data;
   }
 
@@ -65,10 +80,13 @@ class BotService {
    * ⏸️ Pause/Resume Bot - Botni to'xtatish/davom ettirish
    * ✅ FIXED: POST instead of PATCH
    */
-  async toggleBotPause(botId: string, isPaused: boolean): Promise<{ success: boolean; data: Bot }> {
+  async toggleBotPause(
+    botId: string,
+    isPaused: boolean,
+  ): Promise<{ success: boolean; data: Bot }> {
     const response = await apiClient.post<{ success: boolean; data: Bot }>(
       `/bots/${botId}/pause`,
-      { isPaused }
+      { isPaused },
     );
     return response.data;
   }
@@ -77,17 +95,23 @@ class BotService {
    * 🔑 Regenerate API Key - API key'ni qayta yaratish
    * ✅ FIXED: Correct endpoint path
    */
-  async regenerateApiKey(botId: string): Promise<{ success: boolean; data: { apiKey: string } }> {
-    const response = await apiClient.post<{ success: boolean; data: { apiKey: string } }>(
-      `/bots/${botId}/regenerate-api-key`
-    );
+  async regenerateApiKey(
+    botId: string,
+  ): Promise<{ success: boolean; data: { apiKey: string } }> {
+    const response = await apiClient.post<{
+      success: boolean;
+      data: { apiKey: string };
+    }>(`/bots/${botId}/regenerate-api-key`);
     return response.data;
   }
 
   /**
    * 📊 Get Bot Stats - Bot statistikasi
    */
-  async getBotStats(botId: string, period: '7d' | '30d' | '90d' = '7d'): Promise<{
+  async getBotStats(
+    botId: string,
+    period: "7d" | "30d" | "90d" = "7d",
+  ): Promise<{
     success: boolean;
     data: {
       bot: Bot;
@@ -163,8 +187,31 @@ class BotService {
   /**
    * 🔍 Search Public Bots - Botlarni qidirish (reklama uchun)
    */
-  async searchBots(query: string): Promise<{ success: boolean; data: { bots: Pick<Bot, 'id' | 'username' | 'firstName' | 'avatarUrl' | 'totalMembers'>[] } }> {
-    const response = await apiClient.get('/bots/public/search', { params: { q: query } });
+  async searchBots(
+    query: string,
+  ): Promise<{
+    success: boolean;
+    data: {
+      bots: Pick<
+        Bot,
+        "id" | "username" | "firstName" | "avatarUrl" | "totalMembers"
+      >[];
+    };
+  }> {
+    const response = await apiClient.get("/bots/public/search", {
+      params: { q: query },
+    });
+    return response.data;
+  }
+
+  /**
+   * 🌐 Get Public Bots - Landing page uchun public botlar
+   */
+  async getPublicBots(): Promise<{ success: boolean; data: { bots: Bot[] } }> {
+    const response = await apiClient.get<{
+      success: boolean;
+      data: { bots: Bot[] };
+    }>("/bots/public");
     return response.data;
   }
 }
