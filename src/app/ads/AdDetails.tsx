@@ -15,6 +15,7 @@ import { useAdStore } from "../../store/adStore";
 import adService from "../../services/ad.service";
 import type { AdPerformance } from "../../types/ad.types";
 import { useTranslations } from "../../hooks/useTranslations";
+import { getBotAvatarUrl } from "../../api/api";
 
 const AdDetails = () => {
   const { adId } = useParams<{ adId: string }>();
@@ -69,7 +70,8 @@ const AdDetails = () => {
     }
   };
 
-  const formatCurrency = (amount: number) => `$${Number(amount || 0).toFixed(2)}`;
+  const formatCurrency = (amount: number) =>
+    `$${Number(amount || 0).toFixed(2)}`;
   const formatNumber = (num: number) => Number(num || 0).toLocaleString();
 
   if (isLoading || !currentAd) {
@@ -91,18 +93,21 @@ const AdDetails = () => {
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-            {adDetails?.backToCampaigns || 'Back to campaigns'}
+            {adDetails?.backToCampaigns || "Back to campaigns"}
           </button>
 
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-3">
-                {adDetails?.campaignDetails || 'Campaign Details'}
+                {adDetails?.campaignDetails || "Campaign Details"}
               </h1>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4" />
-                  <span>{adDetails?.created || 'Created'} {new Date(currentAd.createdAt).toLocaleDateString()}</span>
+                  <span>
+                    {adDetails?.created || "Created"}{" "}
+                    {new Date(currentAd.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
                 <span>•</span>
                 <span>ID: {currentAd.id}</span>
@@ -117,12 +122,12 @@ const AdDetails = () => {
               {exporting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>{adDetails?.exporting || 'Exporting...'}</span>
+                  <span>{adDetails?.exporting || "Exporting..."}</span>
                 </>
               ) : (
                 <>
                   <Download className="w-4 h-4" />
-                  <span>{adDetails?.exportData || 'Export Data'}</span>
+                  <span>{adDetails?.exportData || "Export Data"}</span>
                 </>
               )}
             </button>
@@ -137,19 +142,23 @@ const AdDetails = () => {
                 <Eye className="w-5 h-5 text-primary" />
               </div>
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                {adDetails?.impressions || 'Impressions'}
+                {adDetails?.impressions || "Impressions"}
               </span>
             </div>
             <div className="text-3xl font-bold text-foreground mb-2 tabular-nums">
               {formatNumber(currentAd.deliveredImpressions)}
             </div>
             <div className="text-sm text-muted-foreground">
-              {adDetails?.target ? `of ${formatNumber(currentAd.targetImpressions)} ${adDetails.target}` : `of ${formatNumber(currentAd.targetImpressions)} target`}
+              {adDetails?.target
+                ? `of ${formatNumber(currentAd.targetImpressions)} ${adDetails.target}`
+                : `of ${formatNumber(currentAd.targetImpressions)} target`}
             </div>
             <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary rounded-full transition-all"
-                style={{ width: `${(currentAd.deliveredImpressions / currentAd.targetImpressions) * 100}%` }}
+                style={{
+                  width: `${(currentAd.deliveredImpressions / currentAd.targetImpressions) * 100}%`,
+                }}
               />
             </div>
           </div>
@@ -160,13 +169,15 @@ const AdDetails = () => {
                 <MousePointerClick className="w-5 h-5 text-blue-500" />
               </div>
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                {adDetails?.clicks || 'Clicks'}
+                {adDetails?.clicks || "Clicks"}
               </span>
             </div>
             <div className="text-3xl font-bold text-foreground mb-2 tabular-nums">
               {formatNumber(currentAd.clicks)}
             </div>
-            <div className="text-sm text-muted-foreground">{adDetails?.totalEngagements || 'Total engagements'}</div>
+            <div className="text-sm text-muted-foreground">
+              {adDetails?.totalEngagements || "Total engagements"}
+            </div>
           </div>
 
           <div className="p-6 bg-card border border-border rounded-xl">
@@ -175,11 +186,15 @@ const AdDetails = () => {
                 <TrendingUp className="w-5 h-5 text-green-500" />
               </div>
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                {adDetails?.ctr || 'CTR'}
+                {adDetails?.ctr || "CTR"}
               </span>
             </div>
-            <div className="text-3xl font-bold text-green-600 mb-2 tabular-nums">{currentAd.ctr}%</div>
-            <div className="text-sm text-muted-foreground">{adDetails?.clickThroughRate || 'Click-through rate'}</div>
+            <div className="text-3xl font-bold text-green-600 mb-2 tabular-nums">
+              {currentAd.ctr}%
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {adDetails?.clickThroughRate || "Click-through rate"}
+            </div>
           </div>
 
           <div className="p-6 bg-card border border-border rounded-xl">
@@ -188,14 +203,15 @@ const AdDetails = () => {
                 <DollarSign className="w-5 h-5 text-green-500" />
               </div>
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                {adDetails?.spent || 'Spent'}
+                {adDetails?.spent || "Spent"}
               </span>
             </div>
             <div className="text-3xl font-bold text-green-600 mb-2 tabular-nums">
               {formatCurrency(currentAd.totalCost - currentAd.remainingBudget)}
             </div>
             <div className="text-sm text-muted-foreground">
-              {formatCurrency(currentAd.remainingBudget)} {adDetails?.remaining || 'remaining'}
+              {formatCurrency(currentAd.remainingBudget)}{" "}
+              {adDetails?.remaining || "remaining"}
             </div>
           </div>
         </div>
@@ -204,14 +220,16 @@ const AdDetails = () => {
         {loadingPerformance ? (
           <div className="p-20 bg-card border border-border rounded-xl text-center">
             <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-3" />
-            <p className="text-muted-foreground text-sm">{adDetails?.loadingPerformance || 'Loading performance data...'}</p>
+            <p className="text-muted-foreground text-sm">
+              {adDetails?.loadingPerformance || "Loading performance data..."}
+            </p>
           </div>
         ) : performance ? (
           <div className="bg-card border border-border rounded-xl overflow-hidden">
             <div className="px-6 py-4 border-b border-border">
               <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-muted-foreground" />
-                {adDetails?.performanceByBot || 'Performance by Bot'}
+                {adDetails?.performanceByBot || "Performance by Bot"}
               </h2>
             </div>
 
@@ -220,16 +238,16 @@ const AdDetails = () => {
                 <thead>
                   <tr className="border-b border-border">
                     <th className="text-left py-4 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      {adDetails?.tableHeaders?.bot || 'Bot'}
+                      {adDetails?.tableHeaders?.bot || "Bot"}
                     </th>
                     <th className="text-left py-4 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      {adDetails?.tableHeaders?.audience || 'Audience'}
+                      {adDetails?.tableHeaders?.audience || "Audience"}
                     </th>
                     <th className="text-right py-4 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      {adDetails?.tableHeaders?.impressions || 'Impressions'}
+                      {adDetails?.tableHeaders?.impressions || "Impressions"}
                     </th>
                     <th className="text-right py-4 px-6 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      {adDetails?.tableHeaders?.revenue || 'Revenue'}
+                      {adDetails?.tableHeaders?.revenue || "Revenue"}
                     </th>
                   </tr>
                 </thead>
@@ -241,8 +259,20 @@ const AdDetails = () => {
                     >
                       <td className="py-5 px-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center font-semibold text-foreground">
-                            {item.bot.username[0].toUpperCase()}
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center font-semibold text-foreground overflow-hidden relative">
+                            <span className="text-xs">
+                              {item.bot.username[0].toUpperCase()}
+                            </span>
+                            <img
+                              src={getBotAvatarUrl(item.bot.username)}
+                              alt={item.bot.username}
+                              className="absolute inset-0 w-full h-full object-cover"
+                              onError={(e) => {
+                                (
+                                  e.currentTarget as HTMLImageElement
+                                ).style.opacity = "0";
+                              }}
+                            />
                           </div>
                           <div>
                             <div className="font-semibold text-sm text-foreground">

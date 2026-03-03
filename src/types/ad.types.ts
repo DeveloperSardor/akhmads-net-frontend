@@ -1,17 +1,17 @@
 // src/types/ad.types.ts - FIXED
 // Ad Types
-export type AdContentType = 'TEXT' | 'HTML' | 'MARKDOWN' | 'MEDIA' | 'POLL';
-export type AdStatus = 
-  | 'DRAFT' 
-  | 'PENDING_REVIEW'  // ✅ NEW
-  | 'SUBMITTED'       // ✅ LEGACY (same as PENDING_REVIEW)
-  | 'APPROVED' 
-  | 'REJECTED' 
-  | 'SCHEDULED'
-  | 'RUNNING' 
-  | 'PAUSED' 
-  | 'COMPLETED'
-  | 'ARCHIVED';       // ✅ NEW
+export type AdContentType = "TEXT" | "HTML" | "MARKDOWN" | "MEDIA" | "POLL";
+export type AdStatus =
+  | "DRAFT"
+  | "PENDING_REVIEW" // ✅ NEW
+  | "SUBMITTED" // ✅ LEGACY (same as PENDING_REVIEW)
+  | "APPROVED"
+  | "REJECTED"
+  | "SCHEDULED"
+  | "RUNNING"
+  | "PAUSED"
+  | "COMPLETED"
+  | "ARCHIVED"; // ✅ NEW
 
 export interface Ad {
   id: string;
@@ -42,7 +42,7 @@ export interface Ad {
   excludedBotIds?: string[];
   promoCodeUsed?: string;
   discount: number;
-  isSaved?: boolean;  // ✅ NEW - for frontend
+  isSaved?: boolean; // ✅ NEW - for frontend
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
@@ -51,7 +51,7 @@ export interface Ad {
 export interface AdButton {
   text: string;
   url: string;
-  color?: string;  // ✅ NEW - for button color
+  color?: string; // ✅ NEW - for button color
 }
 
 export interface AdPoll {
@@ -65,7 +65,7 @@ export interface AdTargeting {
   categories?: string[];
   aiSegments?: string[];
   languages?: string[];
-  frequency?: 'unique' | 'daily' | 'weekly' | 'monthly';
+  frequency?: "unique" | "daily" | "weekly" | "monthly";
 }
 
 export interface PricingTier {
@@ -157,6 +157,7 @@ export interface AdPerformance {
       username: string;
       firstName: string;
       totalMembers: number;
+      avatarUrl?: string;
     };
     impressions: number;
     revenue: number;
