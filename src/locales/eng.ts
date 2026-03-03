@@ -88,7 +88,11 @@ export const eng = {
       faq: "FAQ",
       support: "Support",
     },
-    copyright: "AKHMADS.NET — Bots. Ads. Automation.",
+    copyright: "© 2025 Akhmads Media LLC. All rights reserved.",
+    taxNotice:
+      "Akhmads Media LLC is a legally registered company in the Republic of Uzbekistan.",
+    complianceNotice:
+      "We operate in compliance with applicable laws and international data protection standards.",
   },
 
   // FAQ

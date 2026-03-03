@@ -87,7 +87,11 @@ export const uz = {
       faq: "FAQ",
       support: "Yordam",
     },
-    copyright: "AKHMADS.NET — Botlar. Reklamalar. Avtomatlashtirish.",
+    copyright: "© 2025 Akhmads Media LLC. Barcha huquqlar himoyalangan.",
+    taxNotice:
+      "Akhmads Media LLC O'zbekiston Respublikasida qonuniy ro'yxatdan o'tgan kompaniya hisoblanadi.",
+    complianceNotice:
+      "Biz amaldagi qonunlar va xalqaro ma'lumotlarni himoya qilish standartlariga muvofiq ishlaymiz.",
   },
 
   // FAQ

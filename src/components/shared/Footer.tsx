@@ -81,8 +81,10 @@ const Footer = () => {
         <div className="my-10 h-px w-full bg-white/10" />
 
         {/* BOTTOM */}
-        <div className="pb-6 text-center text-xs text-white/40">
-          © {new Date().getFullYear()} {f?.copyright}
+        <div className="pb-6 text-center text-xs text-white/40 space-y-1">
+          <p>{f?.copyright}</p>
+          <p>{f?.taxNotice}</p>
+          <p>{f?.complianceNotice}</p>
         </div>
       </div>
     </footer>
