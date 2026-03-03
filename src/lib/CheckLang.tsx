@@ -10,7 +10,7 @@ const ChekLang = () => {
 
   useEffect(() => {
     if (!lang || !allowedLangs.includes(lang)) {
-      navigate("/uz", { replace: true });
+      navigate("/ru", { replace: true });
     }
   }, [lang]);
 

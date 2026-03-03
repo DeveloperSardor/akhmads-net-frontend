@@ -8,7 +8,7 @@ const NavigatePage = () => {
   const { lang } = useParams<{ lang?: string }>();
   const [searchParams] = useSearchParams();
   const [isVerifying, setIsVerifying] = useState(false);
-  const defaultLang = "uz";
+  const defaultLang = "ru";
 
   useEffect(() => {
     const handleWidgetLogin = async () => {
@@ -28,7 +28,9 @@ const NavigatePage = () => {
           const response = await authService.telegramWidgetLogin(params);
           if (response.success && response.data) {
             // Log in user via store
-            useAuthStore.getState().login(response.data.tokens, response.data.user);
+            useAuthStore
+              .getState()
+              .login(response.data.tokens, response.data.user);
             navigate(`/${lang || defaultLang}`, { replace: true });
             return;
           }
@@ -56,7 +58,9 @@ const NavigatePage = () => {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-white mb-4"></div>
-          <p className="text-white text-lg font-medium">Telegram orqali avtorizatsiya...</p>
+          <p className="text-white text-lg font-medium">
+            Telegram orqali avtorizatsiya...
+          </p>
         </div>
       </div>
     );
