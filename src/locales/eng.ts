@@ -566,6 +566,8 @@ export const eng = {
 
   // Audience Reach
   audienceReach: {
+    selectLanguage: "Select Language",
+    allLanguages: "All Languages",
     targetImpressions: "Target Impressions",
     users: "users",
     customAmount: "Custom Amount",

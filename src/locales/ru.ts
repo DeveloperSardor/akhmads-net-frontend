@@ -587,6 +587,8 @@ export const ru = {
 
   // Audience Reach
   audienceReach: {
+    selectLanguage: "Выберите язык",
+    allLanguages: "Все языки",
     targetImpressions: "Целевые показы",
     users: "пользователей",
     customAmount: "Своё количество",

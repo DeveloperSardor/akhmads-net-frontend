@@ -604,10 +604,12 @@ export const uz = {
 
   // Audience Reach
   audienceReach: {
-    targetImpressions: "Target Impressions",
-    users: "users",
-    customAmount: "Custom Amount",
-    targetUsers: "target users",
+    selectLanguage: "Tilni tanlang",
+    allLanguages: "Barcha tillar",
+    targetImpressions: "Maqsadli ko'rishlar",
+    users: "foydalanuvchilar",
+    customAmount: "SIZNING MIQDORINGIZ",
+    targetUsers: "maqsadli foydalanuvchilar",
     categorySelect: "Kategoriya tanlash",
     categoryDesc: "Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang",
     selectAll: "Barchasini tanlash",

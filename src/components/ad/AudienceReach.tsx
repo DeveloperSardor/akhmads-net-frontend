@@ -16,9 +16,11 @@ interface CategoryFromApi {
   sortOrder: number;
 }
 
-
-const LANGUAGES = [
-  { code: "all", name: "🌍 Barcha tillar" },
+const getLanguages = (t: any) => [
+  {
+    code: "all",
+    name: `🌍 ${t.audienceReach?.allLanguages || "Barcha tillar"}`,
+  },
   { code: "uz", name: "🇺🇿 Uzbek" },
   { code: "ru", name: "🇷🇺 Russian" },
   { code: "en", name: "🇺🇸 English" },
@@ -29,26 +31,28 @@ const LANGUAGES = [
   { code: "es", name: "🇪🇸 Spanish" },
   { code: "it", name: "🇮🇹 Italian" },
   { code: "pt", name: "🇵🇹 Portuguese" },
-  { code: "hi", name: "��🇳 Hindi" }
+  { code: "hi", name: "🇮🇳 Hindi" },
 ];
 
 const AudienceReach = () => {
   const { formData, updateFormData } = useAdStore();
   const [selectedSegments, setSelectedSegments] = useState<string[]>(
-    formData.targeting?.aiSegments || []
+    formData.targeting?.aiSegments || [],
   );
   const [categories, setCategories] = useState<CategoryFromApi[]>([]);
 
   // Fetch categories from public API
   useEffect(() => {
-    axios.get("https://api.akhmads.net/api/categories")
-      .then(res => setCategories(res.data.data || []))
+    axios
+      .get("https://api.akhmads.net/api/categories")
+      .then((res) => setCategories(res.data.data || []))
       .catch(() => {});
   }, []);
 
   const t = useTranslations();
   const { locale } = t;
   const ar = t.audienceReach;
+  const LANGUAGES = getLanguages(t);
 
   const getCatName = (cat: CategoryFromApi) => {
     if (locale === "uz") return cat.nameUz;
@@ -82,44 +86,53 @@ const AudienceReach = () => {
   const formatNumber = (num: number | undefined) => {
     if (!num && num !== 0) return "0"; // Handle undefined/null
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(num % 1000 === 0 ? 0 : 1)}K`;
+    if (num >= 1000)
+      return `${(num / 1000).toFixed(num % 1000 === 0 ? 0 : 1)}K`;
     return num.toString();
   };
 
   const estimatedReach = Math.floor(
-    formData.targetImpressions * (selectedSegments.length > 0 ? 0.7 : 1)
+    formData.targetImpressions * (selectedSegments.length > 0 ? 0.7 : 1),
   );
 
-  const percentage = ((formData.targetImpressions - 100) / (100000 - 100)) * 100;
+  const percentage =
+    ((formData.targetImpressions - 100) / (100000 - 100)) * 100;
 
   // ✅ Categories from API
-  const segments = categories.map(cat => ({
+  const segments = categories.map((cat) => ({
     id: cat.slug,
     name: `${cat.icon} ${getCatName(cat)}`,
   }));
 
   return (
     <div className="space-y-8">
-      
       {/* Target Impressions */}
       <div>
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           <div className="flex-1 space-y-4">
             <label className="text-sm font-semibold flex items-center gap-2">
               <Globe className="w-4 h-4 text-muted-foreground" />
-              Tilni tanlang
+              {ar?.selectLanguage || "Tilni tanlang"}
             </label>
             <Select
               mode="multiple"
               allowClear
-              placeholder="Barcha tillar"
-              value={formData.targeting?.languages?.includes('all') ? [] : formData.targeting?.languages}
+              placeholder={ar?.allLanguages || "Barcha tillar"}
+              value={
+                formData.targeting?.languages?.includes("all")
+                  ? []
+                  : formData.targeting?.languages
+              }
               onChange={(vals) => {
                 let sorted = vals;
-                if (!vals || vals.length === 0) sorted = ['all'];
-                else if (vals.length > 0 && vals[vals.length - 1] === 'all') sorted = ['all'];
-                else if (vals.includes('all')) sorted = vals.filter(v => v !== 'all');
-                updateFormData({ targeting: { ...formData.targeting, languages: sorted } });
+                if (!vals || vals.length === 0) sorted = ["all"];
+                else if (vals.length > 0 && vals[vals.length - 1] === "all")
+                  sorted = ["all"];
+                else if (vals.includes("all"))
+                  sorted = vals.filter((v) => v !== "all");
+                updateFormData({
+                  targeting: { ...formData.targeting, languages: sorted },
+                });
               }}
               className="w-full h-12 custom-dark-select"
             >
@@ -133,7 +146,6 @@ const AudienceReach = () => {
         </div>
 
         <div className="flex items-center gap-2 mb-4">
-
           <Users className="w-4 h-4 text-muted-foreground" />
           <label className="text-sm font-semibold text-foreground">
             {ar?.targetImpressions ?? "Target Impressions"}
@@ -147,7 +159,9 @@ const AudienceReach = () => {
             return (
               <button
                 key={reach.value}
-                onClick={() => updateFormData({ targetImpressions: reach.value })}
+                onClick={() =>
+                  updateFormData({ targetImpressions: reach.value })
+                }
                 className={`relative py-4 px-3 rounded-xl border transition-all ${
                   isActive
                     ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
@@ -155,10 +169,14 @@ const AudienceReach = () => {
                 }`}
               >
                 <div className="text-center">
-                  <div className={`text-xl font-bold mb-1 ${isActive ? "" : ""}`}>
+                  <div
+                    className={`text-xl font-bold mb-1 ${isActive ? "" : ""}`}
+                  >
                     {reach.label}
                   </div>
-                  <div className="text-xs opacity-80">{ar?.users ?? "users"}</div>
+                  <div className="text-xs opacity-80">
+                    {ar?.users ?? "users"}
+                  </div>
                 </div>
                 {isActive && (
                   <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
@@ -175,7 +193,7 @@ const AudienceReach = () => {
           <label className="block text-xs font-medium text-muted-foreground mb-4 uppercase tracking-wide">
             {ar?.customAmount ?? "Custom Amount"}
           </label>
-          
+
           <div className="mb-6">
             <input
               type="range"
@@ -228,7 +246,9 @@ const AudienceReach = () => {
               <div className="text-3xl font-bold text-foreground tabular-nums">
                 {formatNumber(formData.targetImpressions)}
               </div>
-              <div className="text-xs text-muted-foreground mt-1">{ar?.targetUsers ?? "target users"}</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                {ar?.targetUsers ?? "target users"}
+              </div>
             </div>
             <span>100K</span>
           </div>
@@ -240,13 +260,19 @@ const AudienceReach = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Target className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">{ar?.categorySelect ?? "Kategoriya tanlash"}</h3>
+            <h3 className="text-sm font-semibold text-foreground">
+              {ar?.categorySelect ?? "Kategoriya tanlash"}
+            </h3>
           </div>
           {segments.length > 0 && (
             <button
               onClick={() => {
-                const allSelected = segments.every(s => selectedSegments.includes(s.id));
-                const newSegments = allSelected ? [] : segments.map(s => s.id);
+                const allSelected = segments.every((s) =>
+                  selectedSegments.includes(s.id),
+                );
+                const newSegments = allSelected
+                  ? []
+                  : segments.map((s) => s.id);
                 setSelectedSegments(newSegments);
                 updateFormData({
                   targeting: {
@@ -258,7 +284,7 @@ const AudienceReach = () => {
               }}
               className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors px-3 py-1.5 rounded-lg border border-primary/30 hover:border-primary/60 hover:bg-primary/5"
             >
-              {segments.every(s => selectedSegments.includes(s.id))
+              {segments.every((s) => selectedSegments.includes(s.id))
                 ? (ar?.deselectAll ?? "Barchasini olib tashlash")
                 : (ar?.selectAll ?? "Barchasini tanlash")}
             </button>
@@ -266,7 +292,8 @@ const AudienceReach = () => {
         </div>
 
         <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-          {ar?.categoryDesc ?? "Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang"}
+          {ar?.categoryDesc ??
+            "Reklamangiz ko'rsatiladigan bot kategoriyalarini tanlang"}
         </p>
 
         <div className="flex flex-wrap gap-3">
@@ -283,13 +310,15 @@ const AudienceReach = () => {
                     : "border-border bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card"
                 }`}
               >
-                <span className={`transition-transform duration-300 ${isSelected ? 'scale-110' : 'group-hover:scale-110 opacity-70 group-hover:opacity-100'}`}>
+                <span
+                  className={`transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110 opacity-70 group-hover:opacity-100"}`}
+                >
                   {segment.name}
                 </span>
                 {isSelected && (
-                   <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
-                      <Check className="w-2.5 h-2.5" />
-                   </div>
+                  <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5" />
+                  </div>
                 )}
               </button>
             );
@@ -300,10 +329,13 @@ const AudienceReach = () => {
         {selectedSegments.length > 0 && (
           <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
             <div className="text-sm font-medium text-foreground">
-              {selectedSegments.length} {ar?.categoriesSelected ?? "ta kategoriya tanlandi"}
+              {selectedSegments.length}{" "}
+              {ar?.categoriesSelected ?? "ta kategoriya tanlandi"}
             </div>
             <div className="text-right">
-              <div className="text-xs text-primary font-medium">{ar?.estimatedReach ?? "Taxminiy qamrov"}</div>
+              <div className="text-xs text-primary font-medium">
+                {ar?.estimatedReach ?? "Taxminiy qamrov"}
+              </div>
               <div className="text-lg font-bold text-foreground tabular-nums">
                 {formatNumber(estimatedReach)}
               </div>
@@ -316,22 +348,36 @@ const AudienceReach = () => {
       <div className="pt-6 border-t border-border">
         <div className="flex items-center gap-2 mb-4">
           <Target className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-semibold text-foreground">{ar?.specificBots ?? "Maxsus botlarni tanlash (Ixtiyoriy)"}</h3>
+          <h3 className="text-sm font-semibold text-foreground">
+            {ar?.specificBots ?? "Maxsus botlarni tanlash (Ixtiyoriy)"}
+          </h3>
         </div>
 
         <div className="space-y-6">
           <BotSelector
             label={ar?.includeBots ?? "Faqat shu botlarda ko'rsatilsin"}
-            description={ar?.includeBotsDesc ?? "Reklamangiz faqat siz tanlagan botlardagina chiqadi (boshqalarida chiqmaydi)."}
-            placeholder={ar?.searchPlaceholder ?? "Bot nomi yoki username kiritib izlang..."}
+            description={
+              ar?.includeBotsDesc ??
+              "Reklamangiz faqat siz tanlagan botlardagina chiqadi (boshqalarida chiqmaydi)."
+            }
+            placeholder={
+              ar?.searchPlaceholder ??
+              "Bot nomi yoki username kiritib izlang..."
+            }
             selectedIds={formData.specificBotIds || []}
             onChange={(ids) => updateFormData({ specificBotIds: ids })}
           />
 
           <BotSelector
             label={ar?.excludeBots ?? "Shu botlarda ko'rsatilmasin"}
-            description={ar?.excludeBotsDesc ?? "Reklamangiz aniq siz xohlamagan botlarda ko'rinmaydi (Blacklist)."}
-            placeholder={ar?.searchPlaceholder ?? "Bot nomi yoki username kiritib izlang..."}
+            description={
+              ar?.excludeBotsDesc ??
+              "Reklamangiz aniq siz xohlamagan botlarda ko'rinmaydi (Blacklist)."
+            }
+            placeholder={
+              ar?.searchPlaceholder ??
+              "Bot nomi yoki username kiritib izlang..."
+            }
             selectedIds={formData.excludedBotIds || []}
             onChange={(ids) => updateFormData({ excludedBotIds: ids })}
           />
