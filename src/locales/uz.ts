@@ -11,7 +11,7 @@ export const uz = {
     orSearch: "Yoki telegramda",
     orSearchSuffix: "botini qidiring",
     howTitle: "Qanday ishlaydi?",
-    howStep1: "\"Telegram botni ochish\" tugmasini bosing",
+    howStep1: '"Telegram botni ochish" tugmasini bosing',
     howStep2: "Botda ko'rsatilgan kodni tasdiqlang",
     howStep3: "Avtomatik tizimga kirasiz",
     twoFaTitle: "2FA Tasdiqlash",
@@ -98,6 +98,7 @@ export const uz = {
   homeBots: {
     title: "Platformamizga ulangan botlar",
     subtitle: "Har kuni o'sib borayotgan tarmoq",
+    badge: "Jonli tarmoq",
   },
 
   // Footer
@@ -474,7 +475,8 @@ export const uz = {
       max: "Maksimal",
       insufficientBalance: "Balans yetarli emas",
       addressRequired: "Iltimos, hamyon manzilini kiriting",
-      invalidAddress: "Noto'g'ri BEP-20 manzil formati. 0x bilan boshlanishi va 42 belgidan iborat bo'lishi kerak.",
+      invalidAddress:
+        "Noto'g'ri BEP-20 manzil formati. 0x bilan boshlanishi va 42 belgidan iborat bo'lishi kerak.",
       addressLabel: "BEP-20 (USDT) Manzili",
       addressPlaceholder: "0x...",
       cryptoTitle: "Kripto (USDT)",
@@ -748,7 +750,8 @@ export const uz = {
     approveAd: "Tasdiqlash",
     rejectAd: "Rad etish",
     rejectionReasonPlaceholder: "Rad etish sababi (ixtiyoriy)",
-    moderationSubtitle: "Botingizda yuborish kutilayotgan reklamalarni ko'rib chiqing.",
+    moderationSubtitle:
+      "Botingizda yuborish kutilayotgan reklamalarni ko'rib chiqing.",
     moderationAdvertiser: "Reklamaberuvchi",
     moderationSchedule: "Vaqti",
     moderationAsap: "Darhol",

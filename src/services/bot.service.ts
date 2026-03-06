@@ -211,6 +211,14 @@ class BotService {
     });
     return response.data;
   }
+
+  /**
+   * 🌐 Get Public Bots - Barcha ochiq botlarni olish
+   */
+  async getPublicBots(): Promise<GetBotsResponse> {
+    const response = await apiClient.get<GetBotsResponse>("/bots/public");
+    return response.data;
+  }
 }
 
 export default new BotService();

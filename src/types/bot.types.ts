@@ -69,12 +69,14 @@ export interface RegisterBotResponse {
 
 export interface GetBotsResponse {
   success: boolean;
-  data: Bot[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
+  data: {
+    bots: Bot[];
+    pagination?: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
   };
 }
 

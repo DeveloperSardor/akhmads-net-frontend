@@ -11,7 +11,7 @@ export const eng = {
     orSearch: "Or search in Telegram for",
     orSearchSuffix: "bot",
     howTitle: "How does it work?",
-    howStep1: "Click \"Open Telegram Bot\"",
+    howStep1: 'Click "Open Telegram Bot"',
     howStep2: "Confirm the code shown in the bot",
     howStep3: "You will be logged in automatically",
     twoFaTitle: "2FA Verification",
@@ -99,6 +99,7 @@ export const eng = {
   homeBots: {
     title: "Bots connected to our platform",
     subtitle: "A growing network every day",
+    badge: "Live Network",
   },
 
   // Footer
@@ -453,7 +454,8 @@ export const eng = {
       max: "Max",
       insufficientBalance: "Insufficient balance",
       addressRequired: "Please enter a wallet address",
-      invalidAddress: "Invalid BEP-20 address format. It should start with 0x and be 42 characters long.",
+      invalidAddress:
+        "Invalid BEP-20 address format. It should start with 0x and be 42 characters long.",
       addressLabel: "BEP-20 (USDT) Address",
       addressPlaceholder: "0x...",
       cryptoTitle: "Crypto (USDT)",
@@ -698,7 +700,8 @@ export const eng = {
     pokazDesc: "Charge for each message sent to a user",
     pokazPriceLabel: "Price per message ($)",
     autoAcceptAdsLabel: "Auto-accept advertisements",
-    autoAcceptAdsDesc: "If disabled, you must manually approve each advertisement",
+    autoAcceptAdsDesc:
+      "If disabled, you must manually approve each advertisement",
     audienceTab: "Audience",
     active3Days: "Active 3 days",
     active7Days: "Active 7 days",

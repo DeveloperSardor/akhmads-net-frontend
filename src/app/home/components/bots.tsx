@@ -35,7 +35,11 @@ const ConnectedBots = () => {
     const fetchBots = async () => {
       try {
         const response = await botService.getPublicBots();
-        if (response.success && response.data.bots.length > 0) {
+        if (
+          response.success &&
+          response.data.bots &&
+          response.data.bots.length > 0
+        ) {
           setBots(response.data.bots);
         } else {
           setBots(FEATURED_BOTS);
@@ -50,85 +54,132 @@ const ConnectedBots = () => {
   }, []);
 
   const getAvatar = (bot: Partial<Bot>) => {
-    // Force use our backend proxy to handle scraping/caching/HTTPS properly
     return getBotAvatarUrl(bot.username || "");
   };
 
+  // Split bots into two rows for a more dynamic "cloud" effect
+  // If we don't have enough bots, we double them to ensure the marquee is full
+  const displayBots =
+    bots.length > 0
+      ? bots.length < 10
+        ? [...bots, ...bots, ...bots]
+        : bots
+      : FEATURED_BOTS;
+
+  const midPoint = Math.ceil(displayBots.length / 2);
+  const row1 = displayBots.slice(0, midPoint);
+  const row2 = displayBots.slice(midPoint);
+
   return (
-    <section className="my-28 overflow-hidden">
+    <section className="my-28 overflow-hidden relative">
+      {/* Background Decorative Element */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none z-0" />
+
       {/* Title Area */}
-      <div className="main-container mb-16 text-center">
+      <div className="main-container mb-20 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md">
+            <span className="flex h-2 w-2 rounded-full bg-purple-500 mr-2 animate-pulse" />
+            <span className="text-xs font-medium text-white/70 uppercase tracking-widest">
+              {t.homeBots?.badge || "Live Network"}
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-6">
             {t.homeBots?.title}
           </h2>
-          <p className="mt-4 text-base md:text-lg text-white/50 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-white/50 max-w-3xl mx-auto leading-relaxed">
             {t.homeBots?.subtitle}
           </p>
         </motion.div>
       </div>
 
-      {/* Marquee Slider */}
-      <div className="relative">
+      {/* Marquee Container */}
+      <div className="relative space-y-6 z-10">
         {/* Gradient Overlays */}
-        <div className="absolute inset-y-0 left-0 w-32 z-10 bg-gradient-to-r from-[#0a0a0a] to-transparent pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-32 z-10 bg-gradient-to-l from-[#0a0a0a] to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 left-0 w-48 z-20 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-48 z-20 bg-gradient-to-l from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent pointer-events-none" />
 
+        {/* First Row - Left to Right */}
+        <Marquee
+          gradient={false}
+          speed={35}
+          pauseOnHover={true}
+          autoFill={true}
+          className="py-2"
+        >
+          {row1.map((bot: Partial<Bot>, index: number) => (
+            <BotCard key={`row1-${index}`} bot={bot} getAvatar={getAvatar} />
+          ))}
+        </Marquee>
+
+        {/* Second Row - Right to Left (or Left to Right but offset) */}
+        {/* We use speed={30} and a slightly different direction or just purely more items to create the offset */}
         <Marquee
           gradient={false}
           speed={40}
           pauseOnHover={true}
           autoFill={true}
-          className="py-10"
+          direction="left"
+          className="py-2"
         >
-          {bots.map((bot: Partial<Bot>, index: number) => (
-            <motion.div
-              key={index}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="
-                mx-3 flex items-center gap-4
-                w-[320px] p-4
-                rounded-2xl border border-white/10
-                bg-gradient-to-br from-white/[0.05] to-transparent
-                backdrop-blur-sm shadow-xl
-                transition-shadow duration-300 hover:shadow-purple-500/10
-              "
-            >
-              <div className="relative h-14 w-14 flex-shrink-0">
-                <img
-                  src={getAvatar(bot)}
-                  alt={bot.firstName}
-                  className="h-full w-full rounded-full object-cover border-2 border-white/10"
-                  onError={(e: any) => {
-                    e.target.src = `https://ui-avatars.com/api/?name=${bot.username}&background=random&color=fff`;
-                  }}
-                />
-              </div>
-
-              <div className="flex flex-col overflow-hidden min-w-0">
-                <h3 className="text-lg font-semibold text-white truncate">
-                  {bot.firstName}
-                </h3>
-                <div className="mt-0.5">
-                  <span className="text-sm font-medium text-white/40">
-                    @{bot.username}
-                  </span>
-                </div>
-              </div>
-
-              {/* Glow effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-500/10 via-transparent to-transparent pointer-events-none" />
-            </motion.div>
+          {row2.map((bot: Partial<Bot>, index: number) => (
+            <BotCard key={`row2-${index}`} bot={bot} getAvatar={getAvatar} />
           ))}
         </Marquee>
       </div>
     </section>
   );
 };
+
+const BotCard = ({ bot, getAvatar }: { bot: Partial<Bot>; getAvatar: any }) => (
+  <motion.div
+    whileHover={{ y: -5, scale: 1.02 }}
+    className="
+      mx-4 flex items-center gap-4
+      w-[340px] p-5
+      rounded-2xl border border-white/10
+      bg-gradient-to-br from-white/[0.05] to-transparent
+      backdrop-blur-md shadow-2xl
+      relative group
+      transition-all duration-300
+    "
+  >
+    <div className="relative h-16 w-16 flex-shrink-0">
+      <div className="absolute inset-0 bg-purple-500 rounded-full blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300" />
+      <img
+        src={getAvatar(bot)}
+        alt={bot.firstName}
+        className="h-full w-full rounded-full object-cover border-2 border-white/10 relative z-10"
+        onError={(e: any) => {
+          e.target.src = `https://ui-avatars.com/api/?name=${bot.username || bot.firstName}&background=random&color=fff&size=128`;
+        }}
+      />
+    </div>
+
+    <div className="flex flex-col overflow-hidden min-w-0 flex-grow">
+      <h3 className="text-lg font-bold text-white truncate group-hover:text-purple-400 transition-colors">
+        {bot.firstName}
+      </h3>
+      <div className="flex items-center gap-2 mt-0.5">
+        <span className="text-sm font-medium text-white/40 truncate">
+          @{bot.username}
+        </span>
+        {bot.totalMembers && (
+          <span className="flex items-center text-[10px] px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 font-bold border border-green-500/20">
+            {Math.floor(bot.totalMembers / 1000)}k+
+          </span>
+        )}
+      </div>
+    </div>
+
+    {/* Glow effect */}
+    <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-500/5 via-transparent to-transparent pointer-events-none" />
+  </motion.div>
+);
 
 export default ConnectedBots;

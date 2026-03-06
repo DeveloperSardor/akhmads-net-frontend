@@ -11,7 +11,7 @@ export const ru = {
     orSearch: "Или найдите в Telegram",
     orSearchSuffix: "бота",
     howTitle: "Как это работает?",
-    howStep1: "Нажмите \"Открыть Telegram бота\"",
+    howStep1: 'Нажмите "Открыть Telegram бота"',
     howStep2: "Подтвердите показанный код в боте",
     howStep3: "Вы автоматически войдёте в систему",
     twoFaTitle: "Подтверждение 2FA",
@@ -99,6 +99,7 @@ export const ru = {
   homeBots: {
     title: "Боты, подключённые к нашей платформе",
     subtitle: "Растущая сеть каждый день",
+    badge: "Живая сеть",
   },
 
   // Footer
@@ -467,7 +468,8 @@ export const ru = {
       max: "Макс",
       insufficientBalance: "Недостаточно средств",
       addressRequired: "Пожалуйста, введите адрес кошелька",
-      invalidAddress: "Неверный формат адреса BEP-20. Должен начинаться с 0x и содержать 42 символа.",
+      invalidAddress:
+        "Неверный формат адреса BEP-20. Должен начинаться с 0x и содержать 42 символа.",
       addressLabel: "Адрес BEP-20 (USDT)",
       addressPlaceholder: "0x...",
       cryptoTitle: "Крипто (USDT)",
@@ -719,7 +721,8 @@ export const ru = {
     pokazDesc: "Плата взимается за каждое отправленное сообщение пользователю",
     pokazPriceLabel: "Цена за сообщение ($)",
     autoAcceptAdsLabel: "Автоматически принимать рекламу",
-    autoAcceptAdsDesc: "Если выключено, вы должны вручную одобрять каждую рекламу",
+    autoAcceptAdsDesc:
+      "Если выключено, вы должны вручную одобрять каждую рекламу",
     audienceTab: "Аудитория",
     active3Days: "Активны 3 дня",
     active7Days: "Активны 7 дней",
@@ -729,7 +732,8 @@ export const ru = {
     approveAd: "Одобрить",
     rejectAd: "Отклонить",
     rejectionReasonPlaceholder: "Причина отклонения (необязательно)",
-    moderationSubtitle: "Просматривайте рекламу, ожидающую отправки в вашем боте.",
+    moderationSubtitle:
+      "Просматривайте рекламу, ожидающую отправки в вашем боте.",
     moderationAdvertiser: "Рекламодатель",
     moderationSchedule: "Расписание",
     moderationAsap: "Немедленно",
