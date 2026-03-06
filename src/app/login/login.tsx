@@ -39,6 +39,13 @@ const Login = () => {
       try {
         setIsLoading(true);
         setError("");
+
+        // Try to recover auth first (in case localstorage was cleared but cookie exists)
+        const hasSession = await useAuthStore.getState().checkAuth();
+        if (hasSession) {
+          return; // the isAuthenticated useEffect will handle redirection
+        }
+
         console.log("🔄 Initiating login...");
 
         const response = await authService.initiateLogin();

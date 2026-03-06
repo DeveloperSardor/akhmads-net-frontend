@@ -1,6 +1,5 @@
 // src/store/authStore.ts
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type { AuthState, User, AuthTokens } from "../types/auth.types";
 import authService from "../services/auth.service";
 
@@ -15,115 +14,104 @@ interface AuthActions {
   refreshAccessToken: () => Promise<boolean>;
 }
 
-export const useAuthStore = create<AuthState & AuthActions>()(
-  persist(
-    (set, get) => ({
-      // State
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
+export const useAuthStore = create<AuthState & AuthActions>()((set, get) => ({
+  // State
+  user: null,
+  accessToken: null,
+  refreshToken: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
 
-      // Actions
-      setUser: (user) => set({ user }),
+  // Actions
+  setUser: (user) => set({ user }),
 
-      setTokens: (tokens) =>
-        set({
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-        }),
-
-      setLoading: (isLoading) => set({ isLoading }),
-
-      setError: (error) => set({ error }),
-
-      /**
-       * ✅ Login - Tokenlar va user ma'lumotlarini saqlash
-       */
-      login: (tokens, user) => {
-        authService.setAuthToken(tokens.accessToken);
-        set({
-          user,
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          isAuthenticated: true,
-          error: null,
-        });
-      },
-
-      /**
-       * 🚪 Logout - Tizimdan chiqish
-       */
-      logout: async () => {
-        try {
-          await authService.logout();
-        } catch (error) {
-          console.error("Logout error:", error);
-        } finally {
-          authService.setAuthToken(null);
-          set({
-            user: null,
-            accessToken: null,
-            refreshToken: null,
-            isAuthenticated: false,
-            error: null,
-          });
-        }
-      },
-
-      /**
-       * 🔍 Check Auth - Token tekshirish
-       */
-      checkAuth: async () => {
-        try {
-          // Tokens are handled by cookies now, so just call the endpoint
-          const response = await authService.getCurrentUser();
-
-          set({
-            user: response.data.user || (response.data as any),
-            isAuthenticated: true,
-          });
-
-          return true;
-        } catch (error) {
-          console.error("Auth check failed:", error);
-
-          // Agar token expired bo'lsa, refresh qilishga harakat qilamiz
-          const refreshSuccess = await get().refreshAccessToken();
-          return refreshSuccess;
-        }
-      },
-
-      /**
-       * 🔄 Refresh Token - Access token yangilash
-       */
-      refreshAccessToken: async () => {
-        try {
-          const response = await authService.refreshToken("");
-          const { tokens } = response.data;
-
-          authService.setAuthToken(tokens.accessToken);
-          set({
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
-          });
-
-          return true;
-        } catch (error) {
-          console.error("Token refresh failed:", error);
-          get().logout();
-          return false;
-        }
-      },
+  setTokens: (tokens) =>
+    set({
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
     }),
-    {
-      name: "auth-storage", // localStorage key
-      partialize: (state) => ({
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
-      }),
-    },
-  ),
-);
+
+  setLoading: (isLoading) => set({ isLoading }),
+
+  setError: (error) => set({ error }),
+
+  /**
+   * ✅ Login - Tokenlar va user ma'lumotlarini saqlash
+   */
+  login: (tokens, user) => {
+    authService.setAuthToken(tokens.accessToken);
+    set({
+      user,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      isAuthenticated: true,
+      error: null,
+    });
+  },
+
+  /**
+   * 🚪 Logout - Tizimdan chiqish
+   */
+  logout: async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      authService.setAuthToken(null);
+      set({
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        isAuthenticated: false,
+        error: null,
+      });
+    }
+  },
+
+  /**
+   * 🔍 Check Auth - Token tekshirish
+   */
+  checkAuth: async () => {
+    try {
+      // Tokens are handled by cookies now, so just call the endpoint
+      const response = await authService.getCurrentUser();
+
+      set({
+        user: response.data.user || (response.data as any),
+        isAuthenticated: true,
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Auth check failed:", error);
+
+      // Agar token expired bo'lsa, refresh qilishga harakat qilamiz
+      const refreshSuccess = await get().refreshAccessToken();
+      return refreshSuccess;
+    }
+  },
+
+  /**
+   * 🔄 Refresh Token - Access token yangilash
+   */
+  refreshAccessToken: async () => {
+    try {
+      const response = await authService.refreshToken("");
+      const { tokens } = response.data;
+
+      authService.setAuthToken(tokens.accessToken);
+      set({
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Token refresh failed:", error);
+      get().logout();
+      return false;
+    }
+  },
+}));
