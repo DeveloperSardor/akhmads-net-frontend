@@ -31,13 +31,8 @@ import TestBotModal from "../../components/ad/TestBotModal";
 import { useTranslations } from "../../hooks/useTranslations";
 import adService from "../../services/ad.service";
 
-type TabType =
-  | "all"
-  | "active"
-  | "saved"
-  | "archived"
-  | "scheduled"
-  | "broadcasts";
+type TabType = "all" | "active" | "saved" | "archived" | "scheduled";
+type AdTypeFilter = "all" | "views" | "broadcast";
 type StatusFilter =
   | "all"
   | "DRAFT"
@@ -68,6 +63,7 @@ const MyAds = () => {
   } = useAdStore();
 
   const [activeTab, setActiveTab] = useState<TabType>("all");
+  const [adTypeFilter, setAdTypeFilter] = useState<AdTypeFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -81,47 +77,79 @@ const MyAds = () => {
   }, [activeTab, statusFilter]);
 
   const loadAds = async () => {
-    if (activeTab === "broadcasts") {
-      setBroadcastsLoading(true);
-      try {
-        const res = await adService.getMyBroadcasts({ limit: 50 });
-        setBroadcasts(Array.isArray(res?.data) ? res.data : []);
-      } catch {
-        setBroadcasts([]);
-      } finally {
-        setBroadcastsLoading(false);
-      }
-      return;
-    }
-
     const params: any = {};
-
-    if (statusFilter !== "all") {
+    if (statusFilter !== "all" && statusFilter !== "DRAFT") {
       params.status = statusFilter;
     }
 
+    let fetchPromise: Promise<void>;
     if (activeTab === "saved") {
-      await fetchMyAds({ saved: true });
+      fetchPromise = fetchMyAds({ saved: true });
     } else if (activeTab === "archived") {
       params.archived = true;
-      await fetchMyAds(params);
+      fetchPromise = fetchMyAds(params);
     } else if (activeTab === "scheduled") {
       params.status = "SCHEDULED";
-      await fetchMyAds(params);
+      fetchPromise = fetchMyAds(params);
     } else if (activeTab === "active") {
       params.status = "RUNNING";
-      await fetchMyAds(params);
+      fetchPromise = fetchMyAds(params);
     } else {
-      await fetchMyAds(params);
+      if (statusFilter === "DRAFT") params.status = "DRAFT";
+      fetchPromise = fetchMyAds(params);
+    }
+
+    setBroadcastsLoading(true);
+    try {
+      const [_, bRes] = await Promise.all([
+        fetchPromise,
+        adService.getMyBroadcasts({ limit: 50 }),
+      ]);
+      const bList = Array.isArray(bRes?.data)
+        ? bRes.data
+        : bRes?.data?.broadcasts || [];
+      setBroadcasts(bList);
+    } catch {
+      setBroadcasts([]);
+    } finally {
+      setBroadcastsLoading(false);
     }
   };
 
-  const filteredAds = ads.filter((ad) => {
-    if (searchQuery) {
-      return ad.text.toLowerCase().includes(searchQuery.toLowerCase());
-    }
-    return true;
-  });
+  const combinedList = [
+    ...ads.map((ad) => ({ ...ad, _customType: "views" })),
+    ...broadcasts.map((b) => ({ ...b, _customType: "broadcast" })),
+  ]
+    .filter((item) => {
+      // Search filter
+      if (
+        searchQuery &&
+        !item.text.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+        return false;
+
+      // Type filter
+      if (adTypeFilter !== "all" && item._customType !== adTypeFilter)
+        return false;
+
+      // Status mapping for Broadcasts in tabs
+      if (item._customType === "broadcast") {
+        if (activeTab === "active") return item.status === "RUNNING";
+        if (activeTab === "scheduled")
+          return ["PENDING", "APPROVED", "PENDING_REVIEW"].includes(
+            item.status,
+          );
+        if (activeTab === "saved") return false; // Broadcasts don't have save yet
+        if (activeTab === "archived") return false; // Broadcasts don't have archive yet
+      }
+
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt || 0).getTime() -
+        new Date(a.createdAt || 0).getTime(),
+    );
 
   const handlePauseResume = async (ad: any) => {
     try {
@@ -131,6 +159,21 @@ const MyAds = () => {
       } else if (ad.status === "PAUSED") {
         await resumeAd(ad.id);
         toast.success(m?.toastResumed || "E'lon davom etilmoqda");
+      }
+      loadAds();
+    } catch (error) {
+      toast.error(m?.toastError || "Xatolik yuz berdi");
+    }
+  };
+
+  const handleBroadcastPauseResume = async (broadcast: any) => {
+    try {
+      if (broadcast.status === "RUNNING") {
+        await adService.pauseBroadcast(broadcast.id);
+        toast.success(m?.toastPaused || "Rassilka pauza qilindi");
+      } else if (broadcast.status === "PAUSED") {
+        await adService.resumeBroadcast(broadcast.id);
+        toast.success(m?.toastResumed || "Rassilka davom etilmoqda");
       }
       loadAds();
     } catch (error) {
@@ -216,11 +259,12 @@ const MyAds = () => {
     { id: "saved", label: m?.tabs.saved ?? "Saved", icon: Heart },
     { id: "scheduled", label: m?.tabs.scheduled ?? "Scheduled", icon: Clock },
     { id: "archived", label: m?.tabs.archived ?? "Archived", icon: Archive },
-    {
-      id: "broadcasts",
-      label: m?.tabs.broadcasts ?? "Broadcasts",
-      icon: Radio,
-    },
+  ];
+
+  const typeFilters = [
+    { value: "all", label: m?.typeFilters?.all ?? "All Types" },
+    { value: "views", label: m?.typeFilters?.views ?? "Views" },
+    { value: "broadcast", label: m?.typeFilters?.broadcast ?? "Broadcasts" },
   ];
 
   const statusFilters = [
@@ -273,18 +317,34 @@ const MyAds = () => {
           })}
         </div>
 
-        {/* Search & Filter — hidden for broadcasts tab */}
-        {activeTab !== "broadcasts" && (
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={m?.searchPlaceholder}
-                className="w-full pl-9 sm:pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
-              />
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 mb-6">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={m?.searchPlaceholder}
+              className="w-full pl-9 sm:pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+            />
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative">
+              <Radio className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+              <select
+                value={adTypeFilter}
+                onChange={(e) =>
+                  setAdTypeFilter(e.target.value as AdTypeFilter)
+                }
+                className="w-full sm:w-auto pl-9 pr-8 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer min-w-[140px]"
+              >
+                {typeFilters.map((f) => (
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="relative">
@@ -294,7 +354,7 @@ const MyAds = () => {
                 onChange={(e) =>
                   setStatusFilter(e.target.value as StatusFilter)
                 }
-                className="w-full sm:w-auto pl-9 sm:pl-10 pr-8 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer"
+                className="w-full sm:w-auto pl-9 pr-8 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer min-w-[140px]"
               >
                 {statusFilters.map((filter) => (
                   <option key={filter.value} value={filter.value}>
@@ -304,23 +364,15 @@ const MyAds = () => {
               </select>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Broadcasts Tab Content */}
-        {activeTab === "broadcasts" ? (
-          <BroadcastsList
-            broadcasts={broadcasts}
-            loading={broadcastsLoading}
-            onNew={() => navigate(`/${lang}/broadcasts/new`)}
-            lang={lang}
-          />
-        ) : isLoading ? (
+        {isLoading || broadcastsLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <AdCardSkeleton key={i} />
             ))}
           </div>
-        ) : filteredAds.length === 0 ? (
+        ) : combinedList.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center mx-auto mb-4">
               <BarChart3 className="w-10 h-10 text-muted-foreground" />
@@ -331,35 +383,37 @@ const MyAds = () => {
             <p className="text-muted-foreground mb-6">
               {searchQuery ? m?.adjustSearch : m?.createFirst}
             </p>
-            {!searchQuery && (
-              <button
-                onClick={() => navigate(`/${lang}/launch-ad`)}
-                className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all"
-              >
-                {m?.launchNew}
-              </button>
-            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAds.map((ad) => (
-              <AdCard
-                key={ad.id}
-                ad={ad}
-                actions={m?.actions}
-                progressLabel={m?.progress}
-                onView={() => navigate(`/${lang}/ads/${ad.id}`)}
-                onPauseResume={() => handlePauseResume(ad)}
-                onDuplicate={() => handleDuplicate(ad)}
-                onEdit={() => handleEdit(ad)}
-                onDelete={() => handleDelete(ad.id)}
-                onSchedule={() => handleSchedule(ad)}
-                onTest={() => handleTest(ad)}
-                onArchive={() => handleArchive(ad.id)}
-                onUnarchive={() => handleUnarchive(ad.id)}
-                onToggleSave={handleToggleSave}
-              />
-            ))}
+            {combinedList.map((item) =>
+              item._customType === "views" ? (
+                <AdCard
+                  key={item.id}
+                  ad={item}
+                  actions={m?.actions}
+                  progressLabel={m?.progress}
+                  onView={() => navigate(`/${lang}/ads/${item.id}`)}
+                  onPauseResume={() => handlePauseResume(item)}
+                  onDuplicate={() => handleDuplicate(item)}
+                  onEdit={() => handleEdit(item)}
+                  onDelete={() => handleDelete(item.id)}
+                  onSchedule={() => handleSchedule(item)}
+                  onTest={() => handleTest(item)}
+                  onArchive={() => handleArchive(item.id)}
+                  onUnarchive={() => handleUnarchive(item.id)}
+                  onToggleSave={handleToggleSave}
+                />
+              ) : (
+                <BroadcastCard
+                  key={item.id}
+                  broadcast={item}
+                  lang={lang}
+                  onNew={() => navigate(`/${lang}/broadcasts/new`)}
+                  onPauseResume={() => handleBroadcastPauseResume(item)}
+                />
+              ),
+            )}
           </div>
         )}
       </div>
@@ -427,188 +481,186 @@ const getBroadcastStatusInfo = (status: string, statusTrans: any) => {
       dot: "bg-red-400",
     },
   };
-  return map[status] ?? { label: status, color: "text-slate-400 bg-slate-400/10 border-slate-400/25", dot: "bg-slate-400" };
+  return (
+    map[status] ?? {
+      label: status,
+      color: "text-slate-400 bg-slate-400/10 border-slate-400/25",
+      dot: "bg-slate-400",
+    }
+  );
 };
 
-const BroadcastsList = ({
-  broadcasts,
-  loading,
-  onNew,
+const BroadcastCard = ({
+  broadcast: b,
+  lang,
+  onPauseResume,
 }: {
-  broadcasts: any[];
-  loading: boolean;
+  broadcast: any;
   onNew: () => void;
+  onPauseResume?: () => void;
   lang?: string;
 }) => {
   const t = useTranslations();
+  const navigate = useNavigate();
   const bTrans = t.myAds.broadcasts;
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {[1, 2, 3].map((i) => (
-          <AdCardSkeleton key={i} />
-        ))}
-      </div>
-    );
-  }
-
-  if (broadcasts.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="relative mb-6">
-          <div className="w-24 h-24 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-            <Radio className="w-12 h-12 text-primary/60" />
-          </div>
-          <div className="absolute -top-1 -right-1 w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
-            <Plus className="w-3.5 h-3.5 text-primary" />
-          </div>
-        </div>
-        <h3 className="text-xl font-bold text-foreground mb-2">{bTrans.noBroadcasts}</h3>
-        <p className="text-sm text-muted-foreground mb-8 max-w-xs leading-relaxed">{bTrans.noBroadcastsDesc}</p>
-        <button
-          onClick={onNew}
-          className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold transition-all shadow-lg shadow-primary/25 text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          {bTrans.createBtn}
-        </button>
-      </div>
-    );
-  }
+  const st = getBroadcastStatusInfo(b.status, bTrans.status);
+  const sentPct =
+    b.targetCount > 0
+      ? Math.min(100, Math.round(((b.sentCount ?? 0) / b.targetCount) * 100))
+      : 0;
+  const isActive = b.status === "RUNNING";
+  const isPaused = b.status === "PAUSED";
+  const isDone = b.status === "COMPLETED";
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          {broadcasts.length} broadcast{broadcasts.length !== 1 ? "s" : ""}
-        </p>
-        <button
-          onClick={onNew}
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold text-sm transition-all shadow-md shadow-primary/20"
-        >
-          <Plus className="w-4 h-4" />
-          {bTrans.newBtn}
-        </button>
-      </div>
+    <div
+      className={`relative bg-card border rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5 ${
+        isActive
+          ? "border-cyan-500/30 shadow-sm shadow-cyan-500/10"
+          : "border-border hover:border-primary/30"
+      }`}
+    >
+      {/* Top accent bar */}
+      <div
+        className={`h-1 w-full ${
+          isActive
+            ? "bg-gradient-to-r from-cyan-500 to-indigo-500"
+            : isDone
+              ? "bg-gradient-to-r from-emerald-500 to-teal-500"
+              : b.status === "FAILED"
+                ? "bg-gradient-to-r from-red-500 to-rose-500"
+                : "bg-gradient-to-r from-primary/60 to-indigo-500/60"
+        }`}
+      />
 
-      {/* Cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {broadcasts.map((b: any) => {
-          const st = getBroadcastStatusInfo(b.status, bTrans.status);
-          const sentPct = b.targetCount > 0
-            ? Math.min(100, Math.round(((b.sentCount ?? 0) / b.targetCount) * 100))
-            : 0;
-          const isActive = b.status === "RUNNING";
-          const isDone = b.status === "COMPLETED";
-
-          return (
-            <div
-              key={b.id}
-              className={`relative bg-card border rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5 ${
-                isActive ? "border-cyan-500/30 shadow-sm shadow-cyan-500/10" : "border-border hover:border-primary/30"
-              }`}
-            >
-              {/* Top accent bar */}
-              <div className={`h-1 w-full ${
-                isActive ? "bg-gradient-to-r from-cyan-500 to-indigo-500" :
-                isDone ? "bg-gradient-to-r from-emerald-500 to-teal-500" :
-                b.status === "FAILED" ? "bg-gradient-to-r from-red-500 to-rose-500" :
-                "bg-gradient-to-r from-primary/60 to-indigo-500/60"
-              }`} />
-
-              <div className="p-5">
-                {/* Header row */}
-                <div className="flex items-start justify-between gap-3 mb-4">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground line-clamp-2 leading-snug mb-1.5">
-                      {b.text?.slice(0, 90) || "—"}
-                    </p>
-                    {b.bot?.username && (
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                          <Radio className="w-2.5 h-2.5 text-primary" />
-                        </div>
-                        <span className="text-xs text-muted-foreground font-mono">@{b.bot.username}</span>
-                      </div>
-                    )}
-                  </div>
-                  <span className={`shrink-0 inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border ${st.color}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${st.dot}`} />
-                    {st.label}
-                  </span>
+      <div className="p-5">
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground line-clamp-2 leading-snug mb-1.5">
+              {b.text?.slice(0, 90) || "—"}
+            </p>
+            {b.bot?.username && (
+              <div className="flex items-center gap-1.5">
+                <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <Radio className="w-2.5 h-2.5 text-primary" />
                 </div>
-
-                {/* Stats row */}
-                <div className="grid grid-cols-3 gap-2 mb-4">
-                  <div className="bg-background/60 border border-border/50 rounded-xl p-3 text-center">
-                    <div className="text-base font-black text-foreground tabular-nums">
-                      {(b.targetCount ?? 0).toLocaleString()}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
-                      {bTrans.target}
-                    </div>
-                  </div>
-                  <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3 text-center">
-                    <div className="text-base font-black text-emerald-400 tabular-nums">
-                      {(b.sentCount ?? 0).toLocaleString()}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
-                      {bTrans.sent}
-                    </div>
-                  </div>
-                  <div className={`rounded-xl p-3 text-center border ${
-                    (b.failedCount ?? 0) > 0
-                      ? "bg-red-500/5 border-red-500/20"
-                      : "bg-background/60 border-border/50"
-                  }`}>
-                    <div className={`text-base font-black tabular-nums ${(b.failedCount ?? 0) > 0 ? "text-red-400" : "text-muted-foreground"}`}>
-                      {(b.failedCount ?? 0).toLocaleString()}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
-                      {bTrans.failed}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Progress bar (RUNNING or COMPLETED) */}
-                {(isActive || isDone) && (
-                  <div className="mb-4">
-                    <div className="flex justify-between text-[11px] mb-1.5">
-                      <span className="text-muted-foreground font-semibold">{bTrans.progress}</span>
-                      <span className={`font-bold ${isDone ? "text-emerald-400" : "text-cyan-400"}`}>{sentPct}%</span>
-                    </div>
-                    <div className="h-2 bg-border/60 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all ${
-                          isDone
-                            ? "bg-gradient-to-r from-emerald-500 to-teal-400"
-                            : "bg-gradient-to-r from-cyan-500 to-indigo-500"
-                        }`}
-                        style={{ width: `${sentPct}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-3 border-t border-border/50">
-                  <div className="flex items-center gap-1.5">
-                    <DollarSign className="w-3.5 h-3.5 text-primary/70" />
-                    <span className="text-sm font-bold text-foreground">
-                      ${parseFloat(b.totalCost ?? "0").toFixed(2)}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{bTrans.cost}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {b.createdAt ? new Date(b.createdAt).toLocaleDateString() : "—"}
-                  </span>
-                </div>
+                <span className="text-xs text-muted-foreground font-mono">
+                  @{b.bot.username}
+                </span>
               </div>
+            )}
+          </div>
+          <span
+            className={`shrink-0 inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border ${st.color}`}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${st.dot}`} />
+            {st.label}
+          </span>
+        </div>
+
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="bg-background/60 border border-border/50 rounded-xl p-3 text-center">
+            <div className="text-base font-black text-foreground tabular-nums">
+              {(b.targetCount ?? 0).toLocaleString()}
             </div>
-          );
-        })}
+            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
+              {bTrans.target}
+            </div>
+          </div>
+          <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3 text-center">
+            <div className="text-base font-black text-emerald-400 tabular-nums">
+              {(b.sentCount ?? 0).toLocaleString()}
+            </div>
+            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
+              {bTrans.sent}
+            </div>
+          </div>
+          <div
+            className={`rounded-xl p-3 text-center border ${
+              (b.failedCount ?? 0) > 0
+                ? "bg-red-500/5 border-red-500/20"
+                : "bg-background/60 border-border/50"
+            }`}
+          >
+            <div
+              className={`text-base font-black tabular-nums ${(b.failedCount ?? 0) > 0 ? "text-red-400" : "text-muted-foreground"}`}
+            >
+              {(b.failedCount ?? 0).toLocaleString()}
+            </div>
+            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide mt-0.5">
+              {bTrans.failed}
+            </div>
+          </div>
+        </div>
+
+        {/* Progress bar (RUNNING, PAUSED or COMPLETED) */}
+        {(isActive || isPaused || isDone) && (
+          <div className="mb-4">
+            <div className="flex justify-between text-[11px] mb-1.5">
+              <span className="text-muted-foreground font-semibold">
+                {bTrans.progress}
+              </span>
+              <span
+                className={`font-bold ${isDone ? "text-emerald-400" : isPaused ? "text-slate-400" : "text-cyan-400"}`}
+              >
+                {sentPct}%
+              </span>
+            </div>
+            <div className="h-2 bg-border/60 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${
+                  isDone
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-400"
+                    : isPaused
+                      ? "bg-gradient-to-r from-slate-500 to-slate-400"
+                      : "bg-gradient-to-r from-cyan-500 to-indigo-500"
+                }`}
+                style={{ width: `${sentPct}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-border/50">
+          <div className="flex items-center gap-1.5">
+            <DollarSign className="w-3.5 h-3.5 text-primary/70" />
+            <span className="text-sm font-bold text-foreground">
+              ${parseFloat(b.totalCost ?? "0").toFixed(2)}
+            </span>
+            <span className="text-xs text-muted-foreground">{bTrans.cost}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {(isActive || isPaused) && onPauseResume && (
+              <button
+                onClick={onPauseResume}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  isActive
+                    ? "bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20"
+                    : "bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/20"
+                }`}
+              >
+                {isActive ? (
+                  <><Pause className="w-3 h-3" />{bTrans.pause ?? "Pauza"}</>
+                ) : (
+                  <><Play className="w-3 h-3" />{bTrans.resume ?? "Davom"}</>
+                )}
+              </button>
+            )}
+            <button
+              onClick={() => navigate(`/${lang}/launch-ad`)}
+              className="p-1.5 hover:bg-muted rounded-lg transition-all"
+              title="Duplicate"
+            >
+              <Copy className="w-3.5 h-3.5 text-muted-foreground" />
+            </button>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {b.createdAt ? new Date(b.createdAt).toLocaleDateString() : "—"}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

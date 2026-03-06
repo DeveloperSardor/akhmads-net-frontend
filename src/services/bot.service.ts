@@ -187,9 +187,7 @@ class BotService {
   /**
    * 🔍 Search Public Bots - Botlarni qidirish (reklama uchun)
    */
-  async searchBots(
-    query: string,
-  ): Promise<{
+  async searchBots(query: string): Promise<{
     success: boolean;
     data: {
       bots: Pick<
@@ -205,13 +203,12 @@ class BotService {
   }
 
   /**
-   * 🌐 Get Public Bots - Landing page uchun public botlar
+   * 👥 Get Bot Users (Audience) - Bot auditoriyasi
    */
-  async getPublicBots(): Promise<{ success: boolean; data: { bots: Bot[] } }> {
-    const response = await apiClient.get<{
-      success: boolean;
-      data: { bots: Bot[] };
-    }>("/bots/public");
+  async getBotUsers(botId: string, params?: any): Promise<any> {
+    const response = await apiClient.get(`/bots/${botId}/active-users`, {
+      params,
+    });
     return response.data;
   }
 }

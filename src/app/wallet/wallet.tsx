@@ -14,10 +14,82 @@ import {
 } from "lucide-react";
 import walletService from "../../services/wallet.service";
 import { useTranslations } from "../../hooks/useTranslations";
+import SEO from "../../components/SEO";
+
+const fmt = (n: number) => `$${Math.abs(n).toFixed(2)}`;
+
+function formatTxDescription(type: string, raw: string, txDesc: any): string {
+  if (!txDesc) return raw || "-";
+
+  // available: X → Y  (AD_SPEND, EARNINGS, etc.)
+  const balanceMatch = raw?.match(/^available:\s*([\d.]+)\s*→\s*([\d.]+)/);
+  if (balanceMatch) {
+    return txDesc.balanceChange
+      .replace("${from}", fmt(parseFloat(balanceMatch[1])))
+      .replace("${to}", fmt(parseFloat(balanceMatch[2])));
+  }
+
+  // Ad reserve: available -$X, reserved +$X (adId: ID)
+  const adReserveMatch = raw?.match(
+    /Ad reserve:.*?available\s*-\$?([\d.]+).*?\(adId:\s*([^)]+)\)/i,
+  );
+  if (adReserveMatch) {
+    return txDesc.adReserve
+      .replace("${amount}", fmt(parseFloat(adReserveMatch[1])))
+      .replace("{adId}", adReserveMatch[2].trim().slice(0, 12) + "…");
+  }
+
+  // Ad reserve release
+  const adReleaseMatch = raw?.match(
+    /Ad reserve release:.*?\+\$?([\d.]+).*?\(adId:\s*([^)]+)\)/i,
+  );
+  if (adReleaseMatch) {
+    return txDesc.adReserveRelease
+      .replace("${amount}", fmt(parseFloat(adReleaseMatch[1])))
+      .replace("{adId}", adReleaseMatch[2].trim().slice(0, 12) + "…");
+  }
+
+  // Withdraw confirm: reserved -$X, totalWithdrawn +$X
+  const withdrawMatch = raw?.match(
+    /Withdraw confirm:.*?reserved\s*-\$?([\d.]+)/i,
+  );
+  if (withdrawMatch) {
+    return txDesc.withdrawConfirm.replace(
+      "${amount}",
+      fmt(parseFloat(withdrawMatch[1])),
+    );
+  }
+
+  // Withdraw reserve: available -$X, reserved +$X
+  const withdrawReserveMatch = raw?.match(
+    /Withdraw reserve:.*?available\s*-\$?([\d.]+)/i,
+  );
+  if (withdrawReserveMatch) {
+    return txDesc.withdrawReserve.replace(
+      "${amount}",
+      fmt(parseFloat(withdrawReserveMatch[1])),
+    );
+  }
+
+  // Earnings / deposit with simple amount
+  if (type === "EARNINGS") {
+    const amtMatch = raw?.match(/\+([\d.]+)/);
+    if (amtMatch)
+      return txDesc.earnings.replace("${amount}", fmt(parseFloat(amtMatch[1])));
+  }
+  if (type === "DEPOSIT") {
+    const amtMatch = raw?.match(/\+([\d.]+)/);
+    if (amtMatch)
+      return txDesc.deposit.replace("${amount}", fmt(parseFloat(amtMatch[1])));
+  }
+
+  return txDesc.unknown?.replace("{raw}", raw || "-") ?? raw ?? "-";
+}
 
 const Wallet = () => {
   const t = useTranslations();
   const w = t.wallet;
+  const locale = t.locale;
 
   const [walletData, setWalletData] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -81,6 +153,15 @@ const Wallet = () => {
 
   return (
     <>
+      <SEO
+        title={
+          w?.pageTitle ? `${w.pageTitle} | Akhmads Net` : "Wallet | Akhmads Net"
+        }
+        description={
+          w?.pageSubtitle ||
+          "Manage your Akhmads Net wallet balance and transactions."
+        }
+      />
       <div className="min-h-screen bg-background pt-32 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -249,20 +330,29 @@ const Wallet = () => {
                             ) : (
                               <TrendingDown className="w-4 h-4 text-red-500" />
                             )}
-                            <span className="text-sm font-medium text-foreground capitalize">
-                              {tx.type.toLowerCase().replace("_", " ")}
+                            <span className="text-sm font-medium text-foreground">
+                              {(w?.txTypes as any)?.[tx.type] ??
+                                tx.type.toLowerCase().replace(/_/g, " ")}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-xs text-muted-foreground">
-                            {tx.description || "-"}
+                            {formatTxDescription(
+                              tx.type,
+                              tx.description,
+                              w?.txDesc,
+                            )}
                           </span>
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-xs text-muted-foreground">
                             {new Date(tx.createdAt).toLocaleDateString(
-                              "uz-UZ",
+                              locale === "uz"
+                                ? "uz-UZ"
+                                : locale === "ru"
+                                  ? "ru-RU"
+                                  : "en-US",
                               {
                                 day: "2-digit",
                                 month: "short",
@@ -310,6 +400,7 @@ const Wallet = () => {
           onClose={() => setShowWithdrawModal(false)}
           onSuccess={loadData}
           availableBalance={walletData?.available || 0}
+          locale={locale}
         />
       )}
     </>
@@ -423,10 +514,12 @@ const WithdrawModal = ({
   onClose,
   onSuccess,
   availableBalance,
+  locale,
 }: {
   onClose: () => void;
   onSuccess: () => void;
   availableBalance: number | string;
+  locale: string;
 }) => {
   const t = useTranslations();
   const wm = t.wallet?.withdrawModal;
@@ -441,17 +534,18 @@ const WithdrawModal = ({
       return;
     }
     if (parseFloat(amount) > parseFloat(String(availableBalance))) {
-      alert("Insufficient balance");
+      alert(wm?.insufficientBalance ?? "Insufficient balance");
       return;
     }
     const bep20Regex = /^0x[a-fA-F0-9]{40}$/;
     if (!address.trim()) {
-      alert("Please enter a wallet address");
+      alert(wm?.addressRequired ?? "Please enter a wallet address");
       return;
     }
     if (!bep20Regex.test(address.trim())) {
       alert(
-        "Invalid BEP20 address format. It should start with 0x and be 42 characters long.",
+        wm?.invalidAddress ??
+          "Invalid BEP-20 address format. It should start with 0x and be 42 characters long.",
       );
       return;
     }
@@ -498,13 +592,14 @@ const WithdrawModal = ({
           />
           <div className="flex justify-between items-center mt-1 px-1">
             <span className="text-xs text-muted-foreground">
-              Avaliable: ${parseFloat(String(availableBalance || 0)).toFixed(2)}
+              {wm?.available ?? "Available:"} $
+              {parseFloat(String(availableBalance || 0)).toFixed(2)}
             </span>
             <button
               onClick={() => setAmount(String(availableBalance))}
               className="text-xs text-primary font-medium hover:underline"
             >
-              Max
+              {wm?.max ?? "Max"}
             </button>
           </div>
         </div>

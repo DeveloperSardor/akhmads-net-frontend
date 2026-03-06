@@ -1,8 +1,8 @@
 // src/store/authStore.ts
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { AuthState, User, AuthTokens } from '../types/auth.types';
-import authService from '../services/auth.service';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { AuthState, User, AuthTokens } from "../types/auth.types";
+import authService from "../services/auth.service";
 
 interface AuthActions {
   setUser: (user: User) => void;
@@ -60,7 +60,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         try {
           await authService.logout();
         } catch (error) {
-          console.error('Logout error:', error);
+          console.error("Logout error:", error);
         } finally {
           authService.setAuthToken(null);
           set({
@@ -77,14 +77,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
        * 🔍 Check Auth - Token tekshirish
        */
       checkAuth: async () => {
-        const { accessToken } = get();
-
-        if (!accessToken) {
-          return false;
-        }
-
         try {
-          authService.setAuthToken(accessToken);
+          // Tokens are handled by cookies now, so just call the endpoint
           const response = await authService.getCurrentUser();
 
           set({
@@ -94,7 +88,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
           return true;
         } catch (error) {
-          console.error('Auth check failed:', error);
+          console.error("Auth check failed:", error);
 
           // Agar token expired bo'lsa, refresh qilishga harakat qilamiz
           const refreshSuccess = await get().refreshAccessToken();
@@ -106,14 +100,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
        * 🔄 Refresh Token - Access token yangilash
        */
       refreshAccessToken: async () => {
-        const { refreshToken } = get();
-
-        if (!refreshToken) {
-          return false;
-        }
-
         try {
-          const response = await authService.refreshToken(refreshToken);
+          const response = await authService.refreshToken("");
           const { tokens } = response.data;
 
           authService.setAuthToken(tokens.accessToken);
@@ -124,20 +112,18 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
           return true;
         } catch (error) {
-          console.error('Token refresh failed:', error);
+          console.error("Token refresh failed:", error);
           get().logout();
           return false;
         }
       },
     }),
     {
-      name: 'auth-storage', // localStorage key
+      name: "auth-storage", // localStorage key
       partialize: (state) => ({
         user: state.user,
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 );

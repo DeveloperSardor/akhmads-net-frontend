@@ -1,7 +1,7 @@
 //src/services/interceptors.ts
-import type{ AxiosError, InternalAxiosRequestConfig } from 'axios';
-import apiClient from '../api/api';
-import { useAuthStore } from '../store/authStore';
+import type { AxiosError, InternalAxiosRequestConfig } from "axios";
+import apiClient from "../api/api";
+import { useAuthStore } from "../store/authStore";
 
 let isRefreshing = false;
 let failedQueue: Array<{
@@ -36,7 +36,7 @@ apiClient.interceptors.request.use(
   },
   (error: AxiosError) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -52,10 +52,10 @@ apiClient.interceptors.response.use(
     // Agar 401 error bo'lsa va refresh qilinmagan bo'lsa
     if (error.response?.status === 401 && !originalRequest._retry) {
       const isAuthEndpoint =
-        originalRequest.url?.includes('/auth/refresh') ||
-        originalRequest.url?.includes('/auth/logout') ||
-        originalRequest.url?.includes('/auth/login');
-        
+        originalRequest.url?.includes("/auth/refresh") ||
+        originalRequest.url?.includes("/auth/logout") ||
+        originalRequest.url?.includes("/auth/login");
+
       if (isAuthEndpoint) {
         return Promise.reject(error);
       }
@@ -79,12 +79,7 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const { refreshToken, refreshAccessToken, logout } = useAuthStore.getState();
-
-      if (!refreshToken) {
-        logout();
-        return Promise.reject(error);
-      }
+      const { refreshAccessToken, logout } = useAuthStore.getState();
 
       try {
         const success = await refreshAccessToken();
@@ -99,7 +94,7 @@ apiClient.interceptors.response.use(
 
           return apiClient(originalRequest);
         } else {
-          processQueue(new Error('Token refresh failed'), null);
+          processQueue(new Error("Token refresh failed"), null);
           logout();
           return Promise.reject(error);
         }
@@ -113,7 +108,7 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default apiClient;

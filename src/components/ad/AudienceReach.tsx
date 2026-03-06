@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Check, Users, Target } from "lucide-react";
+import { Check, Users, Target, Globe } from "lucide-react";
+import { Select } from "antd";
 import { useAdStore } from "../../store/adStore";
 import { useTranslations } from "../../hooks/useTranslations";
 import axios from "axios";
@@ -14,6 +15,22 @@ interface CategoryFromApi {
   icon: string;
   sortOrder: number;
 }
+
+
+const LANGUAGES = [
+  { code: "all", name: "🌍 Barcha tillar" },
+  { code: "uz", name: "🇺🇿 Uzbek" },
+  { code: "ru", name: "🇷🇺 Russian" },
+  { code: "en", name: "🇺🇸 English" },
+  { code: "tr", name: "🇹🇷 Turkish" },
+  { code: "ar", name: "🇸🇦 Arabic" },
+  { code: "de", name: "🇩🇪 German" },
+  { code: "fr", name: "🇫🇷 French" },
+  { code: "es", name: "🇪🇸 Spanish" },
+  { code: "it", name: "🇮🇹 Italian" },
+  { code: "pt", name: "🇵🇹 Portuguese" },
+  { code: "hi", name: "��🇳 Hindi" }
+];
 
 const AudienceReach = () => {
   const { formData, updateFormData } = useAdStore();
@@ -83,9 +100,40 @@ const AudienceReach = () => {
 
   return (
     <div className="space-y-8">
+      
       {/* Target Impressions */}
       <div>
+        <div className="flex flex-col md:flex-row gap-6 mb-8">
+          <div className="flex-1 space-y-4">
+            <label className="text-sm font-semibold flex items-center gap-2">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              Tilni tanlang
+            </label>
+            <Select
+              mode="multiple"
+              allowClear
+              placeholder="Barcha tillar"
+              value={formData.targeting?.languages?.includes('all') ? [] : formData.targeting?.languages}
+              onChange={(vals) => {
+                let sorted = vals;
+                if (!vals || vals.length === 0) sorted = ['all'];
+                else if (vals.length > 0 && vals[vals.length - 1] === 'all') sorted = ['all'];
+                else if (vals.includes('all')) sorted = vals.filter(v => v !== 'all');
+                updateFormData({ targeting: { ...formData.targeting, languages: sorted } });
+              }}
+              className="w-full h-12 custom-dark-select"
+            >
+              {LANGUAGES.map((l) => (
+                <Select.Option key={l.code} value={l.code}>
+                  {l.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2 mb-4">
+
           <Users className="w-4 h-4 text-muted-foreground" />
           <label className="text-sm font-semibold text-foreground">
             {ar?.targetImpressions ?? "Target Impressions"}

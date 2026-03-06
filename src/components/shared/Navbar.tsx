@@ -128,7 +128,7 @@ const Navbar = () => {
   };
 
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
-    `relative px-3 xl:px-5 py-2 rounded-full transition-all duration-500 whitespace-nowrap text-[13px] xl:text-sm font-medium ${
+    `relative px-2.5 xl:px-4 py-2 rounded-full transition-all duration-500 whitespace-nowrap text-[12px] xl:text-[13px] 2xl:text-sm font-medium ${
       isActive
         ? "text-white shadow-[0_0_20px_rgba(168,85,247,0.15)]"
         : "text-white/60 hover:text-white/90"
@@ -157,16 +157,16 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 w-full z-50 px-4 py-4 sm:px-6">
-        <div className="max-w-7xl mx-auto h-[64px] sm:h-[72px] w-full bg-[#0a0a0b]/40 backdrop-blur-[24px] border border-white/5 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-          <div className="h-full flex items-center justify-between px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-[95%] xl:max-w-7xl mx-auto h-[64px] sm:h-[72px] w-full bg-[#0a0a0b]/40 backdrop-blur-[24px] border border-white/5 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+          <div className="h-full flex items-center justify-between px-3 sm:px-4 xl:px-8 relative">
             {/* 🔹 Logo */}
             <Link
               to={`/${lang}`}
-              className="flex items-center gap-2 xl:gap-3 hover:opacity-90 transition shrink-0 z-20"
+              className="flex items-center gap-1.5 xl:gap-3 hover:opacity-90 transition shrink-0 z-20"
             >
               {/* Logo — matches public/index.html */}
               <div
-                className="relative w-11 h-11 rounded-full flex items-center justify-center"
+                className="relative w-9 h-9 xl:w-11 xl:h-11 rounded-full flex items-center justify-center"
                 style={{
                   background:
                     "radial-gradient(circle at center, #0f0f2a 40%, #070715 100%)",
@@ -226,23 +226,22 @@ const Navbar = () => {
                   </defs>
                 </svg>
               </div>
-              {/* Text */}
               <div
                 className="flex flex-col leading-tight"
                 style={{ animation: "logoFadeIn 3s ease forwards", opacity: 0 }}
               >
-                <span className="text-sm font-bold text-white tracking-widest uppercase">
+                <span className="hidden sm:block text-sm font-bold text-white tracking-widest uppercase">
                   Akhmads
                 </span>
-                <span className="text-[9px] text-purple-400 tracking-[0.15em] uppercase">
+                <span className="hidden 2xl:block text-[9px] text-purple-400 tracking-[0.15em] uppercase">
                   ◆ Digital Advertising
                 </span>
               </div>
             </Link>
 
             {/* 🔹 Center links — desktop only */}
-            <div className="hidden lg:flex flex-1 justify-center z-10 mx-2 min-w-0">
-              <div className="bg-white/[0.03] border border-white/10 p-1 rounded-full flex items-center gap-0.5 xl:gap-1 backdrop-blur-md shadow-inner overflow-hidden">
+            <div className="hidden lg:flex flex-1 justify-center z-10 mx-1 min-w-0">
+              <div className="bg-white/[0.03] border border-white/10 p-1 rounded-full flex items-center gap-0 backdrop-blur-md shadow-inner overflow-hidden">
                 <NavLink to={`/${lang}`} end className={navItemClass}>
                   {({ isActive }) => (
                     <>
@@ -279,6 +278,21 @@ const Navbar = () => {
                     </>
                   )}
                 </NavLink>
+                <NavLink
+                  to={
+                    isAuthenticated ? `/${lang}/moderation` : `/${lang}/login`
+                  }
+                  className={navItemClass}
+                >
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                      )}
+                      {nav?.moderation ?? "Moderation"}
+                    </>
+                  )}
+                </NavLink>
                 <NavLink to={`/${lang}/wallet`} className={navItemClass}>
                   {({ isActive }) => (
                     <>
@@ -299,34 +313,18 @@ const Navbar = () => {
                     </>
                   )}
                 </NavLink>
-
-                {isAuthenticated &&
-                  (user?.roles?.includes("ADMIN") ||
-                    user?.role === "ADMIN" ||
-                    user?.role === "SUPER_ADMIN") && (
-                    <NavLink to={`/${lang}/admin`} className={navItemClass}>
-                      {({ isActive }) => (
-                        <>
-                          {isActive && (
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
-                          )}
-                          Admin
-                        </>
-                      )}
-                    </NavLink>
-                  )}
               </div>
             </div>
 
             {/* 🔹 Right side — desktop */}
-            <div className="hidden md:flex items-center gap-1.5 xl:gap-3 shrink-0 z-20">
+            <div className="hidden md:flex items-center gap-1 xl:gap-2 shrink-0 z-20">
               {/* 🌍 Language switcher */}
               <div ref={desktopLangRef} className="relative">
                 <button
                   onClick={() => setDesktopLangOpen((p) => !p)}
                   aria-haspopup="listbox"
                   aria-expanded={desktopLangOpen}
-                  className="text-sm border border-white/10 rounded-full px-4 py-2 bg-white/5 text-white/70 hover:text-white transition"
+                  className="text-xs xl:text-sm border border-white/10 rounded-full px-2.5 xl:px-4 py-2 bg-white/5 text-white/70 hover:text-white transition uppercase font-medium"
                 >
                   {lang.toUpperCase()}
                 </button>
@@ -384,7 +382,7 @@ const Navbar = () => {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => navigate(`/${lang}/wallet`)}
-                          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 px-3 xl:px-5 py-2 text-[13px] xl:text-sm text-white/90 hover:text-white transition-all duration-300 active:scale-95 group"
+                          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 px-2.5 xl:px-4 py-2 text-[13px] xl:text-sm text-white/90 hover:text-white transition-all duration-300 active:scale-95 group"
                         >
                           <svg
                             className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform"
@@ -436,7 +434,7 @@ const Navbar = () => {
                       {isAuthenticated && (
                         <button
                           onClick={() => navigate(`/${lang}/launch-ad`)}
-                          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-5 xl:px-7 py-2.5 text-[13px] xl:text-sm font-semibold transition-all duration-300 active:scale-95 shadow-[0_4px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.5)]"
+                          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-4 xl:px-7 py-2.5 text-[13px] xl:text-sm font-semibold transition-all duration-300 active:scale-95 shadow-[0_4px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.5)]"
                         >
                           <svg
                             className="w-4 h-4"
@@ -451,7 +449,9 @@ const Navbar = () => {
                               d="M12 4v16m8-8H4"
                             />
                           </svg>
-                          <span>{nav?.launchAd ?? "Launch Ad"}</span>
+                          <span className="hidden lg:inline whitespace-nowrap">
+                            {nav?.launchAd ?? "Launch Ad"}
+                          </span>
                         </button>
                       )}
 
@@ -882,6 +882,27 @@ const Navbar = () => {
                 />
               </svg>
               {nav?.myAds ?? "My Ads"}
+            </NavLink>
+            <NavLink
+              to={isAuthenticated ? `/${lang}/moderation` : `/${lang}/login`}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+              }
+            >
+              <svg
+                className="w-4 h-4 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              {nav?.moderation ?? "Moderation"}
             </NavLink>
 
             <NavLink

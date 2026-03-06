@@ -32,19 +32,20 @@ export interface LoginInitiateResponse {
   data: {
     loginToken: string;
     deepLink: string;
-    code: string;        // ✅ Browser shows this
-    codes: string[];     // ✅ Bot shows all 4
+    code: string; // ✅ Browser shows this
+    codes: string[]; // ✅ Bot shows all 4
     expiresAt: string;
     expiresIn: number;
   };
 }
-
 
 export interface LoginStatusResponse {
   success: boolean;
   data: {
     authorized: boolean;
     expired?: boolean;
+    requires2fa?: boolean;
+    twoFaToken?: string;
     tokens?: AuthTokens;
     user?: User;
   };

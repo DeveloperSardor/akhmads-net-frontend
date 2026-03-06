@@ -16,6 +16,7 @@ import MyAds from "./app/ads/MyAds";
 import AdDetails from "./app/ads/AdDetails";
 import BroadcastAd from "./app/ads/BroadcastAd";
 import AdminPanel from "./app/admin/AdminPanel";
+import ModerationPage from "./app/moderation/ModerationPage";
 
 export const routes = createBrowserRouter([
   {
@@ -99,6 +100,14 @@ export const routes = createBrowserRouter([
             element: (
               <ProtectedRoute>
                 <BroadcastAd />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "moderation",
+            element: (
+              <ProtectedRoute>
+                <ModerationPage />
               </ProtectedRoute>
             ),
           },

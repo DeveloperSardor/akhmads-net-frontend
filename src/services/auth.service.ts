@@ -1,10 +1,10 @@
-import apiClient from '../api/api';
+import apiClient from "../api/api";
 import type {
   LoginInitiateResponse,
   LoginStatusResponse,
   RefreshTokenResponse,
   MeResponse,
-} from '../types/auth.types';
+} from "../types/auth.types";
 
 class AuthService {
   /**
@@ -12,7 +12,7 @@ class AuthService {
    */
   async initiateLogin(): Promise<LoginInitiateResponse> {
     const response = await apiClient.post<LoginInitiateResponse>(
-      '/auth/login/initiate'
+      "/auth/login/initiate",
     );
     return response.data;
   }
@@ -22,7 +22,7 @@ class AuthService {
    */
   async checkLoginStatus(loginToken: string): Promise<LoginStatusResponse> {
     const response = await apiClient.get<LoginStatusResponse>(
-      `/auth/login/status/${loginToken}`
+      `/auth/login/status/${loginToken}`,
     );
     return response.data;
   }
@@ -31,7 +31,7 @@ class AuthService {
    * 3️⃣ Get Current User - Token bilan user ma'lumotlarini olish
    */
   async getCurrentUser(): Promise<MeResponse> {
-    const response = await apiClient.get<MeResponse>('/auth/me');
+    const response = await apiClient.get<MeResponse>("/auth/me");
     return response.data;
   }
 
@@ -40,8 +40,8 @@ class AuthService {
    */
   async refreshToken(refreshToken: string): Promise<RefreshTokenResponse> {
     const response = await apiClient.post<RefreshTokenResponse>(
-      '/auth/refresh',
-      { refreshToken }
+      "/auth/refresh",
+      { refreshToken },
     );
     return response.data;
   }
@@ -50,14 +50,52 @@ class AuthService {
    * 5️⃣ Logout - Tizimdan chiqish
    */
   async logout(): Promise<void> {
-    await apiClient.post('/auth/logout');
+    await apiClient.post("/auth/logout");
   }
 
   /**
    * 🤖 Telegram Widget Login - Bot URL button orqali avtomatik login
    */
   async telegramWidgetLogin(params: Record<string, string>) {
-    const response = await apiClient.post('/auth/telegram-widget', params);
+    const response = await apiClient.post("/auth/telegram-widget", params);
+    return response.data;
+  }
+
+  /**
+   * 🔐 Verify 2FA - 2FA kodini tasdiqlash
+   */
+  async verify2fa(twoFaToken: string, code: string) {
+    const response = await apiClient.post("/auth/2fa/verify", {
+      twoFaToken,
+      code,
+    });
+    return response.data;
+  }
+
+  /**
+   * 🔐 Setup 2FA - 2FA sozlashni boshlash
+   */
+  async setup2fa() {
+    const response = await apiClient.post("/auth/2fa/setup");
+    return response.data;
+  }
+
+  /**
+   * 🔐 Confirm 2FA - 2FA sozlashni yakunlash
+   */
+  async confirm2fa(secret: string, code: string) {
+    const response = await apiClient.post("/auth/2fa/confirm", {
+      secret,
+      code,
+    });
+    return response.data;
+  }
+
+  /**
+   * 🔐 Disable 2FA - 2FA o'chirish
+   */
+  async disable2fa() {
+    const response = await apiClient.delete("/auth/2fa");
     return response.data;
   }
 
@@ -66,9 +104,9 @@ class AuthService {
    */
   setAuthToken(token: string | null): void {
     if (token) {
-      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     } else {
-      delete apiClient.defaults.headers.common['Authorization'];
+      delete apiClient.defaults.headers.common["Authorization"];
     }
   }
 }

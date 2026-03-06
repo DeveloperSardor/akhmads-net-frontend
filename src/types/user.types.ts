@@ -8,10 +8,11 @@ export interface User {
   username?: string;
   email?: string;
   avatarUrl?: string;
-  role: 'ADVERTISER' | 'BOT_OWNER' | 'ADMIN' | 'MODERATOR' | 'SUPER_ADMIN';
+  role: "ADVERTISER" | "BOT_OWNER" | "ADMIN" | "MODERATOR" | "SUPER_ADMIN";
   roles?: string[];
   displayRole?: string;
   locale: string;
+  twoFactorEnabled: boolean;
   isActive: boolean;
   isBanned: boolean;
   createdAt: string;
@@ -50,7 +51,15 @@ export interface Ad {
   text?: string;
   mediaUrl?: string;
   buttons?: string | any[];
-  status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'RUNNING' | 'PAUSED' | 'COMPLETED' | 'REJECTED' | 'ARCHIVED';
+  status:
+    | "DRAFT"
+    | "SUBMITTED"
+    | "APPROVED"
+    | "RUNNING"
+    | "PAUSED"
+    | "COMPLETED"
+    | "REJECTED"
+    | "ARCHIVED";
   deliveredImpressions: number;
   uniqueViews: number;
   clicks: number;
@@ -73,7 +82,7 @@ export interface Bot {
   id: string;
   username: string;
   firstName: string;
-  status: 'PENDING' | 'ACTIVE' | 'REJECTED' | 'BANNED' | 'PAUSED';
+  status: "PENDING" | "ACTIVE" | "REJECTED" | "BANNED" | "PAUSED";
   totalMembers: number;
   subscribers: number;
   impressionsServed: number;
@@ -144,7 +153,14 @@ export interface AnalyticsResponse {
   data: {
     overview: {
       wallet: { available: number; reserved: number; totalSpent: number };
-      ads: { total: number; active: number; totalImpressions: number; totalClicks: number; averageCtr: number; totalSpent: number };
+      ads: {
+        total: number;
+        active: number;
+        totalImpressions: number;
+        totalClicks: number;
+        averageCtr: number;
+        totalSpent: number;
+      };
       revenue: RevenueData[];
       ctr: CtrData[];
     };

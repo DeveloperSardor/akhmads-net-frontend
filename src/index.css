@@ -231,3 +231,42 @@
     color: #ff9800;
   }
 }
+
+/* Custom Dark Select for AudienceReach */
+.custom-dark-select .ant-select-selector {
+  background: #0b0b0f !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  color: white !important;
+  padding: 0 16px !important;
+}
+.custom-dark-select:hover .ant-select-selector {
+  border-color: #8b5cf6 !important;
+}
+.custom-dark-select .ant-select-selection-item {
+  color: white !important;
+  background: rgba(139, 92, 246, 0.2) !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  border-radius: 8px !important;
+}
+.custom-dark-select .ant-select-selection-item-remove {
+  color: #a1a1aa !important;
+}
+.custom-dark-select .ant-select-selection-item-remove:hover {
+  color: #ef4444 !important;
+}
+.ant-select-dropdown {
+  background: #141418 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+}
+.ant-select-item-option {
+  color: #a1a1aa !important;
+}
+.ant-select-item-option-active {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+.ant-select-item-option-selected {
+  background: rgba(139, 92, 246, 0.2) !important;
+  color: white !important;
+}

@@ -1,7 +1,13 @@
 // src/app/ads/LaunchAd.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, Check, AlertCircle, CheckCircle, AlertTriangle } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  AlertCircle,
+  CheckCircle,
+  AlertTriangle,
+} from "lucide-react";
 import { SendOutlined } from "@ant-design/icons";
 import { useAdStore } from "../../store/adStore";
 import AdComposer from "../../components/ad/AdComposer";
@@ -10,7 +16,6 @@ import BudgetPricing from "../../components/ad/BudgetPricing";
 import LivePreview from "../../components/ad/LivePreview";
 import FeaturedBots from "../../components/ad/FeaturedBots";
 import { useTranslations } from "../../hooks/useTranslations";
-
 
 const LaunchAd = () => {
   const navigate = useNavigate();
@@ -72,6 +77,70 @@ const LaunchAd = () => {
     { name: "Launch", description: "Set budget" },
   ];
 
+  const [campaignType, setCampaignType] = useState<"VIEWS" | null>(null);
+
+  if (!campaignType && !editAdId && !location.state) {
+    return (
+      <div className="min-h-screen bg-background pt-32 pb-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-black text-foreground tracking-tight mb-4">
+              {la?.pageTitle ?? "Kampaniya yaratish"}
+            </h1>
+            <p className="text-muted-foreground">
+              {t.broadcastCard?.description ??
+                "Reklama turini tanlang. O'z biznesingizni eng samarali usulda rivojlantiring."}
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* View Campaign */}
+            <div
+              onClick={() => setCampaignType("VIEWS")}
+              className="cursor-pointer group relative bg-card border border-border hover:border-primary/50 rounded-3xl p-8 overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/20"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-6">
+                <SendOutlined className="text-3xl" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                {la?.viewsTitle || "Oddiy Views"}
+              </h3>
+              <p className="text-gray-400 mb-6">
+                {la?.viewsDesc ||
+                  "Kanallar va guruhlar orqali ko'rishlar (views) yig'ish platformasi bo'ylab barcha mos botlarda ko'rsatiladi."}
+              </p>
+              <div className="flex items-center text-blue-400 font-bold text-sm">
+                {la?.startBtn || "Boshlash"}{" "}
+                <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+              </div>
+            </div>
+
+            {/* Broadcast Campaign */}
+            <div
+              onClick={() => navigate(`/${lang}/broadcasts/new`)}
+              className="cursor-pointer group relative bg-gradient-to-br from-primary/10 to-indigo-900/20 border border-primary/30 hover:border-primary/60 rounded-3xl p-8 overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/30"
+            >
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/20 text-primary flex items-center justify-center mb-6 relative z-10">
+                <SendOutlined className="text-3xl" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3 relative z-10">
+                {la?.broadcastTitle || "Rassilka (Broadcast)"}
+              </h3>
+              <p className="text-gray-400 mb-6 relative z-10">
+                {la?.broadcastDesc ||
+                  "Aniq bir botning barcha aktiv foydalanuvchilariga to'g'ridan to'g'ri shaxsiy xabar yuborish."}
+              </p>
+              <div className="flex items-center text-purple-400 font-bold text-sm relative z-10 group-hover:text-purple-300 transition-colors">
+                {la?.startBtn || "Boshlash"}{" "}
+                <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setStep(currentStep + 1);
@@ -119,15 +188,24 @@ const LaunchAd = () => {
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
-                 <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full border border-primary/20">Campaign</span>
-                 <div className="w-1 h-1 bg-border rounded-full" />
-                 <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Step {currentStep + 1} of 3</span>
+                <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full border border-primary/20">
+                  Campaign
+                </span>
+                <div className="w-1 h-1 bg-border rounded-full" />
+                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
+                  Step {currentStep + 1} of 3
+                </span>
               </div>
               <h1 className="text-4xl font-black text-foreground tracking-tight mb-3">
-                {editAdId ? "Reklamani tahrirlash" : (la?.pageTitle ?? "Kampaniya yaratish")}
+                {editAdId
+                  ? "Reklamani tahrirlash"
+                  : (la?.pageTitle ?? "Kampaniya yaratish")}
               </h1>
               <p className="text-muted-foreground max-w-lg leading-relaxed">
-                {editAdId ? "O'zgartirishlarni kiriting va qayta yuboring" : (la?.pageSubtitle ?? "3 oddiy qadam bilan o'z reklamangizni butun tarmoqqa yoying")}
+                {editAdId
+                  ? "O'zgartirishlarni kiriting va qayta yuboring"
+                  : (la?.pageSubtitle ??
+                    "3 oddiy qadam bilan o'z reklamangizni butun tarmoqqa yoying")}
               </p>
             </div>
 
@@ -145,7 +223,7 @@ const LaunchAd = () => {
                           : isCompleted
                             ? "bg-green-500/10 text-green-500"
                             : "text-muted-foreground hover:bg-white/5"
-                        }`}
+                      }`}
                     >
                       {isCompleted ? (
                         <Check className="w-5 h-5" />
@@ -155,14 +233,20 @@ const LaunchAd = () => {
                             isActive
                               ? "bg-primary-foreground/20"
                               : "bg-muted text-muted-foreground"
-                            }`}
+                          }`}
                         >
                           {index + 1}
                         </div>
                       )}
                       <div className="hidden lg:block lg:min-w-[80px]">
-                        <div className="text-[11px] font-black uppercase tracking-wider">{step.name}</div>
-                        <div className={`text-[10px] opacity-70 ${isActive ? 'text-primary-foreground' : ''}`}>{step.description}</div>
+                        <div className="text-[11px] font-black uppercase tracking-wider">
+                          {step.name}
+                        </div>
+                        <div
+                          className={`text-[10px] opacity-70 ${isActive ? "text-primary-foreground" : ""}`}
+                        >
+                          {step.description}
+                        </div>
                       </div>
                     </div>
                     {index < steps.length - 1 && (
@@ -184,7 +268,10 @@ const LaunchAd = () => {
                 Admin izohi:
               </div>
               <div className="text-sm text-amber-600/80 dark:text-amber-400/80">
-                {String(editAdRejectionReason).replace(/^Edit requested:\s*/i, "")}
+                {String(editAdRejectionReason).replace(
+                  /^Edit requested:\s*/i,
+                  "",
+                )}
               </div>
             </div>
           </div>
@@ -200,7 +287,9 @@ const LaunchAd = () => {
                   <div className="font-semibold text-destructive text-sm">
                     {la?.errorLabel ?? "Error"}
                   </div>
-                  <div className="text-sm text-destructive/80 mt-0.5">{error}</div>
+                  <div className="text-sm text-destructive/80 mt-0.5">
+                    {error}
+                  </div>
                 </div>
               </div>
             )}
@@ -212,7 +301,9 @@ const LaunchAd = () => {
                   <div className="font-semibold text-green-600 text-sm">
                     {la?.successLabel ?? "Success"}
                   </div>
-                  <div className="text-sm text-green-600/80 mt-0.5">{successMessage}</div>
+                  <div className="text-sm text-green-600/80 mt-0.5">
+                    {successMessage}
+                  </div>
                 </div>
               </div>
             )}
@@ -256,25 +347,6 @@ const LaunchAd = () => {
           <div className="space-y-6">
             <LivePreview />
             <FeaturedBots />
-
-            <div className="bg-gradient-to-br from-primary/15 to-indigo-900/30 border border-primary/20 rounded-3xl overflow-hidden relative group shadow-2xl shadow-primary/5">
-              <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/20 rounded-full blur-2xl transition-transform group-hover:scale-150 duration-700" />
-              <div className="relative p-8">
-                <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary mb-6 shadow-inner border border-primary/20">
-                  <SendOutlined className="text-2xl" />
-                </div>
-                <h3 className="font-bold text-2xl text-foreground mb-3">{t.broadcastCard?.title ?? 'Professional Broadcast'}</h3>
-                <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-                  {t.broadcastCard?.description ?? "Barcha faol bot foydalanuvchilariga to'g'ridan-to'g'ri massiv xabarlar yuboring. Yuqori natija va tezkor yetkazib berish."}
-                </p>
-                <button
-                  onClick={() => navigate(`/${lang}/broadcasts/new`)}
-                  className="w-full py-4 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-black transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2 group/btn active:scale-95"
-                >
-                  {t.broadcastCard?.button ?? 'Boshlash'} <ArrowLeft className="w-4 h-4 rotate-180 group-hover/btn:translate-x-1 transition-transform" />
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>

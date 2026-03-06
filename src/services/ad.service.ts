@@ -268,6 +268,16 @@ class AdService {
     const response = await apiClient.post('/ads/broadcasts', data);
     return response.data;
   }
+
+  async pauseBroadcast(id: string): Promise<any> {
+    const response = await apiClient.post(`/ads/broadcasts/${id}/pause`);
+    return response.data;
+  }
+
+  async resumeBroadcast(id: string): Promise<any> {
+    const response = await apiClient.post(`/ads/broadcasts/${id}/resume`);
+    return response.data;
+  }
 }
 
 export default new AdService();

@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
+import authService from "../../services/auth.service";
 import {
   LineChart,
   Line,
@@ -52,7 +53,6 @@ const Profile = () => {
   const [selectedBotForModal, setSelectedBotForModal] = useState<any>(null);
   const [showAdModal, setShowAdModal] = useState(false);
   const [showBotModal, setShowBotModal] = useState(false);
-
   const { logout } = useAuthStore();
 
   const {
@@ -328,6 +328,7 @@ const Profile = () => {
               </p>
             </div>
           </div>
+
         </div>
 
         {/* Performance Metrics — 1 col mobile, 3 col sm+ */}
@@ -894,6 +895,7 @@ const Profile = () => {
           t={t}
         />
       )}
+
     </div>
   );
 };
