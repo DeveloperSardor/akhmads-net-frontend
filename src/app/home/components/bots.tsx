@@ -117,16 +117,17 @@ const ConnectedBots = () => {
           ))}
         </Marquee>
 
-        {/* Second Row - Right to Left (or Left to Right but offset) */}
-        {/* We use speed={30} and a slightly different direction or just purely more items to create the offset */}
+        {/* Second Row - Left to Right but offset by 50% */}
         <Marquee
           gradient={false}
-          speed={40}
+          speed={35}
           pauseOnHover={true}
           autoFill={true}
           direction="left"
           className="py-2"
         >
+          {/* Spacer to create the stagger effect (half card width + gap) */}
+          <div className="w-[186px] flex-shrink-0" />
           {row2.map((bot: Partial<Bot>, index: number) => (
             <BotCard key={`row2-${index}`} bot={bot} getAvatar={getAvatar} />
           ))}
