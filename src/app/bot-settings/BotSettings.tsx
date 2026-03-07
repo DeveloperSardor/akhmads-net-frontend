@@ -842,61 +842,61 @@ async Task<bool> ShowAd(long chatId) {
 
           {/* Right Column - Integration & History */}
           <div className="space-y-6">
-            {/* Integration Card - Only for MANUAL mode */}
-            {settings.integrationMode === "MANUAL" && (
-              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                <div className="px-5 py-5 border-b border-[#1f1f1f] flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-white">
-                    {bs?.integrationCode ?? "Integration Code"}
-                  </h2>
-                  <button
-                    onClick={handleCopyCode}
-                    className="text-gray-400 hover:text-white transition-colors"
-                    title="Copy code"
-                  >
-                    {copiedCode ? (
-                      <CheckCircle className="w-4 h-4 text-green-400" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                <div className="p-5">
-                  <div className="flex gap-2 mb-4">
-                    {[
-                      { id: "python", label: "Python" },
-                      { id: "javascript", label: "Node.js" },
-                      { id: "php", label: "PHP" },
-                      { id: "csharp", label: "C#" },
-                    ].map((lang) => (
-                      <button
-                        key={lang.id}
-                        onClick={() => setActiveCodeTab(lang.id)}
-                        className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
-                          activeCodeTab === lang.id
-                            ? "bg-white text-black"
-                            : "bg-[#1a1a1a] border border-[#222] text-gray-400 hover:text-white"
-                        }`}
-                      >
-                        {lang.label}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="bg-[#050505] border border-[#222] rounded-xl relative">
-                    <pre className="p-4 overflow-x-auto text-[11px] font-mono text-gray-400 leading-relaxed scrollbar-none">
-                      <code>{getIntegrationCode(activeCodeTab)}</code>
-                    </pre>
-                  </div>
-                  <button
-                    onClick={() => setShowResultModal(true)}
-                    className="mt-4 text-xs font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
-                  >
-                    <Info className="w-3.5 h-3.5" />
-                    {bs?.viewResultCodes ?? "View API Result Codes"}
-                  </button>
-                </div>
+            {/* Integration Card - Always show to allow hybrid use */}
+            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+              <div className="px-5 py-5 border-b border-[#1f1f1f] flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-white">
+                  {settings.integrationMode === "AUTO"
+                    ? (bs?.hybridIntegration ?? "Hybrid Integration (API)")
+                    : (bs?.integrationCode ?? "Integration Code")}
+                </h2>
+                <button
+                  onClick={handleCopyCode}
+                  className="text-gray-400 hover:text-white transition-colors"
+                  title="Copy code"
+                >
+                  {copiedCode ? (
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
               </div>
-            )}
+              <div className="p-5">
+                <div className="flex gap-2 mb-4">
+                  {[
+                    { id: "python", label: "Python" },
+                    { id: "javascript", label: "Node.js" },
+                    { id: "php", label: "PHP" },
+                    { id: "csharp", label: "C#" },
+                  ].map((lang) => (
+                    <button
+                      key={lang.id}
+                      onClick={() => setActiveCodeTab(lang.id)}
+                      className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
+                        activeCodeTab === lang.id
+                          ? "bg-white text-black"
+                          : "bg-[#1a1a1a] border border-[#222] text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="bg-[#050505] border border-[#222] rounded-xl relative">
+                  <pre className="p-4 overflow-x-auto text-[11px] font-mono text-gray-400 leading-relaxed scrollbar-none">
+                    <code>{getIntegrationCode(activeCodeTab)}</code>
+                  </pre>
+                </div>
+                <button
+                  onClick={() => setShowResultModal(true)}
+                  className="mt-4 text-xs font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
+                >
+                  <Info className="w-3.5 h-3.5" />
+                  {bs?.viewResultCodes ?? "View API Result Codes"}
+                </button>
+              </div>
+            </div>
 
             {/* Token Update */}
             <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">

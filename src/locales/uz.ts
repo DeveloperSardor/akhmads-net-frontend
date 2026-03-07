@@ -711,6 +711,7 @@ export const uz = {
     postFilterNotMine: "O'zimnikidan tashqari barcha postlar",
     postFilterOnlyMine: "Faqat mening postlarim",
     integrationCode: "Integratsiya kodi",
+    hybridIntegration: "Gibrid integratsiya (API)",
     viewResultCodes: "API natija kodlarini ko'rish",
     copy: "Nusxalash",
     copied: "Nusxalandi!",

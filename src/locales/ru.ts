@@ -692,6 +692,7 @@ export const ru = {
     postFilterNotMine: "Все, кроме моих",
     postFilterOnlyMine: "Только мои",
     integrationCode: "Код интеграции",
+    hybridIntegration: "Гибридная интеграция (API)",
     viewResultCodes: "Просмотреть коды результатов API",
     copy: "Копировать",
     copied: "Скопировано!",

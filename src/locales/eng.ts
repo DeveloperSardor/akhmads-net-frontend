@@ -672,6 +672,7 @@ export const eng = {
     postFilterNotMine: "All posts but mine",
     postFilterOnlyMine: "My posts only",
     integrationCode: "Integration Code",
+    hybridIntegration: "Hybrid Integration (API)",
     viewResultCodes: "View API Result Codes",
     copy: "Copy",
     copied: "Copied!",
