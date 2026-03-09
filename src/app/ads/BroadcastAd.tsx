@@ -94,6 +94,7 @@ const BroadcastAd: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fetchingDraft, setFetchingDraft] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
 
   // ── Derived
   const selectedBot = useMemo(
@@ -140,6 +141,14 @@ const BroadcastAd: React.FC = () => {
       })
       .catch(() => toast.error(tb.errorLoadingBots))
       .finally(() => setBotsLoading(false));
+
+    // Fetch wallet balance
+    apiClient
+      .get("/wallet")
+      .then((res) =>
+        setWalletBalance(parseFloat(res.data?.wallet?.available || "0")),
+      )
+      .catch(() => {});
   }, [botIdFromUrl, tb.errorLoadingBots]);
 
   // Fetch draft automatically once bot is selected via URL
@@ -449,15 +458,39 @@ const BroadcastAd: React.FC = () => {
                                 "Guaranteed organic clicks"}
                           </p>
                         </div>
-                        <div className="flex items-baseline gap-2">
-                          <div className="text-4xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-2xl">
-                            {targetCount.toLocaleString()}
+                        <div className="flex flex-col items-end">
+                          <div className="flex items-baseline gap-2">
+                            <input
+                              type="number"
+                              value={targetCount}
+                              onChange={(e) => {
+                                let val = parseInt(e.target.value);
+                                if (isNaN(val)) val = 0;
+                                if (
+                                  broadcastType === "POKAZ" &&
+                                  val > activeUsersCount
+                                )
+                                  val = activeUsersCount;
+                                setTargetCount(val);
+                              }}
+                              className="w-40 text-4xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-2xl bg-transparent border-b-2 border-white/10 focus:border-purple-500 outline-none text-right"
+                            />
+                            <span className="text-xs font-bold text-purple-500 uppercase tracking-wider mb-1">
+                              {broadcastType === "PDP"
+                                ? tb.clicksLabel || "clicks"
+                                : tb.usersLabel || "users"}
+                            </span>
                           </div>
-                          <span className="text-xs font-bold text-purple-500 uppercase tracking-wider mb-1">
-                            {broadcastType === "PDP"
-                              ? tb.clicksLabel || "clicks"
-                              : tb.usersLabel || "users"}
-                          </span>
+
+                          {walletBalance !== null && totalCost > 0 && (
+                            <div
+                              className={`mt-2 text-[10px] font-black uppercase tracking-widest ${walletBalance >= totalCost ? "text-green-500" : "text-red-500 animate-pulse"}`}
+                            >
+                              {walletBalance >= totalCost
+                                ? `Balance OK: $${totalCost.toFixed(2)}`
+                                : `Need $${(totalCost - walletBalance).toFixed(2)} more`}
+                            </div>
+                          )}
                         </div>
                       </div>
 

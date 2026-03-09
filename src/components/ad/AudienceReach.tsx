@@ -5,6 +5,7 @@ import { useAdStore } from "../../store/adStore";
 import { useTranslations } from "../../hooks/useTranslations";
 import axios from "axios";
 import BotSelector from "./BotSelector";
+import walletService from "../../services/wallet.service";
 
 interface CategoryFromApi {
   id: string;
@@ -40,12 +41,19 @@ const AudienceReach = () => {
     formData.targeting?.aiSegments || [],
   );
   const [categories, setCategories] = useState<CategoryFromApi[]>([]);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
 
   // Fetch categories from public API
   useEffect(() => {
     axios
       .get("https://api.akhmads.net/api/categories")
       .then((res) => setCategories(res.data.data || []))
+      .catch(() => {});
+
+    // Fetch wallet balance
+    walletService
+      .getWallet()
+      .then((res) => setWalletBalance(parseFloat(res.data.wallet.available)))
       .catch(() => {});
   }, []);
 
@@ -97,6 +105,10 @@ const AudienceReach = () => {
 
   const percentage =
     ((formData.targetImpressions - 100) / (100000 - 100)) * 100;
+
+  const { pricingEstimate } = useAdStore();
+  const totalCost = pricingEstimate?.pricing?.totalCost || 0;
+  const hasBalance = walletBalance !== null ? walletBalance >= totalCost : true;
 
   // ✅ Categories from API
   const segments = categories.map((cat) => ({
@@ -243,12 +255,28 @@ const AudienceReach = () => {
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>100</span>
             <div className="text-center">
-              <div className="text-3xl font-bold text-foreground tabular-nums">
-                {formatNumber(formData.targetImpressions)}
-              </div>
+              <input
+                type="number"
+                value={formData.targetImpressions}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value);
+                  if (!isNaN(val)) updateFormData({ targetImpressions: val });
+                }}
+                className="w-40 text-3xl font-bold text-foreground tabular-nums bg-transparent border-b-2 border-primary/20 focus:border-primary outline-none text-center"
+              />
               <div className="text-xs text-muted-foreground mt-1">
                 {ar?.targetUsers ?? "target users"}
               </div>
+
+              {walletBalance !== null && totalCost > 0 && (
+                <div
+                  className={`mt-2 text-xs font-bold transition-colors ${hasBalance ? "text-green-500" : "text-destructive animate-pulse"}`}
+                >
+                  {hasBalance
+                    ? `Balance OK: $${totalCost.toFixed(2)}`
+                    : `Insufficient: Need $${(totalCost - walletBalance).toFixed(2)} more`}
+                </div>
+              )}
             </div>
             <span>100K</span>
           </div>
