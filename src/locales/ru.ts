@@ -647,6 +647,10 @@ export const ru = {
       "Создайте рекламу, просто отправив сообщение боту (Текст, Фото, Видео)",
     sendPreviewTitle: "Отправьте себе тестовое сообщение",
     sendPreviewDesc: "Проверьте, как выглядит реклама через бота",
+    trackingOn: "Трекинг ВКЛ",
+    trackingOff: "Трекинг ВЫКЛ",
+    buttonColor: "Цвет кнопки",
+    colorHint: "Цвет появится в кнопках Telegram",
   },
 
   // Live Preview
@@ -862,6 +866,10 @@ export const ru = {
     inlineButtons: "Inline кнопки (необязательно)",
     addButton: "Добавить",
     buttonTextPlaceholder: "Текст кнопки",
+    trackingOn: "Трекинг ВКЛ",
+    trackingOff: "Трекинг ВЫКЛ",
+    buttonColor: "Цвет кнопки",
+    colorHint: "Цвет появится в кнопках Telegram",
     summary: {
       bot: "Бот:",
       users: "Активные пользователи:",

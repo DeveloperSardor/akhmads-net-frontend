@@ -627,6 +627,10 @@ export const eng = {
     addViaBot: "Add via Telegram Bot",
     addViaBotHint:
       "Create an ad by simply sending a message to the bot (Text, Image, Video)",
+    trackingOn: "Tracking ON",
+    trackingOff: "Tracking OFF",
+    buttonColor: "Button Color",
+    colorHint: "Color will appear in Telegram buttons",
   },
 
   // Live Preview
@@ -798,6 +802,10 @@ export const eng = {
     inlineButtons: "Inline buttons (optional)",
     addButton: "Add",
     buttonTextPlaceholder: "Button text",
+    trackingOn: "Tracking ON",
+    trackingOff: "Tracking OFF",
+    buttonColor: "Button Color",
+    colorHint: "Color will appear in Telegram buttons",
     summary: {
       bot: "Bot:",
       users: "Active users:",

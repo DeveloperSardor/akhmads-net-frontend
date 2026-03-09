@@ -337,7 +337,7 @@ const AdComposer = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-muted-foreground uppercase ml-1">
-                        Tugma matni
+                        {ac?.buttonTextPlaceholder ?? "Tugma matni"}
                       </label>
                       <input
                         type="text"
@@ -353,7 +353,7 @@ const AdComposer = () => {
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-muted-foreground uppercase ml-1">
-                        URL Manzil
+                        {ac?.urlPlaceholder ?? "URL Manzil"}
                       </label>
                       <input
                         type="url"
@@ -393,8 +393,9 @@ const AdComposer = () => {
                           />
                         </div>
                         <span className="text-[10px] font-bold text-muted-foreground uppercase group-hover/tracking:text-foreground transition-colors">
-                          Tracking{" "}
-                          {button.trackingEnabled !== false ? "ON" : "OFF"}
+                          {button.trackingEnabled !== false
+                            ? (ac?.trackingOn ?? "Tracking ON")
+                            : (ac?.trackingOff ?? "Tracking OFF")}
                         </span>
                       </div>
                     </div>

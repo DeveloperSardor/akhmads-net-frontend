@@ -683,8 +683,9 @@ const BroadcastAd: React.FC = () => {
                                   />
                                 </div>
                                 <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors">
-                                  Tracking{" "}
-                                  {btn.trackingEnabled !== false ? "ON" : "OFF"}
+                                  {btn.trackingEnabled !== false
+                                    ? (tb?.trackingOn ?? "Tracking ON")
+                                    : (tb?.trackingOff ?? "Tracking OFF")}
                                 </span>
                               </div>
                             </div>

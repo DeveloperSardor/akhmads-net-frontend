@@ -665,6 +665,10 @@ export const uz = {
       "Reklamani botga shunchaki xabar yuborish orqali yarating (Matn, Rasm, Video)",
     sendPreviewTitle: "O'zingizga sinov xabarini yuboring",
     sendPreviewDesc: "Bot orqali reklama qanday ko'rinishini tekshiring",
+    trackingOn: "Kuzatuv YOQILGAN",
+    trackingOff: "Kuzatuv O'CHIRILGAN",
+    buttonColor: "Tugma rangi",
+    colorHint: "Rang Telegram tugmalarida ko'rinadi",
   },
 
   // Live Preview
@@ -864,8 +868,13 @@ export const uz = {
     removeMedia: "Mediani o'chirish",
     minCharsError: "Kamida 5 ta belgi kiriting",
     inlineButtons: "Inline tugmalar (ixtiyoriy)",
-    addButton: "Qo'shish",
+    addButton: "Tugma qo'shish",
     buttonTextPlaceholder: "Tugma matni",
+    buttonUrlPlaceholder: "https://...", // Added for button URL
+    trackingOn: "Kuzatuv YOQILGAN",
+    trackingOff: "Kuzatuv O'CHIRILGAN",
+    buttonColor: "Tugma rangi",
+    colorHint: "Rang Telegram tugmalarida ko'rinadi",
     summary: {
       bot: "Bot:",
       users: "Faol foydalanuvchilar:",
