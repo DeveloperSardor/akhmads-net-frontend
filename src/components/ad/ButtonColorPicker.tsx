@@ -10,8 +10,6 @@ const BUTTON_COLORS = [
   { name: 'Green', value: 'green', bg: 'bg-green-600', hover: 'hover:bg-green-700', telegram: '#4CAF50' },
   { name: 'Red', value: 'red', bg: 'bg-red-600', hover: 'hover:bg-red-700', telegram: '#F44336' },
   { name: 'Blue', value: 'blue', bg: 'bg-blue-600', hover: 'hover:bg-blue-700', telegram: '#2196F3' },
-  { name: 'Purple', value: 'purple', bg: 'bg-purple-600', hover: 'hover:bg-purple-700', telegram: '#9C27B0' },
-  { name: 'Orange', value: 'orange', bg: 'bg-orange-600', hover: 'hover:bg-orange-700', telegram: '#FF9800' },
 ];
 
 const ButtonColorPicker = ({ selectedColor = 'blue', onChange }: ButtonColorPickerProps) => {

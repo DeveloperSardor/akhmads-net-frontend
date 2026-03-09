@@ -1,13 +1,23 @@
 // src/store/adStore.ts
-import { create } from 'zustand';
-import type { Ad, CreateAdRequest, PricingEstimate, TargetingOptions } from '../types/ad.types';
-import adService from '../services/ad.service';
+import { create } from "zustand";
+import type {
+  Ad,
+  CreateAdRequest,
+  PricingEstimate,
+  TargetingOptions,
+} from "../types/ad.types";
+import adService from "../services/ad.service";
 
 interface AdFormData extends Partial<CreateAdRequest> {
-  contentType: 'TEXT' | 'HTML' | 'MARKDOWN' | 'MEDIA' | 'POLL';
+  contentType: "TEXT" | "HTML" | "MARKDOWN" | "MEDIA" | "POLL";
   title: string;
   text: string;
-  buttons: Array<{ text: string; url: string; color?: string }>;
+  buttons: Array<{
+    text: string;
+    url: string;
+    color?: string;
+    trackingEnabled?: boolean;
+  }>;
   mediaUrl?: string;
   mediaFile?: File;
   targetImpressions: number;
@@ -15,7 +25,7 @@ interface AdFormData extends Partial<CreateAdRequest> {
     categories?: string[];
     aiSegments?: string[];
     languages?: string[];
-    frequency?: 'unique' | 'daily' | 'weekly' | 'monthly';
+    frequency?: "unique" | "daily" | "weekly" | "monthly";
   };
   cpmBid?: number;
   promoCode?: string;
@@ -69,14 +79,14 @@ interface AdActions {
 }
 
 const initialFormData: AdFormData = {
-  contentType: 'TEXT',
-  title: '',
-  text: '',
+  contentType: "TEXT",
+  title: "",
+  text: "",
   buttons: [],
   targetImpressions: 1000,
   targeting: {
-    languages: ['uz', 'ru', 'en'],
-    frequency: 'unique',
+    languages: ["uz", "ru", "en"],
+    frequency: "unique",
   },
 };
 
@@ -117,22 +127,27 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
   setStep: (step) => set({ currentStep: step }),
 
-  resetForm: () => set({
-    formData: initialFormData,
-    currentStep: 0,
-    editAdId: null,
-    editAdRejectionReason: null,
-    error: null,
-    successMessage: null,
-  }),
+  resetForm: () =>
+    set({
+      formData: initialFormData,
+      currentStep: 0,
+      editAdId: null,
+      editAdRejectionReason: null,
+      error: null,
+      successMessage: null,
+    }),
 
   startEditingAd: (ad) => {
     const buttons = ad.buttons
-      ? (typeof ad.buttons === 'string' ? JSON.parse(ad.buttons) : ad.buttons)
+      ? typeof ad.buttons === "string"
+        ? JSON.parse(ad.buttons)
+        : ad.buttons
       : [];
     const targeting = ad.targeting
-      ? (typeof ad.targeting === 'string' ? JSON.parse(ad.targeting) : ad.targeting)
-      : { languages: ['uz', 'ru', 'en'], frequency: 'unique' };
+      ? typeof ad.targeting === "string"
+        ? JSON.parse(ad.targeting)
+        : ad.targeting
+      : { languages: ["uz", "ru", "en"], frequency: "unique" };
 
     set({
       editAdId: ad.id,
@@ -141,9 +156,9 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       error: null,
       successMessage: null,
       formData: {
-        contentType: ad.contentType || 'TEXT',
-        title: ad.title || '',
-        text: ad.text || '',
+        contentType: ad.contentType || "TEXT",
+        title: ad.title || "",
+        text: ad.text || "",
         buttons,
         mediaUrl: ad.mediaUrl || undefined,
         targetImpressions: ad.targetImpressions || 1000,
@@ -170,14 +185,14 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       await adService.submitAd(adId);
       set({
         isSubmitting: false,
-        successMessage: 'Ad submitted for review!',
+        successMessage: "Ad submitted for review!",
         editAdId: null,
         editAdRejectionReason: null,
       });
       return true;
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to submit ad',
+        error: error.response?.data?.message || "Failed to submit ad",
         isSubmitting: false,
       });
       return null;
@@ -196,7 +211,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
       set({ pricingEstimate: response.data.estimate });
     } catch (error: any) {
-      console.error('Failed to fetch pricing:', error);
+      console.error("Failed to fetch pricing:", error);
     }
   },
 
@@ -205,7 +220,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       const response = await adService.getTargetingOptions();
       set({ targetingOptions: response.data.options });
     } catch (error: any) {
-      console.error('Failed to fetch targeting options:', error);
+      console.error("Failed to fetch targeting options:", error);
     }
   },
 
@@ -217,8 +232,8 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
       const response = await adService.createAd({
         contentType: formData.contentType,
-        title: formData.title || '',
-        text: formData.text || '',
+        title: formData.title || "",
+        text: formData.text || "",
         buttons: formData.buttons,
         mediaUrl: formData.mediaUrl,
         targetImpressions: formData.targetImpressions,
@@ -231,13 +246,13 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set({
         currentAd: response.data.ad,
         isSubmitting: false,
-        successMessage: 'Ad created successfully!',
+        successMessage: "Ad created successfully!",
       });
 
       return response.data.ad;
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to create ad',
+        error: error.response?.data?.message || "Failed to create ad",
         isSubmitting: false,
       });
       return null;
@@ -253,22 +268,28 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
         const response: any = await adService.getSavedAds();
         if (Array.isArray(response)) fetchedAds = response;
         else if (Array.isArray(response?.data)) fetchedAds = response.data;
-        else if (Array.isArray(response?.data?.ads)) fetchedAds = response.data.ads;
-        else if (Array.isArray(response?.data?.ads?.ads)) fetchedAds = response.data.ads.ads;
+        else if (Array.isArray(response?.data?.ads))
+          fetchedAds = response.data.ads;
+        else if (Array.isArray(response?.data?.ads?.ads))
+          fetchedAds = response.data.ads.ads;
         else if (Array.isArray(response?.ads)) fetchedAds = response.ads;
-        else if (Array.isArray(response?.ads?.ads)) fetchedAds = response.ads.ads;
+        else if (Array.isArray(response?.ads?.ads))
+          fetchedAds = response.ads.ads;
       } else {
         const response: any = await adService.getMyAds(params);
         if (Array.isArray(response)) fetchedAds = response;
         else if (Array.isArray(response?.data)) fetchedAds = response.data;
-        else if (Array.isArray(response?.data?.ads)) fetchedAds = response.data.ads;
-        else if (Array.isArray(response?.data?.ads?.ads)) fetchedAds = response.data.ads.ads;
+        else if (Array.isArray(response?.data?.ads))
+          fetchedAds = response.data.ads;
+        else if (Array.isArray(response?.data?.ads?.ads))
+          fetchedAds = response.data.ads.ads;
         else if (Array.isArray(response?.ads)) fetchedAds = response.ads;
-        else if (Array.isArray(response?.ads?.ads)) fetchedAds = response.ads.ads;
+        else if (Array.isArray(response?.ads?.ads))
+          fetchedAds = response.ads.ads;
       }
 
       if (params?.saved) {
-        fetchedAds = fetchedAds.map(ad => ({ ...ad, isSaved: true }));
+        fetchedAds = fetchedAds.map((ad) => ({ ...ad, isSaved: true }));
       }
 
       set({
@@ -277,7 +298,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       });
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to fetch ads',
+        error: error.response?.data?.message || "Failed to fetch ads",
         isLoading: false,
       });
     }
@@ -294,7 +315,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       });
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to fetch ad',
+        error: error.response?.data?.message || "Failed to fetch ad",
         isLoading: false,
       });
     }
@@ -308,13 +329,14 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
-        currentAd: state.currentAd?.id === adId ? response.data.ad : state.currentAd,
+        currentAd:
+          state.currentAd?.id === adId ? response.data.ad : state.currentAd,
         isSubmitting: false,
-        successMessage: 'Ad updated successfully!',
+        successMessage: "Ad updated successfully!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to update ad',
+        error: error.response?.data?.message || "Failed to update ad",
         isSubmitting: false,
       });
     }
@@ -329,11 +351,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
-        successMessage: 'Ad submitted for review!',
+        successMessage: "Ad submitted for review!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to submit ad',
+        error: error.response?.data?.message || "Failed to submit ad",
         isSubmitting: false,
       });
     }
@@ -348,11 +370,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
-        successMessage: 'Ad paused!',
+        successMessage: "Ad paused!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to pause ad',
+        error: error.response?.data?.message || "Failed to pause ad",
         isSubmitting: false,
       });
     }
@@ -367,11 +389,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
-        successMessage: 'Ad resumed!',
+        successMessage: "Ad resumed!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to resume ad',
+        error: error.response?.data?.message || "Failed to resume ad",
         isSubmitting: false,
       });
     }
@@ -388,13 +410,13 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: [duplicatedAd, ...state.ads],
         isSubmitting: false,
-        successMessage: 'Ad duplicated!',
+        successMessage: "Ad duplicated!",
       }));
 
       return duplicatedAd;
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to duplicate ad',
+        error: error.response?.data?.message || "Failed to duplicate ad",
         isSubmitting: false,
       });
       return null;
@@ -410,11 +432,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: state.ads.filter((ad) => ad.id !== adId),
         isSubmitting: false,
-        successMessage: 'Ad deleted!',
+        successMessage: "Ad deleted!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to delete ad',
+        error: error.response?.data?.message || "Failed to delete ad",
         isSubmitting: false,
       });
     }
@@ -426,15 +448,13 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
       set((state) => ({
         ads: state.ads.map((ad) =>
-          ad.id === adId
-            ? { ...ad, isSaved: response.data.saved }
-            : ad
+          ad.id === adId ? { ...ad, isSaved: response.data.saved } : ad,
         ),
-        successMessage: response.data.saved ? 'Ad saved!' : 'Ad unsaved!',
+        successMessage: response.data.saved ? "Ad saved!" : "Ad unsaved!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to save ad',
+        error: error.response?.data?.message || "Failed to save ad",
       });
     }
   },
@@ -448,11 +468,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
-        successMessage: 'Ad archived!',
+        successMessage: "Ad archived!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to archive ad',
+        error: error.response?.data?.message || "Failed to archive ad",
         isSubmitting: false,
       });
     }
@@ -467,11 +487,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
-        successMessage: 'Ad unarchived!',
+        successMessage: "Ad unarchived!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to unarchive ad',
+        error: error.response?.data?.message || "Failed to unarchive ad",
         isSubmitting: false,
       });
     }
@@ -486,11 +506,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
-        successMessage: 'Schedule set successfully!',
+        successMessage: "Schedule set successfully!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to set schedule',
+        error: error.response?.data?.message || "Failed to set schedule",
         isSubmitting: false,
       });
     }
@@ -505,11 +525,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       set((state) => ({
         ads: state.ads.map((ad) => (ad.id === adId ? response.data.ad : ad)),
         isSubmitting: false,
-        successMessage: 'Schedule removed!',
+        successMessage: "Schedule removed!",
       }));
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to remove schedule',
+        error: error.response?.data?.message || "Failed to remove schedule",
         isSubmitting: false,
       });
     }
@@ -523,11 +543,11 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
 
       set({
         isSubmitting: false,
-        successMessage: 'Test ad sent to Telegram!',
+        successMessage: "Test ad sent to Telegram!",
       });
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to send test ad',
+        error: error.response?.data?.message || "Failed to send test ad",
         isSubmitting: false,
       });
     }
@@ -547,7 +567,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       return response.data.stats;
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to fetch daily stats',
+        error: error.response?.data?.message || "Failed to fetch daily stats",
         isLoading: false,
       });
       return null;
@@ -568,7 +588,7 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       return response.data.stats;
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to fetch hourly stats',
+        error: error.response?.data?.message || "Failed to fetch hourly stats",
         isLoading: false,
       });
       return null;
@@ -589,7 +609,8 @@ export const useAdStore = create<AdState & AdActions>((set, get) => ({
       return response.data.stats;
     } catch (error: any) {
       set({
-        error: error.response?.data?.message || 'Failed to fetch overview stats',
+        error:
+          error.response?.data?.message || "Failed to fetch overview stats",
         isLoading: false,
       });
       return null;

@@ -57,6 +57,7 @@ interface Button {
   text: string;
   url: string;
   color: BtnColor;
+  trackingEnabled?: boolean;
 }
 
 const BroadcastAd: React.FC = () => {
@@ -230,11 +231,14 @@ const BroadcastAd: React.FC = () => {
 
   const addButton = () => {
     if (buttons.length >= 5) return;
-    setButtons((prev) => [...prev, { text: "", url: "", color: "default" }]);
+    setButtons((prev) => [
+      ...prev,
+      { text: "", url: "", color: "default", trackingEnabled: true },
+    ]);
   };
   const removeButton = (i: number) =>
     setButtons((prev) => prev.filter((_, idx) => idx !== i));
-  const updateButton = (i: number, field: keyof Button, val: string) =>
+  const updateButton = (i: number, field: keyof Button, val: any) =>
     setButtons((prev) =>
       prev.map((b, idx) => (idx === i ? { ...b, [field]: val } : b)),
     );
@@ -630,31 +634,60 @@ const BroadcastAd: React.FC = () => {
 
                       <div className="grid gap-3">
                         {buttons.map((btn, i) => (
-                          <div key={i} className="flex gap-2 items-center">
-                            <input
-                              placeholder={
-                                tb.buttonTextPlaceholder || "Button text"
-                              }
-                              className="flex-1 bg-[#050505] border border-[#1f1f1f] rounded-xl p-3 text-sm focus:border-purple-500/50 outline-none"
-                              value={btn.text}
-                              onChange={(e) =>
-                                updateButton(i, "text", e.target.value)
-                              }
-                            />
-                            <input
-                              placeholder={tb.urlPlaceholder || "https://..."}
-                              className="flex-[2] bg-[#050505] border border-[#1f1f1f] rounded-xl p-3 text-sm focus:border-purple-500/50 outline-none"
-                              value={btn.url}
-                              onChange={(e) =>
-                                updateButton(i, "url", e.target.value)
-                              }
-                            />
-                            <button
-                              onClick={() => removeButton(i)}
-                              className="w-11 h-11 bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center rounded-xl hover:bg-red-500/20"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                          <div
+                            key={i}
+                            className="flex flex-col gap-2 p-4 bg-white/5 border border-white/10 rounded-2xl"
+                          >
+                            <div className="flex gap-2 items-center">
+                              <input
+                                placeholder={
+                                  tb.buttonTextPlaceholder || "Button text"
+                                }
+                                className="flex-1 bg-[#050505] border border-[#1f1f1f] rounded-xl p-3 text-sm focus:border-purple-500/50 outline-none h-11"
+                                value={btn.text}
+                                onChange={(e) =>
+                                  updateButton(i, "text", e.target.value)
+                                }
+                              />
+                              <input
+                                placeholder={tb.urlPlaceholder || "https://..."}
+                                className="flex-[2] bg-[#050505] border border-[#1f1f1f] rounded-xl p-3 text-sm focus:border-purple-500/50 outline-none h-11"
+                                value={btn.url}
+                                onChange={(e) =>
+                                  updateButton(i, "url", e.target.value)
+                                }
+                              />
+                              <button
+                                onClick={() => removeButton(i)}
+                                className="w-11 h-11 bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center rounded-xl hover:bg-red-500/20"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <div className="flex items-center gap-4 px-1">
+                              <div
+                                className="flex items-center gap-2 cursor-pointer group/tracking"
+                                onClick={() =>
+                                  updateButton(
+                                    i,
+                                    "trackingEnabled",
+                                    btn.trackingEnabled === false,
+                                  )
+                                }
+                              >
+                                <div
+                                  className={`w-8 h-4 rounded-full transition-all relative ${btn.trackingEnabled !== false ? "bg-purple-500" : "bg-white/10"}`}
+                                >
+                                  <div
+                                    className={`absolute top-1 w-2 h-2 rounded-full bg-white transition-all ${btn.trackingEnabled !== false ? "right-1" : "left-1"}`}
+                                  />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors">
+                                  Tracking{" "}
+                                  {btn.trackingEnabled !== false ? "ON" : "OFF"}
+                                </span>
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
