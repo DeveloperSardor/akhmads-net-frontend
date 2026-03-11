@@ -686,6 +686,9 @@ export const uz = {
     backToBots: "Botlarga qaytish",
     pageTitle: "Bot Sozlamalari",
     botNotFound: "Bot topilmadi",
+    botCategory: "Bot Kategoriyasi",
+    botCategoryDesc:
+      "Botingizning asosiy yo'nalishini belgilang. Bu sizga mos reklamalar tanlanishiga yordam beradi.",
     allowedCategories: "Ruxsat etilgan kategoriyalar",
     allowedCategoriesDesc:
       "Botingizda ko'rsatilishiga ruxsat berilgan reklama turlarini tanlang. Kamida bittasi tanlangan bo'lishi shart.",

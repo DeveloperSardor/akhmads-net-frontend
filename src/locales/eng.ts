@@ -648,6 +648,9 @@ export const eng = {
     backToBots: "Back to bots",
     pageTitle: "Bot Settings",
     botNotFound: "Bot not found",
+    botCategory: "Bot Category",
+    botCategoryDesc:
+      "Select the primary category of your bot. This helps in selecting the most relevant ads.",
     allowedCategories: "Allowed Categories",
     allowedCategoriesDesc:
       "Select the types of ads permitted to be shown in your bot. At least one must be selected.",

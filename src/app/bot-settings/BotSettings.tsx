@@ -52,6 +52,7 @@ const BotSettings = () => {
     autoAcceptAds: false,
     pricePerClick: 0.01,
     pricePerPokaz: 0.001,
+    category: "",
   });
 
   const [activeCodeTab, setActiveCodeTab] = useState("python");
@@ -116,6 +117,7 @@ const BotSettings = () => {
         autoAcceptAds: currentBot.autoAcceptAds ?? false,
         pricePerClick: currentBot.pricePerClick || 0.01,
         pricePerPokaz: currentBot.pricePerPokaz || 0.001,
+        category: currentBot.category || "",
       });
     }
   }, [currentBot]);
@@ -185,6 +187,7 @@ const BotSettings = () => {
       autoAcceptAds: settings.autoAcceptAds,
       pricePerClick: settings.pricePerClick,
       pricePerPokaz: settings.pricePerPokaz,
+      category: settings.category,
     });
   };
 
@@ -494,6 +497,46 @@ async Task<bool> ShowAd(long chatId) {
               <p className="text-sm text-gray-400 leading-relaxed">
                 {t.addBot?.integrationTypeAutoDesc}
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Bot Category Selection */}
+        <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+          <div className="px-6 py-5 border-b border-[#1f1f1f]">
+            <h2 className="text-lg font-semibold text-white">
+              {bs?.botCategory ?? "Bot Category"}
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">
+              {bs?.botCategoryDesc ??
+                "Select the primary category of your bot. This helps in selecting the most relevant ads."}
+            </p>
+          </div>
+          <div className="p-6 bg-[#0a0a0a]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {apiCategories.map((c: any) => {
+                const isSelected = settings.category === c.slug;
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() =>
+                      setSettings({ ...settings, category: c.slug })
+                    }
+                    className={`flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left group ${
+                      isSelected
+                        ? "bg-purple-500/10 border-purple-500 text-white"
+                        : "bg-transparent border-[#1f1f1f] text-gray-500 hover:border-[#333] hover:text-gray-300"
+                    }`}
+                  >
+                    <div
+                      className={`text-xl transition-transform ${isSelected ? "scale-110" : "group-hover:scale-110"}`}
+                    >
+                      {c.icon}
+                    </div>
+                    <span className="text-sm font-medium">{getCatName(c)}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
