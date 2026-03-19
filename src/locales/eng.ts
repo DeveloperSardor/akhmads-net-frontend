@@ -587,6 +587,21 @@ export const eng = {
       "Your ad will definitely not appear in these bots (Blacklist).",
     searchPlaceholder: "Search by bot name or username...",
   },
+  // Languages
+  languages: {
+    uz: "Uzbek",
+    ru: "Russian",
+    en: "English",
+    tr: "Turkish",
+    ar: "Arabic",
+    de: "German",
+    fr: "French",
+    es: "Spanish",
+    it: "Italian",
+    pt: "Portuguese",
+    hi: "Hindi",
+    all: "All",
+  },
 
   // Ad Composer
   adComposer: {

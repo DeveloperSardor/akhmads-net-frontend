@@ -16,23 +16,22 @@ interface CategoryFromApi {
   sortOrder: number;
 }
 
-const getLanguages = (t: any) => [
-  {
-    code: "all",
-    name: `🌍 ${t.audienceReach?.allLanguages || "Barcha tillar"}`,
-  },
-  { code: "uz", name: "🇺🇿 O'zbekcha" },
-  { code: "ru", name: "🇷🇺 Ruscha" },
-  { code: "en", name: "🇺🇸 Inglizcha" },
-  { code: "tr", name: "🇹🇷 Turkcha" },
-  { code: "ar", name: "🇸🇦 Arabcha" },
-  { code: "de", name: "🇩🇪 Olmoncha" },
-  { code: "fr", name: "🇫🇷 Fransuzcha" },
-  { code: "es", name: "🇪🇸 Ispancha" },
-  { code: "it", name: "🇮🇹 Italyancha" },
-  { code: "pt", name: "🇵🇹 Portugalcha" },
-  { code: "hi", name: "🇮🇳 Hindcha" },
-];
+const getLanguages = (t: any) => {
+  const l = t.languages || {};
+  return [
+    { code: "uz", name: `🇺🇿 ${l.uz || "O'zbekcha"}` },
+    { code: "ru", name: `🇷🇺 ${l.ru || "Ruscha"}` },
+    { code: "en", name: `🇺🇸 ${l.en || "Inglizcha"}` },
+    { code: "tr", name: `🇹🇷 ${l.tr || "Turkcha"}` },
+    { code: "ar", name: `🇸🇦 ${l.ar || "Arabcha"}` },
+    { code: "de", name: `🇩🇪 ${l.de || "Olmoncha"}` },
+    { code: "fr", name: `🇫🇷 ${l.fr || "Fransuzcha"}` },
+    { code: "es", name: `🇪🇸 ${l.es || "Ispancha"}` },
+    { code: "it", name: `🇮🇹 ${l.it || "Italyancha"}` },
+    { code: "pt", name: `🇵🇹 ${l.pt || "Portugalcha"}` },
+    { code: "hi", name: `🇮🇳 ${l.hi || "Hindcha"}` },
+  ];
+};
 
 const AudienceReach = () => {
   const { formData, updateFormData } = useAdStore();

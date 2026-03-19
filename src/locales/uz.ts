@@ -219,7 +219,21 @@ export const uz = {
     pageTitle: "Mening reklamalarim",
     pageSubtitle: "Reklama kampaniyalaringizni boshqaring va kuzating",
     launchNew: "Yangi reklama",
-    searchPlaceholder: "Reklamalarni qidiring...",
+    searchPlaceholder: "Bot nomi yoki username kiritib izlang...",
+    languages: {
+      uz: "O'zbekcha",
+      ru: "Ruscha",
+      en: "Inglizcha",
+      tr: "Turkcha",
+      ar: "Arabcha",
+      de: "Olmoncha",
+      fr: "Fransuzcha",
+      es: "Ispancha",
+      it: "Italyancha",
+      pt: "Portugalcha",
+      hi: "Hindcha",
+      all: "Barchasi",
+    },
     noAdsFound: "Reklamalar topilmadi",
     adjustSearch: "Qidirishni o'zgartiring",
     createFirst: "Birinchi reklama kampaniyangizni yarating",
@@ -621,9 +635,22 @@ export const uz = {
     includeBotsDesc:
       "Reklamangiz faqat siz tanlagan botlardagina chiqadi (boshqalarida chiqmaydi).",
     excludeBots: "Shu botlarda ko'rsatilmasin",
-    excludeBotsDesc:
-      "Reklamangiz aniq siz xohlamagan botlarda ko'rinmaydi (Blacklist).",
     searchPlaceholder: "Bot nomi yoki username kiritib izlang...",
+  },
+  // Languages
+  languages: {
+    uz: "O'zbekcha",
+    ru: "Ruscha",
+    en: "Inglizcha",
+    tr: "Turkcha",
+    ar: "Arabcha",
+    de: "Olmoncha",
+    fr: "Fransuzcha",
+    es: "Ispancha",
+    it: "Italyancha",
+    pt: "Portugalcha",
+    hi: "Hindcha",
+    all: "Barchasi",
   },
 
   // Ad Composer
