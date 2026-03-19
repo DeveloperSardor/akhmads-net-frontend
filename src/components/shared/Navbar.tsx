@@ -242,7 +242,7 @@ const Navbar = () => {
                   to={`/${lang}`}
                   end
                   className={({ isActive }) =>
-                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
+                    `relative px-3 xl:px-4 py-1.5 rounded-full transition-all duration-300 text-[12px] xl:text-[13px] font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -254,7 +254,7 @@ const Navbar = () => {
                       {isActive && (
                         <motion.div
                           layoutId="active-nav"
-                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          className="absolute inset-x-0.5 inset-y-0.5 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_2px_10px_rgba(147,51,234,0.3)] -z-10"
                           transition={{
                             type: "spring",
                             stiffness: 380,
@@ -269,7 +269,7 @@ const Navbar = () => {
                 <NavLink
                   to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`}
                   className={({ isActive }) =>
-                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
+                    `relative px-3 xl:px-4 py-1.5 rounded-full transition-all duration-300 text-[12px] xl:text-[13px] font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -281,7 +281,7 @@ const Navbar = () => {
                       {isActive && (
                         <motion.div
                           layoutId="active-nav"
-                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          className="absolute inset-x-0.5 inset-y-0.5 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_2px_10px_rgba(147,51,234,0.3)] -z-10"
                           transition={{
                             type: "spring",
                             stiffness: 380,
@@ -296,7 +296,7 @@ const Navbar = () => {
                 <NavLink
                   to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`}
                   className={({ isActive }) =>
-                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
+                    `relative px-3 xl:px-4 py-1.5 rounded-full transition-all duration-300 text-[12px] xl:text-[13px] font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -308,7 +308,7 @@ const Navbar = () => {
                       {isActive && (
                         <motion.div
                           layoutId="active-nav"
-                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          className="absolute inset-x-0.5 inset-y-0.5 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_2px_10px_rgba(147,51,234,0.3)] -z-10"
                           transition={{
                             type: "spring",
                             stiffness: 380,
@@ -325,7 +325,7 @@ const Navbar = () => {
                     isAuthenticated ? `/${lang}/moderation` : `/${lang}/login`
                   }
                   className={({ isActive }) =>
-                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
+                    `relative px-3 xl:px-4 py-1.5 rounded-full transition-all duration-300 text-[12px] xl:text-[13px] font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -337,7 +337,7 @@ const Navbar = () => {
                       {isActive && (
                         <motion.div
                           layoutId="active-nav"
-                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          className="absolute inset-x-0.5 inset-y-0.5 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_2px_10px_rgba(147,51,234,0.3)] -z-10"
                           transition={{
                             type: "spring",
                             stiffness: 380,
@@ -352,7 +352,7 @@ const Navbar = () => {
                 <NavLink
                   to={`/${lang}/wallet`}
                   className={({ isActive }) =>
-                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
+                    `relative px-3 xl:px-4 py-1.5 rounded-full transition-all duration-300 text-[12px] xl:text-[13px] font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -364,7 +364,7 @@ const Navbar = () => {
                       {isActive && (
                         <motion.div
                           layoutId="active-nav"
-                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          className="absolute inset-x-0.5 inset-y-0.5 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_2px_10px_rgba(147,51,234,0.3)] -z-10"
                           transition={{
                             type: "spring",
                             stiffness: 380,
@@ -379,7 +379,7 @@ const Navbar = () => {
                 <NavLink
                   to={`/${lang}/faq`}
                   className={({ isActive }) =>
-                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
+                    `relative px-3 xl:px-4 py-1.5 rounded-full transition-all duration-300 text-[12px] xl:text-[13px] font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -391,7 +391,7 @@ const Navbar = () => {
                       {isActive && (
                         <motion.div
                           layoutId="active-nav"
-                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          className="absolute inset-x-0.5 inset-y-0.5 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_2px_10px_rgba(147,51,234,0.3)] -z-10"
                           transition={{
                             type: "spring",
                             stiffness: 380,
