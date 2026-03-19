@@ -121,39 +121,55 @@ const AudienceReach = () => {
       {/* Target Impressions */}
       <div>
         <div className="flex flex-col md:flex-row gap-6 mb-8">
-          <div className="flex-1 space-y-4">
+          <div className="space-y-4">
             <label className="text-sm font-semibold flex items-center gap-2">
               <Globe className="w-4 h-4 text-muted-foreground" />
               {ar?.selectLanguage || "Tilni tanlang"}
             </label>
-            <Select
-              mode="multiple"
-              allowClear
-              placeholder={ar?.allLanguages || "Barcha tillar"}
-              value={
-                formData.targeting?.languages?.includes("all")
-                  ? []
-                  : formData.targeting?.languages
-              }
-              onChange={(vals) => {
-                let sorted = vals;
-                if (!vals || vals.length === 0) sorted = ["all"];
-                else if (vals.length > 0 && vals[vals.length - 1] === "all")
-                  sorted = ["all"];
-                else if (vals.includes("all"))
-                  sorted = vals.filter((v) => v !== "all");
-                updateFormData({
-                  targeting: { ...formData.targeting, languages: sorted },
-                });
-              }}
-              className="w-full h-12 custom-dark-select"
-            >
-              {LANGUAGES.map((l) => (
-                <Select.Option key={l.code} value={l.code}>
-                  {l.name}
-                </Select.Option>
-              ))}
-            </Select>
+
+            <div className="flex flex-wrap gap-3">
+              {LANGUAGES.filter((l) => l.code !== "all").map((lang) => {
+                const currentLangs = formData.targeting?.languages || [];
+                const isSelected = currentLangs.includes(lang.code);
+
+                return (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    onClick={() => {
+                      let newLangs = isSelected
+                        ? currentLangs.filter((c) => c !== lang.code)
+                        : [...currentLangs, lang.code];
+
+                      if (newLangs.length === 0) newLangs = ["all"];
+
+                      updateFormData({
+                        targeting: {
+                          ...formData.targeting,
+                          languages: newLangs,
+                        },
+                      });
+                    }}
+                    className={`px-4 py-2.5 rounded-xl border text-sm font-bold transition-all duration-300 flex items-center gap-2 group ${
+                      isSelected
+                        ? "border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+                        : "border-border bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-card"
+                    }`}
+                  >
+                    <span
+                      className={`transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110 opacity-70 group-hover:opacity-100"}`}
+                    >
+                      {lang.name}
+                    </span>
+                    {isSelected && (
+                      <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 

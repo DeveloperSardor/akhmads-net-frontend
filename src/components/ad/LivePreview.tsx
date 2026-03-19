@@ -82,7 +82,7 @@ const LivePreview = () => {
               <span className="text-white text-xs font-bold">AD</span>
             </div>
             <div>
-              <div className="text-foreground text-sm font-medium">
+              <div className="text-zinc-950 dark:text-zinc-50 text-sm font-medium">
                 {lp?.adLabel ?? "Your Advertisement"}
               </div>
               <div className="text-foreground/50 text-xs">
@@ -95,7 +95,7 @@ const LivePreview = () => {
             <div className="space-y-3">
               {formData.text && (
                 <div
-                  className="text-foreground text-sm leading-relaxed whitespace-pre-wrap break-words break-all"
+                  className="text-zinc-950 dark:text-zinc-50 text-sm leading-relaxed whitespace-pre-wrap break-words break-all"
                   dangerouslySetInnerHTML={{
                     __html: formatText(formData.text),
                   }}
