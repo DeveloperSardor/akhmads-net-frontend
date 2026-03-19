@@ -310,28 +310,28 @@ async Task<bool> ShowAd(long chatId) {
 
   if (isLoading && !currentBot) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <Loader2 className="w-8 h-8 animate-spin text-white" />
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (!currentBot) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black text-white">
+      <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
         <p>{bs?.botNotFound ?? "Bot not found"}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-[160px] sm:pt-[168px] pb-20 font-sans">
+    <div className="min-h-screen bg-background text-foreground pt-[160px] sm:pt-[168px] pb-20 font-sans">
       {/* Top Navigation Bar — fixed below main Navbar */}
-      <div className="fixed top-[96px] sm:top-[104px] left-0 right-0 bg-[#0a0a0a] border-b border-[#1a1a1a] z-40">
+      <div className="fixed top-[96px] sm:top-[104px] left-0 right-0 bg-card/80 backdrop-blur-md border-b border-border z-40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-medium"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             {bs?.backToBots ?? "Back to bots"}
@@ -340,14 +340,14 @@ async Task<bool> ShowAd(long chatId) {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setShowRulesModal(true)}
-              className="text-xs font-medium text-gray-400 hover:text-white transition-colors"
+              className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               {bs?.acceptRules ?? "Rules"}
             </button>
             <button
               onClick={handleSaveSettings}
               disabled={isSubmitting || settings.allowedCategories.length === 0}
-              className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+              className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
             >
               {isSubmitting ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -368,16 +368,16 @@ async Task<bool> ShowAd(long chatId) {
           <img
             src={getBotAvatarUrl(currentBot.username)}
             alt={currentBot.username}
-            className="w-16 h-16 rounded-full object-cover border border-[#222] bg-[#111]"
+            className="w-16 h-16 rounded-full object-cover border border-border bg-accent shadow-sm"
             onError={(e) => {
               e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentBot.username || "B")}&background=random&color=fff&size=128`;
             }}
           />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white mb-1">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1">
               {currentBot.firstName}
             </h1>
-            <p className="text-gray-400 text-sm font-medium">
+            <p className="text-muted-foreground text-sm font-medium">
               @{currentBot.username}
             </p>
           </div>
@@ -403,30 +403,32 @@ async Task<bool> ShowAd(long chatId) {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-            <div className="text-sm font-medium text-gray-400 mb-2">
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <div className="text-sm font-medium text-muted-foreground mb-2">
               {bs?.impressions ?? "Impressions"}
             </div>
-            <div className="text-3xl font-bold tracking-tight text-white">
+            <div className="text-3xl font-bold tracking-tight text-foreground">
               {formatNumber(currentBot.impressionsServed || 0)}
             </div>
           </div>
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-            <div className="text-sm font-medium text-gray-400 mb-2">
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <div className="text-sm font-medium text-muted-foreground mb-2">
               {bs?.clicks ?? "Clicks"}
             </div>
-            <div className="text-3xl font-bold tracking-tight text-white">
+            <div className="text-3xl font-bold tracking-tight text-foreground">
               {formatNumber(currentBot.clicks || 0)}
             </div>
           </div>
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-            <div className="text-sm font-medium text-gray-400 mb-2">CTR</div>
-            <div className="text-3xl font-bold tracking-tight text-white">
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <div className="text-sm font-medium text-muted-foreground mb-2">
+              CTR
+            </div>
+            <div className="text-3xl font-bold tracking-tight text-foreground">
               {currentBot.ctr || 0}%
             </div>
           </div>
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5">
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
               <svg
                 width="48"
                 height="48"
@@ -438,18 +440,18 @@ async Task<bool> ShowAd(long chatId) {
                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
             </div>
-            <div className="text-sm font-medium text-gray-400 mb-2">
+            <div className="text-sm font-medium text-muted-foreground mb-2">
               {bs?.earnings ?? "Earnings"}
             </div>
-            <div className="text-3xl font-bold tracking-tight text-green-400">
+            <div className="text-3xl font-bold tracking-tight text-green-600 dark:text-green-400">
               {formatCurrency(currentBot.totalEarnings)}
             </div>
           </div>
         </div>
 
         {/* Integration Mode Selection */}
-        <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-          <h2 className="text-lg font-semibold mb-6 text-white">
+        <div className="bg-card border border-border rounded-2xl p-6">
+          <h2 className="text-lg font-semibold mb-6 text-foreground">
             {bs?.integrationType ?? "Integration Mode"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -459,12 +461,12 @@ async Task<bool> ShowAd(long chatId) {
               }
               className={`relative cursor-pointer rounded-2xl border p-5 transition-all ${
                 settings.integrationMode === "MANUAL"
-                  ? "border-purple-500 bg-purple-500/10"
-                  : "border-[#1f1f1f] bg-[#0a0a0a] hover:border-[#333]"
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-card hover:border-primary/50"
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-semibold text-white">
+                <h4 className="font-semibold text-foreground">
                   {t.addBot?.integrationTypeManual}
                 </h4>
                 {settings.integrationMode === "MANUAL" && (
@@ -482,12 +484,12 @@ async Task<bool> ShowAd(long chatId) {
               }
               className={`relative cursor-pointer rounded-2xl border p-5 transition-all ${
                 settings.integrationMode === "AUTO"
-                  ? "border-purple-500 bg-purple-500/10"
-                  : "border-[#1f1f1f] bg-[#0a0a0a] hover:border-[#333]"
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-card hover:border-primary/50"
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-semibold text-white">
+                <h4 className="font-semibold text-foreground">
                   {t.addBot?.integrationTypeAuto}
                 </h4>
                 {settings.integrationMode === "AUTO" && (
@@ -502,9 +504,9 @@ async Task<bool> ShowAd(long chatId) {
         </div>
 
         {/* Bot Category Selection */}
-        <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-          <div className="px-6 py-5 border-b border-[#1f1f1f]">
-            <h2 className="text-lg font-semibold text-white">
+        <div className="bg-card border border-border rounded-2xl overflow-hidden">
+          <div className="px-6 py-5 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">
               {bs?.botCategory ?? "Bot Category"}
             </h2>
             <p className="text-sm text-gray-400 mt-1">
@@ -512,7 +514,7 @@ async Task<bool> ShowAd(long chatId) {
                 "Select the primary category of your bot. This helps in selecting the most relevant ads."}
             </p>
           </div>
-          <div className="p-6 bg-[#0a0a0a]">
+          <div className="p-6 bg-card">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {apiCategories.map((c: any) => {
                 const isSelected = settings.category === c.slug;
@@ -524,8 +526,8 @@ async Task<bool> ShowAd(long chatId) {
                     }
                     className={`flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left group ${
                       isSelected
-                        ? "bg-purple-500/10 border-purple-500 text-white"
-                        : "bg-transparent border-[#1f1f1f] text-gray-500 hover:border-[#333] hover:text-gray-300"
+                        ? "bg-primary/10 border-primary text-foreground"
+                        : "bg-transparent border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                     }`}
                   >
                     <div
@@ -545,9 +547,9 @@ async Task<bool> ShowAd(long chatId) {
           {/* Main Configuration - 2 Columns wide */}
           <div className="lg:col-span-2 space-y-6">
             {/* Allowed Categories */}
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-              <div className="px-6 py-5 border-b border-[#1f1f1f]">
-                <h2 className="text-lg font-semibold text-white">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="px-6 py-5 border-b border-border">
+                <h2 className="text-lg font-semibold text-foreground">
                   {bs?.allowedCategories ?? "Allowed Categories"}
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
@@ -555,7 +557,7 @@ async Task<bool> ShowAd(long chatId) {
                     "Select the types of ads permitted to be shown in your bot. At least one must be selected."}
                 </p>
               </div>
-              <div className="p-6 bg-[#0a0a0a]">
+              <div className="p-6 bg-card">
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {apiCategories.map((c: any) => {
                     const isSelected = settings.allowedCategories.includes(
@@ -567,8 +569,8 @@ async Task<bool> ShowAd(long chatId) {
                         onClick={() => handleCategoryToggle(c.id)}
                         className={`flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left group ${
                           isSelected
-                            ? "bg-[#1a1a1a] border-[#333] text-white"
-                            : "bg-transparent border-[#1f1f1f] text-gray-500 hover:border-[#333] hover:text-gray-300"
+                            ? "bg-primary/10 border-primary text-foreground"
+                            : "bg-transparent border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                         }`}
                       >
                         <div
@@ -587,14 +589,14 @@ async Task<bool> ShowAd(long chatId) {
             </div>
 
             {/* Advanced Settings */}
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-              <h2 className="text-lg font-semibold mb-6 text-white">
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <h2 className="text-lg font-semibold mb-6 text-foreground">
                 {bs?.postingRules ?? "Posting Rules & Limits"}
               </h2>
 
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     {bs?.frequencyTitle ?? "Post Frequency"}
                   </label>
                   <div className="relative">
@@ -611,15 +613,15 @@ async Task<bool> ShowAd(long chatId) {
                         );
                         setSettings({ ...settings, frequencyMinutes: clamped });
                       }}
-                      className="w-full pl-4 pr-12 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium focus:outline-none focus:border-[#444] transition-colors"
+                      className="w-full pl-4 pr-12 py-3 bg-background border border-border rounded-xl text-foreground font-medium focus:outline-none focus:border-primary transition-colors"
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium pointer-events-none">
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium pointer-events-none">
                       MIN
                     </div>
                   </div>
-                  <div className="mt-2 text-xs text-gray-500">
+                  <div className="mt-2 text-xs text-muted-foreground">
                     {bs?.adminFrequencyPrefix ?? "Admin defined range:"}{" "}
-                    <span className="text-gray-300 font-medium">
+                    <span className="text-foreground font-medium">
                       {freqBounds.min} — {freqBounds.max}{" "}
                       {bs?.minutes ?? "minutes"}
                     </span>
@@ -627,7 +629,7 @@ async Task<bool> ShowAd(long chatId) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     {bs?.postFilterTitle ?? "Which posts can this bot publish?"}
                   </label>
                   <div className="relative">
@@ -639,7 +641,7 @@ async Task<bool> ShowAd(long chatId) {
                           postFilter: e.target.value as any,
                         })
                       }
-                      className="w-full pl-4 pr-10 py-3 bg-[#050505] border border-[#222] rounded-xl text-white font-medium appearance-none focus:outline-none focus:border-[#444] transition-colors"
+                      className="w-full pl-4 pr-10 py-3 bg-background border border-border rounded-xl text-foreground font-medium appearance-none focus:outline-none focus:border-primary transition-colors"
                     >
                       <option value="all">
                         {bs?.postFilterAll ?? "All posts"}
@@ -651,14 +653,14 @@ async Task<bool> ShowAd(long chatId) {
                         {bs?.postFilterOnlyMine ?? "My posts only"}
                       </option>
                     </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Blocked Ads */}
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+            <div className="bg-card border border-border rounded-2xl p-6">
               <AdSelector
                 onSelect={(ids) =>
                   setSettings({ ...settings, blockedAdIds: ids })
@@ -669,7 +671,7 @@ async Task<bool> ShowAd(long chatId) {
                 <button
                   onClick={handleSaveSettings}
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 px-5 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-white/5"
+                  className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 px-5 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-md"
                 >
                   {isSubmitting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -682,8 +684,8 @@ async Task<bool> ShowAd(long chatId) {
             </div>
 
             {/* Broadcast Settings */}
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-              <h2 className="text-lg font-semibold mb-6 text-white flex items-center gap-2">
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <h2 className="text-lg font-semibold mb-6 text-foreground flex items-center gap-2">
                 <Radio className="w-5 h-5 text-purple-500" />
                 {bs?.broadcastSettings ?? "Broadcast Settings"}
               </h2>
@@ -691,14 +693,14 @@ async Task<bool> ShowAd(long chatId) {
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 {/* PDP Settings */}
                 <div
-                  className={`p-5 rounded-2xl border transition-all ${settings.pdpEnabled ? "bg-green-500/5 border-green-500/20" : "bg-transparent border-[#1f1f1f] opacity-50"}`}
+                  className={`p-5 rounded-2xl border transition-all ${settings.pdpEnabled ? "bg-green-500/5 border-green-500/20" : "bg-transparent border-border opacity-50"}`}
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="font-bold text-white">
+                      <h3 className="font-bold text-foreground">
                         {bs?.pdpTitle ?? "Pay per click"}
                       </h3>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {bs?.pdpDesc ?? "Charge when user clicks a button"}
                       </p>
                     </div>
@@ -714,17 +716,17 @@ async Task<bool> ShowAd(long chatId) {
                           })
                         }
                       />
-                      <div className="w-11 h-6 bg-[#222] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                      <div className="w-11 h-6 bg-accent peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
                     </label>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
                       {bs?.pdpPriceLabel ?? "Price per click ($)"}
                     </label>
                     <input
                       type="number"
                       step="0.001"
-                      className="w-full bg-[#050505] border border-[#222] p-2.5 rounded-xl text-sm font-mono"
+                      className="w-full bg-background border border-border p-2.5 rounded-xl text-sm font-mono focus:border-primary focus:outline-none transition-colors"
                       value={settings.pricePerClick}
                       onChange={(e) =>
                         setSettings({
@@ -739,14 +741,14 @@ async Task<bool> ShowAd(long chatId) {
 
                 {/* POKAZ Settings */}
                 <div
-                  className={`p-5 rounded-2xl border transition-all ${settings.pokazEnabled ? "bg-blue-500/5 border-blue-500/20" : "bg-transparent border-[#1f1f1f] opacity-50"}`}
+                  className={`p-5 rounded-2xl border transition-all ${settings.pokazEnabled ? "bg-blue-500/5 border-blue-500/20" : "bg-transparent border-border opacity-50"}`}
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="font-bold text-white">
+                      <h3 className="font-bold text-foreground">
                         {bs?.pokazTitle ?? "Pay per message"}
                       </h3>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {bs?.pokazDesc ??
                           "Charge for each message sent to a user"}
                       </p>
@@ -763,17 +765,17 @@ async Task<bool> ShowAd(long chatId) {
                           })
                         }
                       />
-                      <div className="w-11 h-6 bg-[#222] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      <div className="w-11 h-6 bg-accent peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                     </label>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
                       {bs?.pokazPriceLabel ?? "Price per message ($)"}
                     </label>
                     <input
                       type="number"
                       step="0.0001"
-                      className="w-full bg-[#050505] border border-[#222] p-2.5 rounded-xl text-sm font-mono"
+                      className="w-full bg-background border border-border p-2.5 rounded-xl text-sm font-mono focus:border-primary focus:outline-none transition-colors"
                       value={settings.pricePerPokaz}
                       onChange={(e) =>
                         setSettings({
@@ -790,10 +792,10 @@ async Task<bool> ShowAd(long chatId) {
               {/* Auto Accept Toggle */}
               <div className="mt-8 p-5 rounded-2xl border border-purple-500/20 bg-purple-500/5 flex items-center justify-between">
                 <div className="flex-1 pr-4">
-                  <h3 className="font-bold text-white mb-1">
+                  <h3 className="font-bold text-foreground mb-1">
                     {bs?.autoAcceptAdsLabel}
                   </h3>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     {bs?.autoAcceptAdsDesc}
                   </p>
                 </div>
@@ -809,19 +811,19 @@ async Task<bool> ShowAd(long chatId) {
                       })
                     }
                   />
-                  <div className="w-11 h-6 bg-[#222] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                  <div className="w-11 h-6 bg-accent peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
 
               {/* User Upload Tool */}
-              <div className="bg-[#0a0a0a] border-2 border-primary/30 border-dashed rounded-2xl p-8 text-center mt-6 shadow-lg shadow-primary/5">
+              <div className="bg-card border-2 border-primary/30 border-dashed rounded-2xl p-8 text-center mt-6 shadow-lg shadow-primary/5">
                 <div className="mx-auto w-16 h-16 bg-primary/20 text-primary flex items-center justify-center rounded-full mb-4 shadow-inner border border-primary/30">
                   <UsersIcon className="w-8 h-8" />
                 </div>
-                <h3 className="text-white font-bold text-xl mb-2">
+                <h3 className="text-foreground font-bold text-xl mb-2">
                   {bs?.uploadUsersTitle}
                 </h3>
-                <p className="text-sm text-gray-400 mb-6 max-w-md mx-auto leading-relaxed">
+                <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto leading-relaxed">
                   {bs?.uploadUsersDesc}
                 </p>
                 <div className="relative inline-block">
@@ -834,7 +836,7 @@ async Task<bool> ShowAd(long chatId) {
                   />
                   <label
                     htmlFor="user-upload"
-                    className="cursor-pointer bg-primary text-white px-8 py-3 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all inline-flex items-center gap-2 shadow-lg shadow-primary/30"
+                    className="cursor-pointer bg-primary text-foreground px-8 py-3 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all inline-flex items-center gap-2 shadow-lg shadow-primary/30"
                   >
                     {bs?.uploadButton}
                   </label>
@@ -845,10 +847,10 @@ async Task<bool> ShowAd(long chatId) {
                     <Info className="w-4 h-4" />
                     {bs?.instructions ?? "Instructions"}
                   </h4>
-                  <ul className="text-sm text-gray-400 space-y-3 list-disc pl-5 leading-relaxed">
+                  <ul className="text-sm text-muted-foreground space-y-3 list-disc pl-5 leading-relaxed">
                     <li>
                       {bs?.instructionFileTypes ?? "Only .txt or .csv files"}:{" "}
-                      <span className="text-white font-mono bg-white/10 px-1 rounded">
+                      <span className="text-foreground font-mono bg-foreground/10 px-1 rounded">
                         .txt
                       </span>{" "}
                       {t.locale === "uz"
@@ -856,7 +858,7 @@ async Task<bool> ShowAd(long chatId) {
                         : t.locale === "ru"
                           ? "или"
                           : "or"}{" "}
-                      <span className="text-white font-mono bg-white/10 px-1 rounded">
+                      <span className="text-foreground font-mono bg-foreground/10 px-1 rounded">
                         .csv
                       </span>{" "}
                       {bs?.instructionAcceptance ?? "files are accepted"}.
@@ -886,16 +888,16 @@ async Task<bool> ShowAd(long chatId) {
           {/* Right Column - Integration & History */}
           <div className="space-y-6">
             {/* Integration Card - Always show to allow hybrid use */}
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-              <div className="px-5 py-5 border-b border-[#1f1f1f] flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-white">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="px-5 py-5 border-b border-border flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-foreground">
                   {settings.integrationMode === "AUTO"
                     ? (bs?.hybridIntegration ?? "Hybrid Integration (API)")
                     : (bs?.integrationCode ?? "Integration Code")}
                 </h2>
                 <button
                   onClick={handleCopyCode}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                   title="Copy code"
                 >
                   {copiedCode ? (
@@ -918,22 +920,22 @@ async Task<bool> ShowAd(long chatId) {
                       onClick={() => setActiveCodeTab(lang.id)}
                       className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
                         activeCodeTab === lang.id
-                          ? "bg-white text-black"
-                          : "bg-[#1a1a1a] border border-[#222] text-gray-400 hover:text-white"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-accent border border-border text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {lang.label}
                     </button>
                   ))}
                 </div>
-                <div className="bg-[#050505] border border-[#222] rounded-xl relative">
-                  <pre className="p-4 overflow-x-auto text-[11px] font-mono text-gray-400 leading-relaxed scrollbar-none">
+                <div className="bg-background border border-border rounded-xl relative">
+                  <pre className="p-4 overflow-x-auto text-[11px] font-mono text-muted-foreground leading-relaxed scrollbar-none">
                     <code>{getIntegrationCode(activeCodeTab)}</code>
                   </pre>
                 </div>
                 <button
                   onClick={() => setShowResultModal(true)}
-                  className="mt-4 text-xs font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
+                  className="mt-4 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
                 >
                   <Info className="w-3.5 h-3.5" />
                   {bs?.viewResultCodes ?? "View API Result Codes"}
@@ -942,8 +944,8 @@ async Task<bool> ShowAd(long chatId) {
             </div>
 
             {/* Token Update */}
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
-              <h2 className="text-sm font-semibold mb-4 text-white">
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <h2 className="text-sm font-semibold mb-4 text-foreground">
                 {bs?.updateToken ?? "Update Access Token"}
               </h2>
               <div className="flex gap-3">
@@ -956,12 +958,12 @@ async Task<bool> ShowAd(long chatId) {
                   placeholder={
                     bs?.newTokenPlaceholder ?? "New token from BotFather..."
                   }
-                  className="flex-1 px-4 py-2.5 bg-[#050505] border border-[#222] rounded-xl text-sm text-white focus:outline-none focus:border-[#444] transition-colors placeholder:text-gray-600"
+                  className="flex-1 px-4 py-2.5 bg-background border border-border rounded-xl text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground/50"
                 />
                 <button
                   onClick={handleUpdateToken}
                   disabled={isSubmitting || !settings.newToken.trim()}
-                  className="px-5 py-2.5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                  className="px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm"
                 >
                   {bs?.update ?? "Update"}
                 </button>
@@ -969,45 +971,45 @@ async Task<bool> ShowAd(long chatId) {
             </div>
 
             {/* History / Released */}
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl flex flex-col h-[400px]">
-              <div className="flex items-center gap-6 p-5 border-b border-[#1f1f1f]">
+            <div className="bg-card border border-border rounded-2xl flex flex-col h-[400px]">
+              <div className="flex items-center gap-6 p-5 border-b border-border">
                 <button
                   onClick={() => setActiveTab("released")}
                   className={`text-sm font-semibold transition-colors relative ${
                     activeTab === "released"
-                      ? "text-white"
-                      : "text-gray-500 hover:text-gray-300"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {bs?.releasedAds ?? "Released ads"}
                   {activeTab === "released" && (
-                    <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
+                    <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary rounded-t-full"></div>
                   )}
                 </button>
                 <button
                   onClick={() => setActiveTab("exceptions")}
                   className={`text-sm font-semibold transition-colors relative ${
                     activeTab === "exceptions"
-                      ? "text-white"
-                      : "text-gray-500 hover:text-gray-300"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {bs?.exceptions ?? "Exceptions"}
                   {activeTab === "exceptions" && (
-                    <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
+                    <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary rounded-t-full"></div>
                   )}
                 </button>
                 <button
                   onClick={() => setActiveTab("audience")}
                   className={`text-sm font-semibold transition-colors relative ${
                     activeTab === "audience"
-                      ? "text-white"
-                      : "text-gray-500 hover:text-gray-300"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {bs?.audienceTab}
                   {activeTab === "audience" && (
-                    <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-white rounded-t-full"></div>
+                    <div className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary rounded-t-full"></div>
                   )}
                 </button>
               </div>
@@ -1019,24 +1021,24 @@ async Task<bool> ShowAd(long chatId) {
                       {history.map((item) => (
                         <div
                           key={item.id}
-                          className="bg-[#0a0a0a] border border-[#222] rounded-xl p-4"
+                          className="bg-card border border-border rounded-xl p-4 transition-colors hover:border-primary/30"
                         >
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="text-sm font-semibold text-white truncate pr-3">
+                            <h4 className="text-sm font-semibold text-foreground truncate pr-3">
                               {item.ad?.title || "Ad"}
                             </h4>
                             <span className="text-sm font-mono text-green-400 font-medium shrink-0">
                               +${parseFloat(item.botOwnerEarns).toFixed(4)}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                             {item.ad?.text}
                           </p>
-                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#1f1f1f]">
-                            <span className="text-[10px] text-gray-500 font-medium">
+                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+                            <span className="text-[10px] text-muted-foreground font-medium">
                               {new Date(item.createdAt).toLocaleDateString()}
                             </span>
-                            <span className="text-[10px] font-mono bg-[#1a1a1a] border border-[#333] px-2 py-0.5 rounded-md text-gray-400">
+                            <span className="text-[10px] font-mono bg-accent border border-border px-2 py-0.5 rounded-md text-muted-foreground">
                               @{item.username}
                             </span>
                           </div>
@@ -1077,7 +1079,7 @@ async Task<bool> ShowAd(long chatId) {
                       audience.map((u: any) => (
                         <div
                           key={u.id}
-                          className="bg-[#0a0a0a] border border-[#222] rounded-xl p-3 flex items-center justify-between group"
+                          className="bg-card border border-[#222] rounded-xl p-3 flex items-center justify-between group"
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-xs font-bold border border-white/5">
@@ -1086,7 +1088,7 @@ async Task<bool> ShowAd(long chatId) {
                                 : u.firstName?.[0]?.toUpperCase() || "U"}
                             </div>
                             <div>
-                              <div className="text-sm font-bold text-white flex items-center gap-2">
+                              <div className="text-sm font-bold text-foreground flex items-center gap-2">
                                 {u.firstName} {u.lastName}
                                 {u.source === "UPLOADED" && (
                                   <span className="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20 font-black tracking-tighter uppercase">
@@ -1104,10 +1106,10 @@ async Task<bool> ShowAd(long chatId) {
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-[10px] text-gray-600 font-mono">
+                            <div className="text-[10px] text-muted-foreground font-mono">
                               {bs?.lastActivity}
                             </div>
-                            <div className="text-[10px] text-gray-400">
+                            <div className="text-[10px] text-muted-foreground">
                               {new Date(u.lastSeenAt).toLocaleDateString()}
                             </div>
                           </div>
@@ -1132,7 +1134,7 @@ async Task<bool> ShowAd(long chatId) {
                       blockedAdsDetails.map((ad) => (
                         <div
                           key={ad.id}
-                          className="bg-[#0a0a0a] border border-[#222] rounded-xl p-4 flex gap-3"
+                          className="bg-card border border-border rounded-xl p-4 flex gap-3 hover:border-primary/30 transition-colors"
                         >
                           {ad.mediaUrl ? (
                             <img
@@ -1141,15 +1143,15 @@ async Task<bool> ShowAd(long chatId) {
                               className="w-12 h-12 object-cover rounded-lg shrink-0"
                             />
                           ) : (
-                            <div className="w-12 h-12 bg-[#1a1a1a] border border-[#333] rounded-xl flex items-center justify-center text-gray-500 shrink-0 font-bold">
+                            <div className="w-12 h-12 bg-accent border border-border rounded-xl flex items-center justify-center text-muted-foreground shrink-0 font-bold">
                               {ad.title?.[0]?.toUpperCase() || "A"}
                             </div>
                           )}
                           <div className="min-w-0 flex-1">
-                            <h4 className="text-sm font-semibold text-white truncate mb-1">
+                            <h4 className="text-sm font-semibold text-foreground truncate mb-1">
                               {ad.title || "Ad Without Title"}
                             </h4>
-                            <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
+                            <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">
                               {ad.text || "No description provided"}
                             </p>
                           </div>
@@ -1172,15 +1174,15 @@ async Task<bool> ShowAd(long chatId) {
 
       {/* RULES MODAL */}
       {showRulesModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#0f0f0f] border border-[#222] rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-white tracking-tight">
+              <h2 className="text-lg font-bold text-foreground tracking-tight">
                 {bs?.rulesModal?.title ?? "API Integration Instructions"}
               </h2>
               <button
                 onClick={() => setShowRulesModal(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1188,16 +1190,16 @@ async Task<bool> ShowAd(long chatId) {
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2">
                   {bs?.rulesModal?.apiTokenLabel ?? "Your API Token"}
                 </h3>
-                <div className="flex items-center gap-3 bg-[#050505] border border-[#222] rounded-xl p-3">
+                <div className="flex items-center gap-3 bg-background border border-border rounded-xl p-3">
                   <code className="flex-1 text-sm text-green-400 break-all font-mono">
                     {currentBot?.apiKey || "Loading..."}
                   </code>
                   <button
                     onClick={handleCopyToken}
-                    className="text-gray-400 hover:text-white p-1 rounded-md hover:bg-[#222] transition-colors"
+                    className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-accent transition-colors"
                   >
                     {copiedToken ? (
                       <CheckCircle className="w-4 h-4 text-green-400" />
@@ -1212,10 +1214,10 @@ async Task<bool> ShowAd(long chatId) {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2">
                   {bs?.rulesModal?.quickStart ?? "Quick Start"}
                 </h3>
-                <div className="space-y-2.5 text-sm text-gray-400">
+                <div className="space-y-2.5 text-sm text-muted-foreground">
                   {(
                     bs?.rulesModal?.quickStartSteps ?? [
                       "1. Copy your API token above",
@@ -1230,10 +1232,10 @@ async Task<bool> ShowAd(long chatId) {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2">
                   {bs?.rulesModal?.importantRules ?? "Important Rules"}
                 </h3>
-                <ul className="space-y-2.5 text-sm text-gray-400">
+                <ul className="space-y-2.5 text-sm text-muted-foreground">
                   {(
                     bs?.rulesModal?.rules ?? [
                       "Only show ads after completing useful tasks",
@@ -1260,7 +1262,7 @@ async Task<bool> ShowAd(long chatId) {
 
               <button
                 onClick={() => setShowRulesModal(false)}
-                className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors mt-4"
+                className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold hover:bg-primary/90 transition-colors mt-4"
               >
                 {bs?.rulesModal?.gotIt ?? "Got it!"}
               </button>
@@ -1271,81 +1273,105 @@ async Task<bool> ShowAd(long chatId) {
 
       {/* RESULT CODES MODAL */}
       {showResultModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#0f0f0f] border border-[#222] rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-white tracking-tight">
+              <h2 className="text-lg font-bold text-foreground tracking-tight">
                 {bs?.resultCodesModal?.title ?? "Result Codes"}
               </h2>
               <button
                 onClick={() => setShowResultModal(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-sm text-gray-400 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
               {bs?.resultCodesModal?.desc}
             </p>
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2">
                   {bs?.resultCodesModal?.exampleTitle ??
                     "Example Response (200 OK)"}
                 </h3>
-                <div className="bg-[#050505] border border-[#222] rounded-xl p-4">
-                  <pre className="text-sm text-green-400 font-mono">
+                <div className="bg-background border border-border rounded-xl p-4">
+                  <pre className="text-sm text-green-600 dark:text-green-400 font-mono">
                     {'{\n  "SendPostResult": 1\n}'}
                   </pre>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2">
                   {bs?.resultCodesModal?.allCodesTitle ?? "All Result Codes"}
                 </h3>
-                <div className="bg-[#050505] border border-[#222] rounded-xl overflow-hidden">
+                <div className="bg-background border border-border rounded-xl overflow-hidden">
                   {[
-                    { code: 0, name: "Undefined", color: "text-gray-500" },
-                    { code: 1, name: "Success", color: "text-green-500" },
+                    {
+                      code: 0,
+                      name: "Undefined",
+                      color: "text-muted-foreground",
+                    },
+                    {
+                      code: 1,
+                      name: "Success",
+                      color: "text-green-600 dark:text-green-500",
+                    },
                     {
                       code: 2,
                       name: "RevokedTokenError",
-                      color: "text-red-500",
+                      color: "text-red-600 dark:text-red-500",
                     },
                     {
                       code: 3,
                       name: "UserForbiddenError",
-                      color: "text-red-500",
+                      color: "text-red-600 dark:text-red-500",
                     },
                     {
                       code: 4,
                       name: "TooManyRequestsError",
-                      color: "text-yellow-500",
+                      color: "text-yellow-600 dark:text-yellow-500",
                     },
                     {
                       code: 5,
                       name: "OtherBotApiError",
-                      color: "text-red-500",
+                      color: "text-red-600 dark:text-red-500",
                     },
-                    { code: 6, name: "OtherError", color: "text-red-500" },
-                    { code: 7, name: "AdLimited", color: "text-yellow-500" },
-                    { code: 8, name: "NoAds", color: "text-gray-500" },
+                    {
+                      code: 6,
+                      name: "OtherError",
+                      color: "text-red-600 dark:text-red-500",
+                    },
+                    {
+                      code: 7,
+                      name: "AdLimited",
+                      color: "text-yellow-600 dark:text-yellow-500",
+                    },
+                    { code: 8, name: "NoAds", color: "text-muted-foreground" },
                     {
                       code: 9,
                       name: "BotIsNotEnabled",
-                      color: "text-yellow-500",
+                      color: "text-yellow-600 dark:text-yellow-500",
                     },
-                    { code: 10, name: "Banned", color: "text-red-500" },
-                    { code: 11, name: "InReview", color: "text-yellow-500" },
+                    {
+                      code: 10,
+                      name: "Banned",
+                      color: "text-red-600 dark:text-red-500",
+                    },
+                    {
+                      code: 11,
+                      name: "InReview",
+                      color: "text-yellow-600 dark:text-yellow-500",
+                    },
                   ].map((item, idx, arr) => (
                     <div
                       key={item.code}
-                      className={`flex items-center justify-between p-3 text-sm ${idx !== arr.length - 1 ? "border-b border-[#1f1f1f]" : ""}`}
+                      className={`flex items-center justify-between p-3 text-sm ${idx !== arr.length - 1 ? "border-b border-border" : ""}`}
                     >
-                      <span className="font-mono text-gray-300">
+                      <span className="font-mono text-muted-foreground">
                         {item.name}
                       </span>
                       <span className={`font-mono font-bold ${item.color}`}>
@@ -1358,7 +1384,7 @@ async Task<bool> ShowAd(long chatId) {
 
               <button
                 onClick={() => setShowResultModal(false)}
-                className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors mt-4"
+                className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold hover:bg-primary/90 transition-colors mt-4"
               >
                 {bs?.resultCodesModal?.close ?? "Close"}
               </button>

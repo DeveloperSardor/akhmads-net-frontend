@@ -5,13 +5,48 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap");
 
 /* =========================
-   BASE THEME (DOIM DARK)
+   THEME VARIABLES
 ========================= */
 
 :root {
   --radius: 0.5rem;
 
-  /* Background */
+  /* Light Theme (Default) */
+  --background: #f9fafb;
+  --foreground: #020617;
+
+  --card: #ffffff;
+  --card-foreground: #020617;
+
+  --popover: #ffffff;
+  --popover-foreground: #020617;
+
+  /* Brand */
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  --accent: #f8fafc;
+  --accent-foreground: #0f172a;
+
+  --destructive: #ef4444;
+
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #8b5cf6;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #020617;
+  --sidebar-border: #e2e8f0;
+}
+
+.dark {
+  /* Dark Theme Overlay */
   --background: #070709;
   --foreground: #ffffff;
 
@@ -20,10 +55,6 @@
 
   --popover: #0b0b0f;
   --popover-foreground: #ffffff;
-
-  /* Brand */
-  --primary: #8b5cf6;
-  --primary-foreground: #ffffff;
 
   --secondary: #141418;
   --secondary-foreground: #ffffff;
@@ -34,11 +65,8 @@
   --accent: #141418;
   --accent-foreground: #ffffff;
 
-  --destructive: #ef4444;
-
   --border: rgba(255, 255, 255, 0.08);
   --input: rgba(255, 255, 255, 0.1);
-  --ring: #8b5cf6;
 
   --sidebar: #070709;
   --sidebar-foreground: #ffffff;
@@ -110,13 +138,13 @@
 ========================= */
 
 .apply-input {
-  @apply h-[52px] bg-[#0f0f14] border border-white/10 text-white
-    placeholder:text-white/40 shadow-none
-    max-sm:h-10 max-sm:text-[16px];
+  @apply h-[52px] bg-secondary border border-border text-foreground
+    placeholder:text-muted-foreground shadow-none
+    max-sm:h-10 max-sm:text-[16px] rounded-[10px];
 }
 
 .apply-label {
-  @apply text-white/80 font-medium text-[16px] max-sm:text-[14px];
+  @apply text-foreground/80 font-medium text-[16px] max-sm:text-[14px];
 }
 
 /* =========================
@@ -147,7 +175,7 @@
 }
 
 .custom-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--border);
   border-radius: 4px;
 }
 
@@ -165,12 +193,12 @@
   padding-left: 20px;
   margin-bottom: 12px;
   font-size: 16px;
-  color: #e5e7eb;
+  color: var(--muted-foreground);
 }
 
 .custom-list li::before {
   content: "•";
-  color: #8b5cf6;
+  color: var(--primary);
   position: absolute;
   left: 0;
 }
@@ -180,7 +208,7 @@
 ========================= */
 
 .ant-picker-input > input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--muted-foreground);
 }
 
 /* =========================
@@ -188,7 +216,7 @@
 ========================= */
 
 #cost {
-  color: #8b5cf6;
+  color: var(--primary);
 }
 
 @keyframes marquee {
@@ -217,8 +245,8 @@
     align-items: center;
     position: relative;
     padding: 0 4px;
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
     border-radius: 4px;
     font-weight: 500;
   }
@@ -232,41 +260,41 @@
   }
 }
 
-/* Custom Dark Select for AudienceReach */
+/* Custom Select for AudienceReach */
 .custom-dark-select .ant-select-selector {
-  background: #0b0b0f !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: var(--card) !important;
+  border-color: var(--border) !important;
   border-radius: 12px !important;
-  color: white !important;
+  color: var(--foreground) !important;
   padding: 0 16px !important;
 }
 .custom-dark-select:hover .ant-select-selector {
-  border-color: #8b5cf6 !important;
+  border-color: var(--primary) !important;
 }
 .custom-dark-select .ant-select-selection-item {
-  color: white !important;
-  background: rgba(139, 92, 246, 0.2) !important;
-  border-color: rgba(139, 92, 246, 0.3) !important;
+  color: var(--foreground) !important;
+  background: color-mix(in srgb, var(--primary) 20%, transparent) !important;
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent) !important;
   border-radius: 8px !important;
 }
 .custom-dark-select .ant-select-selection-item-remove {
-  color: #a1a1aa !important;
+  color: var(--muted-foreground) !important;
 }
 .custom-dark-select .ant-select-selection-item-remove:hover {
-  color: #ef4444 !important;
+  color: var(--destructive) !important;
 }
 .ant-select-dropdown {
-  background: #141418 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: var(--popover) !important;
+  border: 1px solid var(--border) !important;
   border-radius: 12px !important;
 }
 .ant-select-item-option {
-  color: #a1a1aa !important;
+  color: var(--muted-foreground) !important;
 }
 .ant-select-item-option-active {
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: var(--accent) !important;
 }
 .ant-select-item-option-selected {
-  background: rgba(139, 92, 246, 0.2) !important;
-  color: white !important;
+  background: color-mix(in srgb, var(--primary) 20%, transparent) !important;
+  color: var(--foreground) !important;
 }

@@ -9,9 +9,13 @@ import "./index.css";
 // 🔐 MUHIM: Interceptors ni import qilish (auto token management)
 import "./services/interceptors";
 
+import { ThemeProvider } from "next-themes";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
-    <RouterProvider router={routes} />
-    <Toaster position="top-right" />
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+      <RouterProvider router={routes} />
+      <Toaster position="top-right" />
+    </ThemeProvider>
   </HelmetProvider>,
 );

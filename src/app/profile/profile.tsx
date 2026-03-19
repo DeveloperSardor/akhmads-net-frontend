@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
-import authService from "../../services/auth.service";
 import {
   LineChart,
   Line,
@@ -166,7 +165,7 @@ const Profile = () => {
       case "COMPLETED":
         return "bg-purple-500/10 text-purple-400 border border-purple-500/20";
       case "ARCHIVED":
-        return "bg-white/5 text-white/40 border border-white/10";
+        return "bg-foreground/5 text-foreground/40 border border-white/10";
       case "SCHEDULED":
         return "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20";
       default:
@@ -200,25 +199,25 @@ const Profile = () => {
 
   if (isLoading && !profile) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Error Alert */}
         {error && (
-          <div className="mb-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3 flex items-center justify-between">
+          <div className="mb-4 bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-              <p className="text-xs text-red-400">{error}</p>
+              <AlertCircle className="w-4 h-4 text-destructive shrink-0" />
+              <p className="text-xs text-destructive">{error}</p>
             </div>
             <button
               onClick={clearError}
-              className="text-red-400 hover:text-red-300 ml-2 shrink-0"
+              className="text-destructive hover:text-destructive/80 ml-2 shrink-0"
             >
               <X className="w-4 h-4" />
             </button>
@@ -229,7 +228,7 @@ const Profile = () => {
         <div className="mt-16 pt-2">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-1.5 text-white/50 hover:text-white transition text-xs mb-3"
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition text-xs mb-3"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             {p?.backToHome}
@@ -238,12 +237,12 @@ const Profile = () => {
         </div>
 
         {/* Profile Card */}
-        <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-4 sm:p-5 mt-5 mb-4">
+        <div className="bg-card border border-border rounded-xl p-4 sm:p-5 mt-5 mb-4 shadow-sm">
           {/* Profile header — stack on mobile, row on sm+ */}
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
             {/* Avatar + info */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border border-white/10 shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border border-border shrink-0">
                 <img
                   src={avatarUrl}
                   alt={profile?.firstName}
@@ -257,22 +256,22 @@ const Profile = () => {
                 <h2 className="text-base sm:text-lg font-semibold mb-0.5 truncate">
                   {profile?.firstName} {profile?.lastName}
                 </h2>
-                <p className="text-xs text-white/50 mb-1.5 truncate">
+                <p className="text-xs text-muted-foreground mb-1.5 truncate">
                   @{profile?.username || "user"}
                 </p>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-white/40 truncate">
+                  <span className="text-xs text-muted-foreground/80 truncate">
                     ID: {profile?.telegramId}
                   </span>
                   <button
                     onClick={handleCopyTelegramId}
-                    className="p-1 hover:bg-white/10 rounded transition shrink-0"
+                    className="p-1 hover:bg-accent rounded transition shrink-0"
                     title={p?.copyTelegramId}
                   >
                     {copiedTelegramId ? (
-                      <Check className="w-3 h-3 text-green-400" />
+                      <Check className="w-3 h-3 text-green-500" />
                     ) : (
-                      <Copy className="w-3 h-3 text-white/40" />
+                      <Copy className="w-3 h-3 text-muted-foreground" />
                     )}
                   </button>
                 </div>
@@ -283,14 +282,14 @@ const Profile = () => {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setShowEditModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition text-sm"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-accent hover:bg-accent/80 border border-border rounded-lg transition text-sm text-foreground"
               >
                 <Edit className="w-3.5 h-3.5" />
                 <span className="hidden xs:inline">{p?.edit}</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition text-sm"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-destructive/10 hover:bg-destructive/20 border border-destructive/20 text-destructive rounded-lg transition text-sm"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span className="hidden xs:inline">{p?.logOut}</span>
@@ -300,12 +299,12 @@ const Profile = () => {
 
           {/* Financial Stats — always 2 cols */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gradient-to-br from-red-500/10 to-transparent border border-red-500/20 rounded-lg p-3 sm:p-4">
+            <div className="bg-gradient-to-br from-red-500/5 to-transparent border border-red-500/10 rounded-lg p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0">
-                  <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-400" />
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
+                  <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-500" />
                 </div>
-                <span className="text-xs text-white/60 truncate">
+                <span className="text-xs text-muted-foreground truncate">
                   {p?.totalSpent}
                 </span>
               </div>
@@ -314,12 +313,12 @@ const Profile = () => {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 rounded-lg p-3 sm:p-4">
+            <div className="bg-gradient-to-br from-green-500/5 to-transparent border border-green-500/10 rounded-lg p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
-                  <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-400" />
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
+                  <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-500" />
                 </div>
-                <span className="text-xs text-white/60 truncate">
+                <span className="text-xs text-muted-foreground truncate">
                   {p?.totalEarned}
                 </span>
               </div>
@@ -328,79 +327,94 @@ const Profile = () => {
               </p>
             </div>
           </div>
-
         </div>
 
         {/* Performance Metrics — 1 col mobile, 3 col sm+ */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
-                <Eye className="w-3.5 h-3.5 text-purple-400" />
+              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Eye className="w-3.5 h-3.5 text-primary" />
               </div>
-              <span className="text-xs text-white/60">{p?.impressions}</span>
+              <span className="text-xs text-muted-foreground">
+                {p?.impressions}
+              </span>
             </div>
             <p className="text-xl font-bold mb-0.5">
               {formatNumber(stats?.totalImpressions)}
             </p>
-            <p className="text-xs text-white/40">{p?.totalViews}</p>
+            <p className="text-xs text-muted-foreground/60">{p?.totalViews}</p>
           </div>
 
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
-                <MousePointerClick className="w-3.5 h-3.5 text-purple-400" />
+              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <MousePointerClick className="w-3.5 h-3.5 text-primary" />
               </div>
-              <span className="text-xs text-white/60">{p?.ctr}</span>
+              <span className="text-xs text-muted-foreground">{p?.ctr}</span>
             </div>
             <p className="text-xl font-bold mb-0.5">
               {formatPercent(stats?.averageCtr)}
             </p>
-            <p className="text-xs text-white/40">{p?.avgCtr}</p>
+            <p className="text-xs text-muted-foreground/60">{p?.avgCtr}</p>
           </div>
 
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
+              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <TrendingUp className="w-3.5 h-3.5 text-primary" />
               </div>
-              <span className="text-xs text-white/60">{p?.conversions}</span>
+              <span className="text-xs text-muted-foreground">
+                {p?.conversions}
+              </span>
             </div>
             <p className="text-xl font-bold mb-0.5">
               {formatCurrency(stats?.totalClicks)}
             </p>
-            <p className="text-xs text-white/40">{p?.totalConversions}</p>
+            <p className="text-xs text-muted-foreground/60">
+              {p?.totalConversions}
+            </p>
           </div>
         </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
           {/* Revenue Trend */}
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold">{p?.revenueTrend}</h3>
               <div className="flex items-center gap-2">
-                <button className="p-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition">
+                <button className="p-1.5 bg-accent hover:bg-accent/80 border border-border rounded-lg transition">
                   <Calendar className="w-3.5 h-3.5" />
                 </button>
-                <button className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition text-xs">
+                <button className="px-2.5 py-1.5 bg-accent hover:bg-accent/80 border border-border rounded-lg transition text-xs">
                   {p?.exportCsv}
                 </button>
               </div>
             </div>
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
-                <XAxis dataKey="date" stroke="#ffffff30" fontSize={10} />
-                <YAxis stroke="#ffffff30" fontSize={10} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="currentColor"
+                  opacity={0.1}
+                />
+                <XAxis
+                  dataKey="date"
+                  stroke="currentColor"
+                  opacity={0.5}
+                  fontSize={10}
+                />
+                <YAxis stroke="currentColor" opacity={0.5} fontSize={10} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0a0a0a",
-                    border: "1px solid #ffffff20",
-                    borderRadius: "6px",
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
                     fontSize: "11px",
+                    color: "var(--foreground)",
                   }}
-                  cursor={{ fill: "#ffffff08" }}
+                  cursor={{ fill: "currentColor", opacity: 0.05 }}
                 />
                 <Bar dataKey="earnings" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -408,31 +422,41 @@ const Profile = () => {
           </div>
 
           {/* CTR Indicator */}
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold">{p?.ctrIndicator}</h3>
               <div className="flex items-center gap-2">
-                <button className="p-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition">
+                <button className="p-1.5 bg-accent hover:bg-accent/80 border border-border rounded-lg transition">
                   <Calendar className="w-3.5 h-3.5" />
                 </button>
-                <button className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition text-xs">
+                <button className="px-2.5 py-1.5 bg-accent hover:bg-accent/80 border border-border rounded-lg transition text-xs">
                   {p?.exportCsv}
                 </button>
               </div>
             </div>
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={ctrData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
-                <XAxis dataKey="date" stroke="#ffffff30" fontSize={10} />
-                <YAxis stroke="#ffffff30" fontSize={10} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="currentColor"
+                  opacity={0.1}
+                />
+                <XAxis
+                  dataKey="date"
+                  stroke="currentColor"
+                  opacity={0.5}
+                  fontSize={10}
+                />
+                <YAxis stroke="currentColor" opacity={0.5} fontSize={10} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0a0a0a",
-                    border: "1px solid #ffffff20",
-                    borderRadius: "6px",
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
                     fontSize: "11px",
+                    color: "var(--foreground)",
                   }}
-                  cursor={{ stroke: "#ffffff20" }}
+                  cursor={{ stroke: "currentColor", opacity: 0.2 }}
                 />
                 <Line
                   type="monotone"
@@ -448,20 +472,20 @@ const Profile = () => {
         </div>
 
         {/* Information Table */}
-        <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
+        <div className="bg-card border border-white/10 rounded-lg p-4">
           {/* Tab header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <h3 className="text-sm font-semibold">{p?.information}</h3>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setActiveTab("my-ads")}
-                className={`px-3 py-1.5 rounded-lg font-medium transition text-sm ${activeTab === "my-ads" ? "bg-purple-600 text-white" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
+                className={`px-3 py-1.5 rounded-lg font-medium transition text-sm ${activeTab === "my-ads" ? "bg-purple-600 text-foreground" : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10"}`}
               >
                 {p?.myAds}
               </button>
               <button
                 onClick={() => setActiveTab("my-bots")}
-                className={`px-3 py-1.5 rounded-lg font-medium transition text-sm ${activeTab === "my-bots" ? "bg-purple-600 text-white" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
+                className={`px-3 py-1.5 rounded-lg font-medium transition text-sm ${activeTab === "my-bots" ? "bg-purple-600 text-foreground" : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10"}`}
               >
                 {p?.myBots}
               </button>
@@ -476,25 +500,25 @@ const Profile = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-white/10">
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.adsTableHeaders.title}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.adsTableHeaders.impressions}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.adsTableHeaders.ctr}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.adsTableHeaders.conversions}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.adsTableHeaders.spent}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.adsTableHeaders.status}
                       </th>
-                      <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-right py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.adsTableHeaders.actions}
                       </th>
                     </tr>
@@ -504,7 +528,7 @@ const Profile = () => {
                       <tr>
                         <td
                           colSpan={7}
-                          className="text-center py-10 text-white/40 text-sm"
+                          className="text-center py-10 text-foreground/40 text-sm"
                         >
                           {p?.noAds}
                         </td>
@@ -513,7 +537,7 @@ const Profile = () => {
                       ads.map((ad) => (
                         <tr
                           key={ad.id}
-                          className="border-b border-white/5 hover:bg-white/[0.02] transition"
+                          className="border-b border-white/5 hover:bg-foreground/[0.02] transition"
                         >
                           <td className="py-3 px-3 max-w-[160px] truncate">
                             <div className="flex items-center gap-2">
@@ -551,14 +575,14 @@ const Profile = () => {
                                   setSelectedAdForModal(ad);
                                   setShowAdModal(true);
                                 }}
-                                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                                className="p-1.5 hover:bg-foreground/10 rounded-lg transition"
                                 title={t.myAds?.actions?.view || "View"}
                               >
                                 <Eye className="w-3.5 h-3.5 text-purple-400" />
                               </button>
                               <button
                                 onClick={() => handleDeleteAd(ad.id)}
-                                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                                className="p-1.5 hover:bg-foreground/10 rounded-lg transition"
                               >
                                 <Trash2 className="w-3.5 h-3.5 text-red-400" />
                               </button>
@@ -574,14 +598,14 @@ const Profile = () => {
               {/* Mobile card view */}
               <div className="sm:hidden space-y-3">
                 {ads.length === 0 ? (
-                  <p className="text-center py-10 text-white/40 text-sm">
+                  <p className="text-center py-10 text-foreground/40 text-sm">
                     {p?.noAds}
                   </p>
                 ) : (
                   ads.map((ad) => (
                     <div
                       key={ad.id}
-                      className="bg-white/[0.03] border border-white/10 rounded-xl p-3"
+                      className="bg-foreground/[0.03] border border-white/10 rounded-xl p-3"
                     >
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <p className="text-sm font-medium truncate">
@@ -595,27 +619,27 @@ const Profile = () => {
                             ad.status}
                         </span>
                       </div>
-                      <div className="grid grid-cols-3 gap-2 text-xs text-white/50 mb-3">
+                      <div className="grid grid-cols-3 gap-2 text-xs text-foreground/50 mb-3">
                         <div>
-                          <p className="text-white/30 mb-0.5">
+                          <p className="text-foreground/30 mb-0.5">
                             {p?.adsTableHeaders.impressions}
                           </p>
-                          <p className="text-white/70">
+                          <p className="text-foreground/70">
                             {formatNumber(
                               ad.deliveredImpressions ?? ad.impressions,
                             )}
                           </p>
                         </div>
                         <div>
-                          <p className="text-white/30 mb-0.5">
+                          <p className="text-foreground/30 mb-0.5">
                             {p?.adsTableHeaders.conversions}
                           </p>
-                          <p className="text-white/70">
+                          <p className="text-foreground/70">
                             {formatNumber(ad.conversions)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-white/30 mb-0.5">
+                          <p className="text-foreground/30 mb-0.5">
                             {p?.adsTableHeaders.spent}
                           </p>
                           <p className="text-red-400">
@@ -629,13 +653,13 @@ const Profile = () => {
                             setSelectedAdForModal(ad);
                             setShowAdModal(true);
                           }}
-                          className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                          className="p-1.5 hover:bg-foreground/10 rounded-lg transition"
                         >
                           <Eye className="w-4 h-4 text-purple-400" />
                         </button>
                         <button
                           onClick={() => handleDeleteAd(ad.id)}
-                          className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                          className="p-1.5 hover:bg-foreground/10 rounded-lg transition"
                         >
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
@@ -655,22 +679,22 @@ const Profile = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-white/10">
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.botsTableHeaders.name}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.botsTableHeaders.subscribers}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.botsTableHeaders.impressions}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.botsTableHeaders.earnings}
                       </th>
-                      <th className="text-left py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.botsTableHeaders.status}
                       </th>
-                      <th className="text-right py-3 px-3 font-medium text-white/60 text-xs">
+                      <th className="text-right py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.botsTableHeaders.actions}
                       </th>
                     </tr>
@@ -680,7 +704,7 @@ const Profile = () => {
                       <tr>
                         <td
                           colSpan={6}
-                          className="text-center py-10 text-white/40 text-sm"
+                          className="text-center py-10 text-foreground/40 text-sm"
                         >
                           {p?.noBots}
                         </td>
@@ -689,7 +713,7 @@ const Profile = () => {
                       bots.map((bot) => (
                         <tr
                           key={bot.id}
-                          className="border-b border-white/5 hover:bg-white/[0.02] transition"
+                          className="border-b border-white/5 hover:bg-foreground/[0.02] transition"
                         >
                           <td className="py-3 px-3">@{bot.username}</td>
                           <td className="py-3 px-3">
@@ -715,14 +739,14 @@ const Profile = () => {
                                   setSelectedBotForModal(bot);
                                   setShowBotModal(true);
                                 }}
-                                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                                className="p-1.5 hover:bg-foreground/10 rounded-lg transition"
                                 title={t.myAds?.actions?.view || "View"}
                               >
                                 <Eye className="w-3.5 h-3.5 text-purple-400" />
                               </button>
                               <button
                                 onClick={() => handleDeleteBot(bot.id)}
-                                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                                className="p-1.5 hover:bg-foreground/10 rounded-lg transition"
                               >
                                 <Trash2 className="w-3.5 h-3.5 text-red-400" />
                               </button>
@@ -738,14 +762,14 @@ const Profile = () => {
               {/* Mobile card view */}
               <div className="sm:hidden space-y-3">
                 {bots.length === 0 ? (
-                  <p className="text-center py-10 text-white/40 text-sm">
+                  <p className="text-center py-10 text-foreground/40 text-sm">
                     {p?.noBots}
                   </p>
                 ) : (
                   bots.map((bot) => (
                     <div
                       key={bot.id}
-                      className="bg-white/[0.03] border border-white/10 rounded-xl p-3"
+                      className="bg-foreground/[0.03] border border-white/10 rounded-xl p-3"
                     >
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <p className="text-sm font-medium">@{bot.username}</p>
@@ -757,23 +781,23 @@ const Profile = () => {
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs mb-3">
                         <div>
-                          <p className="text-white/30 mb-0.5">
+                          <p className="text-foreground/30 mb-0.5">
                             {p?.botsTableHeaders.subscribers}
                           </p>
-                          <p className="text-white/70">
+                          <p className="text-foreground/70">
                             {formatNumber(bot.subscribers)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-white/30 mb-0.5">
+                          <p className="text-foreground/30 mb-0.5">
                             {p?.botsTableHeaders.impressions}
                           </p>
-                          <p className="text-white/70">
+                          <p className="text-foreground/70">
                             {formatNumber(bot.impressionsServed)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-white/30 mb-0.5">
+                          <p className="text-foreground/30 mb-0.5">
                             {p?.botsTableHeaders.earnings}
                           </p>
                           <p className="text-green-400">
@@ -787,13 +811,13 @@ const Profile = () => {
                             setSelectedBotForModal(bot);
                             setShowBotModal(true);
                           }}
-                          className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                          className="p-1.5 hover:bg-foreground/10 rounded-lg transition"
                         >
                           <Eye className="w-4 h-4 text-purple-400" />
                         </button>
                         <button
                           onClick={() => handleDeleteBot(bot.id)}
-                          className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                          className="p-1.5 hover:bg-foreground/10 rounded-lg transition"
                         >
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
@@ -810,12 +834,12 @@ const Profile = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-md">
+          <div className="bg-card border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-md">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold">{p?.editModal.title}</h2>
               <button
                 onClick={() => setShowEditModal(false)}
-                className="text-white/60 hover:text-white transition"
+                className="text-foreground/60 hover:text-foreground transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -823,7 +847,7 @@ const Profile = () => {
 
             <div className="space-y-3.5">
               <div>
-                <label className="block text-xs text-white/60 mb-2">
+                <label className="block text-xs text-foreground/60 mb-2">
                   {p?.editModal.nameLabel}
                 </label>
                 <input
@@ -832,14 +856,14 @@ const Profile = () => {
                   onChange={(e) =>
                     setEditForm({ ...editForm, firstName: e.target.value })
                   }
-                  className="w-full px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
+                  className="w-full px-3.5 py-2.5 bg-foreground/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
                   placeholder="Ahmad"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-white/60 mb-2">
+                <label className="block text-xs text-foreground/60 mb-2">
                   {p?.editModal.surnameLabel}
                 </label>
                 <input
@@ -848,7 +872,7 @@ const Profile = () => {
                   onChange={(e) =>
                     setEditForm({ ...editForm, lastName: e.target.value })
                   }
-                  className="w-full px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
+                  className="w-full px-3.5 py-2.5 bg-foreground/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
                   placeholder="Karimov"
                 />
               </div>
@@ -857,7 +881,7 @@ const Profile = () => {
             <div className="flex items-center gap-2.5 mt-6">
               <button
                 onClick={() => setShowEditModal(false)}
-                className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition font-medium text-sm"
+                className="flex-1 px-4 py-2.5 bg-foreground/5 hover:bg-foreground/10 border border-white/10 rounded-lg transition font-medium text-sm"
               >
                 {p?.editModal.cancel}
               </button>
@@ -895,7 +919,6 @@ const Profile = () => {
           t={t}
         />
       )}
-
     </div>
   );
 };
@@ -923,14 +946,14 @@ const AdDetailModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto">
-      <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
+      <div className="bg-card border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">
             {p?.information} - {p?.myAds}
           </h2>
           <button
             onClick={onClose}
-            className="text-white/60 hover:text-white transition"
+            className="text-foreground/60 hover:text-foreground transition"
           >
             <X className="w-6 h-6" />
           </button>
@@ -938,15 +961,15 @@ const AdDetailModal = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-[10px] text-white/40 mb-1.5 uppercase tracking-wider">
+            <label className="block text-[10px] text-foreground/40 mb-1.5 uppercase tracking-wider">
               {p?.adsTableHeaders.title}
             </label>
-            <p className="text-sm font-medium leading-relaxed bg-white/5 p-3 rounded-lg border border-white/5 whitespace-pre-wrap max-h-[150px] overflow-y-auto">
+            <p className="text-sm font-medium leading-relaxed bg-foreground/5 p-3 rounded-lg border border-white/5 whitespace-pre-wrap max-h-[150px] overflow-y-auto">
               {ad.title || ad.text}
             </p>
 
             <div className="mt-5">
-              <label className="block text-[10px] text-white/40 mb-2 uppercase tracking-wider">
+              <label className="block text-[10px] text-foreground/40 mb-2 uppercase tracking-wider">
                 {p?.adsTableHeaders.status}
               </label>
               <span
@@ -960,10 +983,10 @@ const AdDetailModal = ({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Eye className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[10px] text-white/40 uppercase font-medium">
+                <span className="text-[10px] text-foreground/40 uppercase font-medium">
                   {p?.adsTableHeaders.impressions}
                 </span>
               </div>
@@ -972,20 +995,20 @@ const AdDetailModal = ({
               </p>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <MousePointerClick className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[10px] text-white/40 uppercase font-medium">
+                <span className="text-[10px] text-foreground/40 uppercase font-medium">
                   {p?.adsTableHeaders.ctr}
                 </span>
               </div>
               <p className="text-lg font-bold">{formatPercent(ad.ctr)}</p>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[10px] text-white/40 uppercase font-medium">
+                <span className="text-[10px] text-foreground/40 uppercase font-medium">
                   {p?.adsTableHeaders.conversions}
                 </span>
               </div>
@@ -994,10 +1017,10 @@ const AdDetailModal = ({
               </p>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <DollarSign className="w-3.5 h-3.5 text-red-400" />
-                <span className="text-[10px] text-white/40 uppercase font-medium">
+                <span className="text-[10px] text-foreground/40 uppercase font-medium">
                   {p?.adsTableHeaders.spent}
                 </span>
               </div>
@@ -1008,7 +1031,7 @@ const AdDetailModal = ({
 
             <div className="col-span-2 bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/10 rounded-lg p-3 mt-1">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-[10px] text-white/40 uppercase font-medium">
+                <span className="text-[10px] text-foreground/40 uppercase font-medium">
                   {p?.budget ?? "Budget"}
                 </span>
 
@@ -1016,7 +1039,7 @@ const AdDetailModal = ({
                   {formatCurrency(ad.totalCost)}
                 </p>
               </div>
-              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+              <div className="h-1.5 w-full bg-foreground/5 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-purple-500 transition-all duration-500"
                   style={{
@@ -1088,20 +1111,20 @@ const DetailedImpressionsList = ({ adId, p }: { adId: string; p: any }) => {
 
   if (loading)
     return (
-      <div className="text-center py-4 text-white/40 text-xs">
+      <div className="text-center py-4 text-foreground/40 text-xs">
         {p?.loading ?? "Loading..."}
       </div>
     );
   if (!data?.length)
     return (
-      <div className="text-center py-4 text-white/40 text-xs">
+      <div className="text-center py-4 text-foreground/40 text-xs">
         {p?.noImpressions ?? "No impressions yet"}
       </div>
     );
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-[11px] text-white/70">
+      <table className="w-full text-[11px] text-foreground/70">
         <thead>
           <tr className="border-b border-white/5 text-left">
             <th>{p?.tableUser ?? "User"}</th>
@@ -1115,10 +1138,10 @@ const DetailedImpressionsList = ({ adId, p }: { adId: string; p: any }) => {
             <tr key={imp.id}>
               <td className="py-2">
                 <div className="flex flex-col">
-                  <span className="text-white font-medium">
+                  <span className="text-foreground font-medium">
                     {imp.firstName} {imp.lastName}
                   </span>
-                  <span className="text-white/40">
+                  <span className="text-foreground/40">
                     @{imp.username || "user"}
                   </span>
                 </div>
@@ -1126,13 +1149,13 @@ const DetailedImpressionsList = ({ adId, p }: { adId: string; p: any }) => {
               <td className="py-2">
                 <div className="flex items-center gap-1.5">
                   <span className="opacity-60">{imp.languageCode || "-"}</span>
-                  <span className="bg-white/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-white/50">
+                  <span className="bg-foreground/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-foreground/50">
                     {imp.country || "???"}
                   </span>
                 </div>
               </td>
               <td className="py-2 text-purple-400">@{imp.bot?.username}</td>
-              <td className="py-2 text-white/40">
+              <td className="py-2 text-foreground/40">
                 {dayjs(imp.createdAt).format("HH:mm, DD.MM")}
               </td>
             </tr>
@@ -1170,20 +1193,20 @@ const DetailedClicksList = ({ adId, p }: { adId: string; p: any }) => {
 
   if (loading)
     return (
-      <div className="text-center py-4 text-white/40 text-xs">
+      <div className="text-center py-4 text-foreground/40 text-xs">
         {p?.loading ?? "Loading..."}
       </div>
     );
   if (!data?.length)
     return (
-      <div className="text-center py-4 text-white/40 text-xs">
+      <div className="text-center py-4 text-foreground/40 text-xs">
         {p?.noClicks ?? "No clicks yet"}
       </div>
     );
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-[11px] text-white/70">
+      <table className="w-full text-[11px] text-foreground/70">
         <thead>
           <tr className="border-b border-white/5 text-left">
             <th>{p?.tableUser ?? "User"}</th>
@@ -1197,10 +1220,10 @@ const DetailedClicksList = ({ adId, p }: { adId: string; p: any }) => {
             <tr key={click.id}>
               <td className="py-2">
                 <div className="flex flex-col">
-                  <span className="text-white font-medium">
+                  <span className="text-foreground font-medium">
                     {click.firstName} {click.lastName}
                   </span>
-                  <span className="text-white/40">
+                  <span className="text-foreground/40">
                     @{click.username || "user"}
                   </span>
                 </div>
@@ -1210,7 +1233,7 @@ const DetailedClicksList = ({ adId, p }: { adId: string; p: any }) => {
                   <span className="opacity-60 uppercase">
                     {click.languageCode || "-"}
                   </span>
-                  <span className="bg-white/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-white/50">
+                  <span className="bg-foreground/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-foreground/50">
                     {click.country || "???"}
                   </span>
                 </div>
@@ -1223,7 +1246,7 @@ const DetailedClicksList = ({ adId, p }: { adId: string; p: any }) => {
                   </span>
                 </div>
               </td>
-              <td className="py-2 text-white/40">
+              <td className="py-2 text-foreground/40">
                 {dayjs(click.clickedAt).format("HH:mm, DD.MM")}
               </td>
             </tr>
@@ -1247,14 +1270,14 @@ const BotDetailModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto">
-      <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
+      <div className="bg-card border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">
             {p?.information} - {p?.myBots}
           </h2>
           <button
             onClick={onClose}
-            className="text-white/60 hover:text-white transition"
+            className="text-foreground/60 hover:text-foreground transition"
           >
             <X className="w-6 h-6" />
           </button>
@@ -1262,20 +1285,20 @@ const BotDetailModal = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+            <div className="flex items-center gap-4 bg-foreground/5 p-4 rounded-xl border border-white/5">
               <div className="w-14 h-14 bg-purple-600/20 text-purple-400 rounded-full flex items-center justify-center text-xl font-bold border border-purple-500/20">
                 {bot.username?.[0]?.toUpperCase() || "B"}
               </div>
               <div>
                 <h3 className="text-lg font-bold">@{bot.username}</h3>
-                <p className="text-xs text-white/40 bg-white/5 px-2 py-0.5 rounded mt-1 inline-block">
+                <p className="text-xs text-foreground/40 bg-foreground/5 px-2 py-0.5 rounded mt-1 inline-block">
                   {bot.category}
                 </p>
               </div>
             </div>
 
-            <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-              <label className="block text-[10px] text-white/40 mb-2 uppercase tracking-wider">
+            <div className="bg-foreground/5 p-4 rounded-xl border border-white/5">
+              <label className="block text-[10px] text-foreground/40 mb-2 uppercase tracking-wider">
                 {p?.botsTableHeaders.status}
               </label>
               <span
@@ -1287,10 +1310,10 @@ const BotDetailModal = ({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Users className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[10px] text-white/40 uppercase font-medium">
+                <span className="text-[10px] text-foreground/40 uppercase font-medium">
                   {p?.botsTableHeaders.subscribers}
                 </span>
               </div>
@@ -1299,10 +1322,10 @@ const BotDetailModal = ({
               </p>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Eye className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[10px] text-white/40 uppercase font-medium">
+                <span className="text-[10px] text-foreground/40 uppercase font-medium">
                   {p?.botsTableHeaders.impressions}
                 </span>
               </div>
@@ -1316,7 +1339,7 @@ const BotDetailModal = ({
                 <div>
                   <div className="flex items-center gap-2 mb-1.5">
                     <DollarSign className="w-4 h-4 text-green-400" />
-                    <span className="text-xs text-white/50 uppercase font-bold tracking-tight">
+                    <span className="text-xs text-foreground/50 uppercase font-bold tracking-tight">
                       {p?.botsTableHeaders.earnings}
                     </span>
                   </div>
@@ -1382,22 +1405,22 @@ const ActiveUsersList = ({ botId, p }: { botId: string; p: any }) => {
 
   if (loading)
     return (
-      <div className="text-center py-4 text-white/40 text-xs">
+      <div className="text-center py-4 text-foreground/40 text-xs">
         {p?.loading ?? "Loading..."}
       </div>
     );
   if (!data?.length)
     return (
-      <div className="text-center py-4 text-white/40 text-xs">
+      <div className="text-center py-4 text-foreground/40 text-xs">
         {p?.noUsers ?? "No users yet"}
       </div>
     );
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-[11px] text-white/70">
+      <table className="w-full text-[11px] text-foreground/70">
         <thead>
-          <tr className="border-b border-white/5 text-left text-white/40">
+          <tr className="border-b border-white/5 text-left text-foreground/40">
             <th>{p?.tableUser ?? "User"}</th>
             <th>{p?.tableLanguage ?? "Language"}</th>
             <th>{p?.tableCountry ?? "Country"}</th>
@@ -1407,7 +1430,7 @@ const ActiveUsersList = ({ botId, p }: { botId: string; p: any }) => {
         <tbody className="divide-y divide-white/5">
           {data.map((user: any) => (
             <tr key={user.id}>
-              <td className="py-2 text-white/90">
+              <td className="py-2 text-foreground/90">
                 <div className="flex flex-col">
                   <span className="font-bold">
                     {user.firstName} {user.lastName}
@@ -1421,11 +1444,11 @@ const ActiveUsersList = ({ botId, p }: { botId: string; p: any }) => {
                 {user.languageCode || "-"}
               </td>
               <td className="py-2">
-                <span className="bg-white/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-white/50">
+                <span className="bg-foreground/5 px-1.5 py-0.5 rounded text-[9px] font-bold text-foreground/50">
                   {user.country || "???"}
                 </span>
               </td>
-              <td className="py-2 text-white/40">
+              <td className="py-2 text-foreground/40">
                 {dayjs(user.lastSeenAt).fromNow()}
               </td>
             </tr>
@@ -1483,7 +1506,7 @@ const BotUsersExport = ({ botId, p }: { botId: string; p: any }) => {
     <button
       onClick={handleExport}
       disabled={exporting}
-      className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[10px] font-bold transition flex items-center gap-1.5 disabled:opacity-50"
+      className="px-3 py-1 bg-foreground/5 hover:bg-foreground/10 border border-white/10 rounded-lg text-[10px] font-bold transition flex items-center gap-1.5 disabled:opacity-50"
     >
       <TrendingUp className="w-3 h-3" />
       {exporting

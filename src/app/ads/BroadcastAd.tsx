@@ -253,30 +253,30 @@ const BroadcastAd: React.FC = () => {
     );
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-24 pb-16 px-4 md:px-8">
+    <div className="min-h-screen bg-background text-foreground pt-24 pb-16 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Navigation */}
         <button
           onClick={() => navigate(-1)}
-          className="group mb-8 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+          className="group mb-8 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
         >
-          <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:bg-white/10 group-hover:border-white/20 transition-all">
+          <div className="p-2 rounded-xl bg-card border border-border group-hover:bg-accent group-hover:border-primary/30 transition-all shadow-sm">
             <ArrowLeft className="w-4 h-4" />
           </div>
-          <span className="text-sm font-medium">{tb.back}</span>
+          <span className="text-sm font-semibold">{tb.back}</span>
         </button>
 
         {/* Header */}
         <div className="grid md:grid-cols-2 gap-12 items-end mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold mb-4 uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold mb-4 uppercase tracking-widest">
               <Sparkles className="w-3 h-3" />
               Advanced Campaign
             </div>
-            <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-white via-white to-gray-500 bg-clip-text text-transparent italic">
+            <h1 className="text-4xl md:text-5xl font-black mb-4 text-foreground italic tracking-tight">
               {tb.title}
             </h1>
-            <p className="text-gray-400 text-lg leading-relaxed">
+            <p className="text-muted-foreground text-lg leading-relaxed max-w-lg">
               {tb.subtitle}
             </p>
           </div>
@@ -287,59 +287,59 @@ const BroadcastAd: React.FC = () => {
               <button
                 key={n}
                 onClick={() => n === 1 && setStep(1)}
-                className={`h-1.5 rounded-full transition-all duration-500 ${step === n ? "w-12 bg-purple-500" : "w-4 bg-white/10 hover:bg-white/20"}`}
+                className={`h-2 rounded-full transition-all duration-500 ${step === n ? "w-16 bg-primary shadow-lg shadow-primary/20" : "w-6 bg-muted hover:bg-muted/80"}`}
               />
             ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Main Form */}
-          <div className="lg:col-span-8 space-y-6">
+          <div className="lg:col-span-8 space-y-8">
             {step === 1 ? (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {/* 1. Model Selection */}
-                <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-3xl p-8 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[100px] pointer-events-none" />
+                <div className="bg-card border border-border rounded-3xl p-10 relative overflow-hidden group shadow-sm">
+                  <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 blur-[120px] pointer-events-none" />
 
-                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-purple-400 mb-8 flex items-center gap-2">
-                    <div className="p-2 bg-purple-500/10 rounded-lg">
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-10 flex items-center gap-2">
+                    <div className="p-2.5 bg-primary/10 rounded-xl">
                       <Zap className="w-4 h-4" />
                     </div>
                     1. {tb.typeLabel || "Kampaniya Modeli"}
                   </h2>
 
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-2 gap-6">
                     <button
                       onClick={() => setBroadcastType("POKAZ")}
-                      className={`p-6 rounded-2xl border text-left transition-all ${broadcastType === "POKAZ" ? "bg-purple-500/10 border-purple-500/40 ring-1 ring-purple-500/20" : "bg-[#050505] border-[#1f1f1f] hover:border-[#333]"}`}
+                      className={`p-8 rounded-2xl border-2 text-left transition-all relative group/btn ${broadcastType === "POKAZ" ? "bg-primary/5 border-primary shadow-xl shadow-primary/5" : "bg-background border-border hover:border-primary/30"}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${broadcastType === "POKAZ" ? "bg-purple-500 text-white shadow-lg shadow-purple-500/40" : "bg-gray-800 text-gray-400"}`}
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-all ${broadcastType === "POKAZ" ? "bg-primary text-primary-foreground shadow-xl shadow-primary/40 scale-110" : "bg-muted text-muted-foreground"}`}
                       >
-                        <Users className="w-5 h-5" />
+                        <Users className="w-6 h-6" />
                       </div>
-                      <h3 className="font-bold text-lg mb-1">
+                      <h3 className="font-bold text-xl mb-2 text-foreground">
                         {tb.pokazTitle || "Pay per message"}
                       </h3>
-                      <p className="text-xs text-gray-500 leading-relaxed uppercase font-black opacity-60">
+                      <p className="text-xs text-muted-foreground leading-relaxed uppercase font-bold tracking-wider opacity-80">
                         {tb.pokazDesc || "Barcha foydalanuvchilar uchun"}
                       </p>
                     </button>
 
                     <button
                       onClick={() => setBroadcastType("PDP")}
-                      className={`p-6 rounded-2xl border text-left transition-all ${broadcastType === "PDP" ? "bg-blue-500/10 border-blue-500/40 ring-1 ring-blue-500/20" : "bg-[#050505] border-[#1f1f1f] hover:border-[#333]"}`}
+                      className={`p-8 rounded-2xl border-2 text-left transition-all relative group/btn ${broadcastType === "PDP" ? "bg-blue-500/5 border-blue-500 shadow-xl shadow-blue-500/5" : "bg-background border-border hover:border-blue-500/30"}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${broadcastType === "PDP" ? "bg-blue-500 text-white shadow-lg shadow-blue-500/40" : "bg-gray-800 text-gray-400"}`}
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-all ${broadcastType === "PDP" ? "bg-blue-500 text-foreground shadow-xl shadow-blue-500/40 scale-110" : "bg-muted text-muted-foreground"}`}
                       >
-                        <Radio className="w-5 h-5" />
+                        <Radio className="w-6 h-6" />
                       </div>
-                      <h3 className="font-bold text-lg mb-1">
+                      <h3 className="font-bold text-xl mb-2 text-foreground">
                         {tb.pdpTitle || "Pay per click"}
                       </h3>
-                      <p className="text-xs text-gray-500 leading-relaxed uppercase font-black opacity-60">
+                      <p className="text-xs text-muted-foreground leading-relaxed uppercase font-bold tracking-wider opacity-80">
                         {tb.pdpDesc || "Faqat kliklar uchun"}
                       </p>
                     </button>
@@ -347,18 +347,18 @@ const BroadcastAd: React.FC = () => {
                 </div>
 
                 {/* 2. Bot & Audience */}
-                <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-3xl p-8">
-                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-purple-400 mb-8 flex items-center gap-2">
-                    <div className="p-2 bg-purple-500/10 rounded-lg">
+                <div className="bg-card border border-border rounded-3xl p-10 shadow-sm">
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-10 flex items-center gap-2">
+                    <div className="p-2.5 bg-primary/10 rounded-xl">
                       <Users className="w-4 h-4" />
                     </div>
                     2. {tb.step1 || "Auditoriya"}
                   </h2>
 
-                  <div className="space-y-8">
+                  <div className="space-y-10">
                     {/* Bot Select */}
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 block ml-1">
+                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground block ml-1">
                         {tb.botSelect || "Botni tanlang"}
                       </label>
                       <Select
@@ -366,7 +366,7 @@ const BroadcastAd: React.FC = () => {
                         value={selectedBotId}
                         loading={botsLoading}
                         placeholder={tb.searchBotPlaceholder}
-                        className="w-full custom-select-bc-new h-14"
+                        className="w-full custom-select-bc-new h-16"
                         onChange={(v) => setSelectedBotId(v)}
                         onSearch={setSearchTerm}
                         filterOption={false}
@@ -378,20 +378,20 @@ const BroadcastAd: React.FC = () => {
                             value={b.id}
                             label={`@${b.username}`}
                           >
-                            <div className="flex items-center gap-4 py-1">
-                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-white/5 flex items-center justify-center font-black text-purple-400">
+                            <div className="flex items-center gap-4 py-2">
+                              <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-primary text-lg">
                                 {b.username[0].toUpperCase()}
                               </div>
-                              <div className="flex flex-col gap-0.5">
-                                <div className="font-bold text-white text-sm tracking-tight leading-none">
+                              <div className="flex flex-col gap-1">
+                                <div className="font-black text-foreground text-sm tracking-tight leading-none">
                                   @{b.username}
                                 </div>
-                                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mt-1 opacity-60">
+                                <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-none mt-1">
                                   {b.category}
                                 </div>
                               </div>
                               <div className="ml-auto">
-                                <div className="px-3 py-1.5 rounded-lg bg-white/5 text-[10px] font-black text-purple-500 uppercase tracking-wider">
+                                <div className="px-4 py-2 rounded-xl bg-accent text-[10px] font-black text-primary uppercase tracking-widest shadow-sm border border-border/50">
                                   {(b.activeUsers30d ?? 0).toLocaleString()}{" "}
                                   {tb.usersLabel?.toLowerCase() || "user"}
                                 </div>
@@ -403,9 +403,9 @@ const BroadcastAd: React.FC = () => {
                     </div>
 
                     {/* Language & Scheduling Group */}
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid md:grid-cols-2 gap-8">
                       <div className="space-y-4">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 block ml-1">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground block ml-1">
                           {tb.languageTitle || "Language Targeting"}
                         </label>
                         <Select
@@ -424,7 +424,7 @@ const BroadcastAd: React.FC = () => {
                         </Select>
                       </div>
                       <div className="space-y-4">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 block ml-1">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground block ml-1">
                           {tb.scheduleTitle || "Schedule (Optional)"}
                         </label>
                         <DatePicker
@@ -432,7 +432,7 @@ const BroadcastAd: React.FC = () => {
                           disabledDate={(current) =>
                             current && current < dayjs().endOf("day")
                           }
-                          className="w-full h-14 bg-[#050505] border-[#1f1f1f] text-white hover:border-purple-500 focus:border-purple-500 rounded-2xl"
+                          className="w-full h-14 bg-background border-border text-foreground hover:border-primary focus:border-primary rounded-2xl shadow-sm"
                           placeholder="Now"
                           value={scheduledAt}
                           onChange={(val) => setScheduledAt(val)}
@@ -441,17 +441,17 @@ const BroadcastAd: React.FC = () => {
                     </div>
 
                     {/* Count / Clicks Section */}
-                    <div className="p-10 rounded-[40px] bg-gradient-to-b from-[#111] to-[#050505] border border-white/5 shadow-2xl relative overflow-hidden group/card">
-                      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/5 blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+                    <div className="p-10 rounded-[2.5rem] bg-accent/30 border border-border shadow-inner relative overflow-hidden group/card">
+                      <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 blur-[100px] -mr-40 -mt-40 pointer-events-none" />
 
-                      <div className="flex items-start md:items-center justify-between mb-10 gap-4 relative z-10">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6 relative z-10">
                         <div className="space-y-2">
-                          <h4 className="font-bold text-sm text-gray-300">
+                          <h4 className="font-black text-sm text-foreground uppercase tracking-widest">
                             {broadcastType === "POKAZ"
                               ? tb.targetCountLabel || "Recipients"
                               : tb.targetClickLabel || "Target Clicks"}
                           </h4>
-                          <p className="text-[11px] text-gray-500 font-medium">
+                          <p className="text-xs text-muted-foreground font-medium">
                             {broadcastType === "POKAZ"
                               ? tb.randomHint || "Random audience"
                               : tb.guaranteedHint ||
@@ -459,7 +459,7 @@ const BroadcastAd: React.FC = () => {
                           </p>
                         </div>
                         <div className="flex flex-col items-end">
-                          <div className="flex items-baseline gap-2">
+                          <div className="flex items-baseline gap-3">
                             <input
                               type="number"
                               value={targetCount}
@@ -473,9 +473,9 @@ const BroadcastAd: React.FC = () => {
                                   val = activeUsersCount;
                                 setTargetCount(val);
                               }}
-                              className="w-40 text-4xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-2xl bg-transparent border-b-2 border-white/10 focus:border-purple-500 outline-none text-right"
+                              className="w-48 text-5xl md:text-7xl font-black text-foreground tracking-tighter tabular-nums bg-transparent border-b-2 border-border focus:border-primary outline-none text-right transition-colors"
                             />
-                            <span className="text-xs font-bold text-purple-500 uppercase tracking-wider mb-1">
+                            <span className="text-sm font-black text-primary uppercase tracking-widest mb-2">
                               {broadcastType === "PDP"
                                 ? tb.clicksLabel || "clicks"
                                 : tb.usersLabel || "users"}
@@ -484,7 +484,7 @@ const BroadcastAd: React.FC = () => {
 
                           {walletBalance !== null && totalCost > 0 && (
                             <div
-                              className={`mt-2 text-[10px] font-black uppercase tracking-widest ${walletBalance >= totalCost ? "text-green-500" : "text-red-500 animate-pulse"}`}
+                              className={`mt-4 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] shadow-sm border ${walletBalance >= totalCost ? "bg-green-500/10 text-green-600 border-green-500/20" : "bg-destructive/10 text-destructive border-destructive/20 animate-pulse"}`}
                             >
                               {walletBalance >= totalCost
                                 ? `Balance OK: $${totalCost.toFixed(2)}`
@@ -495,13 +495,13 @@ const BroadcastAd: React.FC = () => {
                       </div>
 
                       {broadcastType === "POKAZ" && (
-                        <div className="mb-8 space-y-8 relative z-10">
-                          <div className="p-1.5 bg-black/40 border border-white/5 rounded-2xl grid grid-cols-3 gap-1.5 shadow-inner">
+                        <div className="mb-8 space-y-10 relative z-10">
+                          <div className="p-2 bg-background/50 border border-border rounded-2xl grid grid-cols-3 gap-2 shadow-sm">
                             {([3, 7, 30] as const).map((d) => (
                               <button
                                 key={d}
                                 onClick={() => setActiveDays(d)}
-                                className={`py-4 px-1 rounded-xl text-xs font-bold transition-all duration-300 ${activeDays === d ? "bg-white text-black shadow-lg" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"}`}
+                                className={`py-4 px-1 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 ${activeDays === d ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:bg-accent"}`}
                               >
                                 {d} {tb.activeDaysBtn || "days active"}
                               </button>
@@ -517,10 +517,10 @@ const BroadcastAd: React.FC = () => {
                               onChange={(e) =>
                                 setTargetCount(Number(e.target.value))
                               }
-                              className="w-full h-2 bg-white/5 rounded-full appearance-none cursor-pointer accent-purple-500 hover:accent-purple-400 transition-all focus:outline-none custom-slider-bc"
+                              className="w-full h-3 bg-muted rounded-full appearance-none cursor-pointer accent-primary hover:accent-primary/80 transition-all focus:outline-none"
                             />
                           </div>
-                          <div className="flex justify-between text-xs font-medium text-gray-500">
+                          <div className="flex justify-between text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                             <span>1 {tb.usersLabel || "User"}</span>
                             <span>
                               {activeUsersCount.toLocaleString()}{" "}
@@ -536,7 +536,7 @@ const BroadcastAd: React.FC = () => {
                             <button
                               key={val}
                               onClick={() => setTargetCount(val)}
-                              className={`py-6 rounded-2xl font-bold border transition-all ${targetCount === val ? "bg-blue-600 border-blue-400 text-white shadow-xl shadow-blue-600/30 -translate-y-1" : "bg-black/40 border-white/5 text-gray-600 hover:border-white/10"}`}
+                              className={`py-6 rounded-2xl font-black text-sm transition-all border-2 ${targetCount === val ? "bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/20 -translate-y-1" : "bg-background border-border text-muted-foreground hover:border-primary/30"}`}
                             >
                               {val.toLocaleString()}
                             </button>
@@ -549,7 +549,7 @@ const BroadcastAd: React.FC = () => {
                   <button
                     disabled={!selectedBotId || targetCount < 1}
                     onClick={() => setStep(2)}
-                    className="w-full h-16 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white rounded-[24px] font-black uppercase tracking-[0.2em] mt-12 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-20 disabled:grayscale shadow-xl shadow-purple-500/20 text-xs flex items-center justify-center gap-2 group/btn"
+                    className="w-full h-16 bg-primary text-primary-foreground rounded-[24px] font-black uppercase tracking-[0.2em] mt-12 hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-30 shadow-xl shadow-primary/20 text-xs flex items-center justify-center gap-3 group/btn"
                   >
                     {tb.nextStep || "Davom etish"}
                     <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
@@ -557,12 +557,12 @@ const BroadcastAd: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                 {/* 3. Content Creation */}
-                <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-3xl p-8">
-                  <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-xs font-black uppercase tracking-[0.2em] text-purple-400 flex items-center gap-2 group-hover:scale-105 transition-transform duration-500">
-                      <div className="p-2 bg-purple-500/10 rounded-lg">
+                <div className="bg-card border border-border rounded-3xl p-10 shadow-sm">
+                  <div className="flex items-center justify-between mb-10">
+                    <h2 className="text-xs font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
+                      <div className="p-2.5 bg-primary/10 rounded-xl">
                         <MessageSquare className="w-4 h-4" />
                       </div>
                       3. {tb.step3 || "Xabar Mazmuni"}
@@ -572,12 +572,12 @@ const BroadcastAd: React.FC = () => {
                         <button
                           onClick={fetchDraft}
                           disabled={fetchingDraft}
-                          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold hover:bg-purple-500/20 transition-all"
+                          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent border border-border text-primary text-xs font-black shadow-sm hover:bg-accent/80 transition-all uppercase tracking-widest"
                         >
                           {fetchingDraft ? (
                             <Spin size="small" />
                           ) : (
-                            <Download className="w-3.5 h-3.5" />
+                            <Download className="w-4 h-4" />
                           )}
                           {fetchingDraft ? tb.fetching : tb.fetchDraft}
                         </button>
@@ -585,19 +585,19 @@ const BroadcastAd: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-8">
+                  <div className="space-y-10">
                     {/* Composition Method Selection */}
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="p-6 bg-purple-500/5 border-2 border-purple-500/50 rounded-2xl ring-4 ring-purple-500/5">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="p-2 bg-purple-500/10 rounded-xl">
-                            <FileText className="w-5 h-5 text-purple-400" />
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="p-8 bg-primary/5 border-2 border-primary rounded-3xl relative shadow-sm">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-2.5 bg-primary/10 rounded-xl">
+                            <FileText className="w-6 h-6 text-primary" />
                           </div>
-                          <span className="text-base font-bold text-white uppercase tracking-tighter italic">
+                          <span className="text-xl font-black text-foreground italic tracking-tighter uppercase">
                             {tb.telegramTab?.directTitle || "Write directly"}
                           </span>
                         </div>
-                        <p className="text-[10px] text-gray-500 uppercase font-black leading-relaxed tracking-widest opacity-70">
+                        <p className="text-[10px] text-muted-foreground uppercase font-black leading-relaxed tracking-widest opacity-80">
                           {tb.telegramTab?.hint ||
                             "You can add text, image, and buttons together"}
                         </p>
@@ -607,18 +607,18 @@ const BroadcastAd: React.FC = () => {
                         href={`https://t.me/akhmadsnetbot?start=broadcast_${selectedBotId}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-6 bg-card border border-border hover:border-blue-500/50 hover:bg-blue-500/5 rounded-2xl transition-all group relative overflow-hidden shadow-sm flex flex-col justify-center"
+                        className="p-8 bg-background border border-border hover:border-blue-500/50 hover:bg-blue-500/5 rounded-3xl transition-all group relative overflow-hidden shadow-sm flex flex-col justify-center"
                       >
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="p-2 bg-blue-500/10 rounded-xl transition-transform group-hover:scale-110">
-                            <Send className="w-5 h-5 text-blue-500" />
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-2.5 bg-blue-500/10 rounded-xl transition-transform group-hover:scale-110">
+                            <Send className="w-6 h-6 text-blue-500" />
                           </div>
-                          <span className="text-base font-bold text-white group-hover:text-blue-500 transition-colors uppercase tracking-tighter italic">
+                          <span className="text-xl font-black text-foreground group-hover:text-blue-500 transition-colors italic tracking-tighter uppercase">
                             {tb.telegramTab?.telegramTitle || "Add via Bot"}
                           </span>
-                          <Sparkles className="w-4 h-4 text-yellow-500 animate-pulse ml-auto" />
+                          <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse ml-auto" />
                         </div>
-                        <p className="text-[10px] text-gray-500 uppercase font-black leading-relaxed tracking-widest opacity-70">
+                        <p className="text-[10px] text-muted-foreground uppercase font-black leading-relaxed tracking-widest opacity-80">
                           {tb.telegramTab?.hint ||
                             "Create by sending a message to the bot"}
                         </p>
@@ -626,57 +626,57 @@ const BroadcastAd: React.FC = () => {
                     </div>
 
                     {/* Editor */}
-                    <div className="bg-[#050505] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                      <div className="p-3 border-b border-[#1f1f1f] flex gap-2">
+                    <div className="bg-background border-2 border-border rounded-3xl overflow-hidden shadow-sm focus-within:border-primary/50 transition-colors">
+                      <div className="p-4 border-b-2 border-border flex gap-3 bg-muted/30">
                         {(["TEXT", "HTML"] as const).map((fmt) => (
                           <button
                             key={fmt}
                             onClick={() => setContentType(fmt)}
-                            className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all ${contentType === fmt ? "bg-white text-black" : "text-gray-500 hover:bg-white/5"}`}
+                            className={`px-5 py-2 rounded-xl text-[10px] font-black tracking-[0.2em] uppercase transition-all shadow-sm ${contentType === fmt ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:bg-accent"}`}
                           >
                             {fmt}
                           </button>
                         ))}
                       </div>
                       <textarea
-                        rows={10}
+                        rows={12}
                         value={text}
                         onChange={(e) => setText(e.target.value)}
                         placeholder={
                           tb.messagePlaceholder || "Xabaringizni yozing..."
                         }
-                        className="w-full bg-transparent p-6 text-white text-lg leading-relaxed focus:outline-none resize-none placeholder:text-gray-700"
+                        className="w-full bg-transparent p-8 text-foreground text-xl leading-relaxed font-medium focus:outline-none resize-none placeholder:text-muted-foreground/30"
                       />
                     </div>
 
                     {/* Buttons Management */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-bold text-gray-400 text-sm">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between px-2">
+                        <h4 className="font-black text-muted-foreground text-xs uppercase tracking-widest">
                           {tb.inlineButtons || "Inline Buttons"}
                         </h4>
                         <button
                           onClick={addButton}
                           disabled={buttons.length >= 6}
-                          className="p-1 px-3 rounded-lg bg-white/5 border border-white/10 text-xs font-bold hover:bg-white/10 transition-all flex items-center gap-2"
+                          className="px-5 py-2.5 rounded-xl bg-accent border border-border text-xs font-black text-primary hover:bg-accent/80 transition-all flex items-center gap-2 uppercase tracking-widest shadow-sm"
                         >
-                          <Plus className="w-3 h-3" />{" "}
+                          <Plus className="w-4 h-4" />{" "}
                           {tb.addButton || "Qo'shish"}
                         </button>
                       </div>
 
-                      <div className="grid gap-3">
+                      <div className="grid gap-4">
                         {buttons.map((btn, i) => (
                           <div
                             key={i}
-                            className="flex flex-col gap-2 p-4 bg-white/5 border border-white/10 rounded-2xl"
+                            className="flex flex-col gap-4 p-6 bg-accent/20 border border-border rounded-3xl shadow-sm"
                           >
-                            <div className="flex gap-2 items-center">
+                            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
                               <input
                                 placeholder={
                                   tb.buttonTextPlaceholder || "Button text"
                                 }
-                                className="flex-1 bg-[#050505] border border-[#1f1f1f] rounded-xl p-3 text-sm focus:border-purple-500/50 outline-none h-11"
+                                className="w-full md:flex-1 bg-background border border-border rounded-xl px-5 py-4 text-sm font-bold focus:border-primary outline-none shadow-sm"
                                 value={btn.text}
                                 onChange={(e) =>
                                   updateButton(i, "text", e.target.value)
@@ -684,7 +684,7 @@ const BroadcastAd: React.FC = () => {
                               />
                               <input
                                 placeholder={tb.urlPlaceholder || "https://..."}
-                                className="flex-[2] bg-[#050505] border border-[#1f1f1f] rounded-xl p-3 text-sm focus:border-purple-500/50 outline-none h-11"
+                                className="w-full md:flex-[2] bg-background border border-border rounded-xl px-5 py-4 text-sm font-bold focus:border-primary outline-none shadow-sm"
                                 value={btn.url}
                                 onChange={(e) =>
                                   updateButton(i, "url", e.target.value)
@@ -692,14 +692,14 @@ const BroadcastAd: React.FC = () => {
                               />
                               <button
                                 onClick={() => removeButton(i)}
-                                className="w-11 h-11 bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center rounded-xl hover:bg-red-500/20"
+                                className="w-14 h-14 bg-destructive/10 border border-destructive/20 text-destructive flex items-center justify-center rounded-xl hover:bg-destructive shadow-sm hover:text-destructive-foreground transition-all"
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-5 h-5" />
                               </button>
                             </div>
                             <div className="flex items-center gap-4 px-1">
                               <div
-                                className="flex items-center gap-2 cursor-pointer group/tracking"
+                                className="flex items-center gap-3 cursor-pointer group/tracking"
                                 onClick={() =>
                                   updateButton(
                                     i,
@@ -709,13 +709,13 @@ const BroadcastAd: React.FC = () => {
                                 }
                               >
                                 <div
-                                  className={`w-8 h-4 rounded-full transition-all relative ${btn.trackingEnabled !== false ? "bg-purple-500" : "bg-white/10"}`}
+                                  className={`w-12 h-6 rounded-full transition-all relative p-1 ${btn.trackingEnabled !== false ? "bg-primary" : "bg-muted"}`}
                                 >
                                   <div
-                                    className={`absolute top-1 w-2 h-2 rounded-full bg-white transition-all ${btn.trackingEnabled !== false ? "right-1" : "left-1"}`}
+                                    className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-all ${btn.trackingEnabled !== false ? "right-1" : "left-1"}`}
                                   />
                                 </div>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
                                   {btn.trackingEnabled !== false
                                     ? (tb?.trackingOn ?? "Tracking ON")
                                     : (tb?.trackingOff ?? "Tracking OFF")}
@@ -729,45 +729,48 @@ const BroadcastAd: React.FC = () => {
 
                     {/* Media Preview if Drafted */}
                     {mediaUrl && (
-                      <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                        <div className="text-[10px] font-black uppercase text-gray-500 tracking-widest mb-3">
-                          {tb.draftMedia || "Draft Media Attached"}
+                      <div className="p-8 rounded-[2.5rem] bg-accent/30 border-2 border-border shadow-inner group">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="text-[10px] font-black uppercase text-primary tracking-[0.2em]">
+                            {tb.draftMedia || "Draft Media Attached"}
+                          </div>
+                          <button
+                            onClick={() => setMediaUrl("")}
+                            className="p-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
-                        {mediaType?.startsWith("video") ? (
-                          <video
-                            src={mediaUrl}
-                            className="w-full max-h-64 object-cover rounded-xl"
-                            controls
-                          />
-                        ) : (
-                          <img
-                            src={mediaUrl}
-                            className="w-full max-h-64 object-cover rounded-xl"
-                            alt="Draft"
-                          />
-                        )}
-                        <button
-                          onClick={() => setMediaUrl("")}
-                          className="mt-3 text-[10px] font-bold text-red-400 hover:text-red-300 flex items-center gap-1"
-                        >
-                          <Trash2 className="w-3 h-3" />{" "}
-                          {tb.removeMedia || "Medianing o'chirish"}
-                        </button>
+                        <div className="rounded-3xl overflow-hidden border border-border shadow-xl">
+                          {mediaType?.startsWith("video") ? (
+                            <video
+                              src={mediaUrl}
+                              className="w-full max-h-[400px] object-cover"
+                              controls
+                            />
+                          ) : (
+                            <img
+                              src={mediaUrl}
+                              className="w-full max-h-[400px] object-cover"
+                              alt="Draft"
+                            />
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex gap-4 mt-12">
+                  <div className="flex flex-col sm:flex-row gap-4 mt-12">
                     <button
                       onClick={() => setStep(1)}
-                      className="flex-1 h-14 bg-white/5 border border-white/10 rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all text-xs"
+                      className="flex-1 h-16 bg-background border-2 border-border rounded-2xl font-black uppercase tracking-widest hover:bg-muted transition-all text-xs active:scale-[0.98]"
                     >
                       {tb.back || "Back"}
                     </button>
                     <button
                       disabled={isSubmitting || !canLaunch}
                       onClick={handleLaunch}
-                      className="flex-[2] h-14 bg-gradient-to-r from-purple-600 to-blue-600 shadow-xl shadow-purple-600/20 text-white rounded-2xl font-black uppercase tracking-widest hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-20 flex items-center justify-center gap-2"
+                      className="flex-[2] h-16 bg-primary shadow-xl shadow-primary/20 text-primary-foreground rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-30 flex items-center justify-center gap-3 text-sm"
                     >
                       {isSubmitting ? (
                         <Spin size="small" />
@@ -786,20 +789,22 @@ const BroadcastAd: React.FC = () => {
 
           {/* Right Sidebar: Checkout Summary */}
           <div className="lg:col-span-4 sticky top-24">
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-3xl p-8 relative overflow-hidden text-white/90">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 blur-[60px] -mr-10 -mt-10 pointer-events-none" />
+            <div className="bg-card border border-border rounded-[2.5rem] p-10 relative overflow-hidden shadow-xl text-foreground/90">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-[80px] -mr-24 -mt-24 pointer-events-none" />
 
-              <h3 className="text-xl font-black italic border-b border-white/10 pb-6 mb-8 uppercase tracking-tighter flex items-center justify-between text-white">
+              <h3 className="text-2xl font-black italic border-b-2 border-border pb-8 mb-10 uppercase tracking-tighter flex items-center justify-between text-foreground">
                 {tb.checkout?.budgetControl || "Budget Control"}
-                <Sparkles className="w-5 h-5 text-purple-500" />
+                <div className="p-2.5 bg-primary/10 rounded-xl">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                </div>
               </h3>
 
-              <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500 text-xs font-black tracking-widest uppercase">
+              <div className="space-y-8">
+                <div className="flex justify-between items-center px-2">
+                  <span className="text-muted-foreground text-[10px] font-black tracking-widest uppercase">
                     {tb.checkout?.targeting || "Targeting"}
                   </span>
-                  <div className="px-2 py-1 rounded bg-white/5 text-[10px] font-bold text-white uppercase">
+                  <div className="px-2 py-1 rounded bg-foreground/5 text-[10px] font-bold text-foreground uppercase">
                     {targetLanguage.toLowerCase() === "all"
                       ? tb.allLanguages || "ALL"
                       : targetLanguage}
@@ -810,7 +815,7 @@ const BroadcastAd: React.FC = () => {
                   <span className="text-gray-400">
                     {tb.checkout?.recipients || "Recipients"}
                   </span>
-                  <span className="font-bold text-white">
+                  <span className="font-bold text-foreground">
                     {targetCount.toLocaleString()}{" "}
                     {broadcastType === "PDP"
                       ? tb.clicksLabel || "Clicks"
@@ -831,11 +836,13 @@ const BroadcastAd: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex justify-between items-center group hover:border-purple-500/30 transition-all">
+                <div className="p-4 rounded-2xl bg-foreground/5 border border-white/10 flex justify-between items-center group hover:border-purple-500/30 transition-all">
                   <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest">
                     {tb.checkout?.baseFee || "Base Fee"}
                   </span>
-                  <span className="font-bold text-white/50 text-xs">$0.50</span>
+                  <span className="font-bold text-foreground/50 text-xs">
+                    $0.50
+                  </span>
                 </div>
 
                 <div className="pt-6 border-t border-white/5 mt-6">
@@ -843,7 +850,7 @@ const BroadcastAd: React.FC = () => {
                     {tb.checkout?.total || "Total Amount"}
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-white italic">
+                    <span className="text-4xl font-black text-foreground italic">
                       ${totalCost.toFixed(2)}
                     </span>
                     <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">

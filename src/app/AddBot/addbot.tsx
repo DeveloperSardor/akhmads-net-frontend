@@ -158,7 +158,7 @@ const AddBot = () => {
           "Add your Telegram bot to Akhmads Net and start earning from targeted advertising."
         }
       />
-      <section className="main-container mt-32 mb-20 text-white">
+      <section className="main-container mt-32 mb-20 text-foreground">
         <h1 className="mb-8 text-xl font-semibold">{ab?.pageTitle}</h1>
 
         {/* Error Alert */}
@@ -200,25 +200,25 @@ const AddBot = () => {
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               onClick={() => setShowApiKey(false)}
             />
-            <div className="relative w-full max-w-md rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-6 shadow-2xl">
+            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl">
               <h2 className="mb-4 text-xl font-bold">
                 {ab?.apiKeyModal.title}
               </h2>
-              <p className="mb-4 text-sm text-gray-400">
+              <p className="mb-4 text-sm text-muted-foreground">
                 {ab?.apiKeyModal.subtitle}
               </p>
 
-              <div className="mb-4 rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-                <p className="mb-2 text-xs text-gray-400">
+              <div className="mb-4 rounded-lg border border-border bg-accent/50 p-4">
+                <p className="mb-2 text-xs text-muted-foreground">
                   {ab?.apiKeyModal.apiKeyLabel}
                 </p>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 overflow-x-auto text-sm text-green-400">
+                  <code className="flex-1 overflow-x-auto text-sm text-primary font-mono">
                     {apiKey}
                   </code>
                   <button
                     onClick={handleCopyApiKey}
-                    className="rounded-lg bg-purple-600 p-2 hover:bg-purple-700"
+                    className="rounded-lg bg-primary p-2 hover:bg-primary/90 text-primary-foreground"
                   >
                     {copiedApiKey ? (
                       <CheckCircle className="h-4 w-4" />
@@ -229,13 +229,13 @@ const AddBot = () => {
                 </div>
               </div>
 
-              <p className="mb-4 text-xs text-yellow-400">
+              <p className="mb-4 text-xs text-yellow-600 dark:text-yellow-400">
                 {ab?.apiKeyModal.warning}
               </p>
 
               <button
                 onClick={() => setShowApiKey(false)}
-                className="w-full rounded-lg bg-purple-600 py-3 font-medium hover:bg-purple-700"
+                className="w-full rounded-lg bg-primary py-3 font-medium text-primary-foreground hover:bg-primary/90"
               >
                 {ab?.apiKeyModal.gotIt}
               </button>
@@ -246,17 +246,17 @@ const AddBot = () => {
         {/* Top section */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {/* LEFT — Bot information */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:col-span-2">
-            <h2 className="mb-5 text-[20px] font-medium text-white/80">
+          <div className="rounded-2xl border border-border bg-card/50 p-6 md:col-span-2 shadow-sm">
+            <h2 className="mb-5 text-[20px] font-medium text-foreground/80">
               {ab?.botInfo}
             </h2>
 
             {/* Bot token */}
-            <label className="mb-2 block text-sm text-white/60">
-              {ab?.botToken} <span className="text-red-400">*</span>
+            <label className="mb-2 block text-sm text-muted-foreground">
+              {ab?.botToken} <span className="text-destructive">*</span>
             </label>
 
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <input
                 type="password"
                 value={formData.token}
@@ -266,16 +266,16 @@ const AddBot = () => {
                 }}
                 placeholder={ab?.tokenPlaceholder}
                 disabled={!!verifiedBot}
-                className="w-140 rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm outline-none transition focus:border-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-lg border border-border bg-background px-4 py-2 text-sm outline-none transition focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
               />
 
               <button
                 onClick={handleVerifyBot}
                 disabled={isVerifying || !!verifiedBot}
-                className={`flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium transition ${
+                className={`flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-medium transition ${
                   isVerifying || !!verifiedBot
-                    ? "cursor-not-allowed bg-purple-400"
-                    : "bg-purple-600 hover:bg-purple-700"
+                    ? "cursor-not-allowed bg-primary/40 text-primary-foreground/60"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md active:scale-95"
                 }`}
               >
                 {isVerifying && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -290,13 +290,13 @@ const AddBot = () => {
               </button>
             </div>
 
-            <p className="mt-3 text-xs text-white/40">
+            <p className="mt-3 text-xs text-muted-foreground/60">
               {ab?.tokenHint}{" "}
               <a
                 href="https://t.me/BotFather"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-purple-400 hover:text-purple-300"
+                className="text-primary hover:underline font-medium"
               >
                 @BotFather
               </a>
@@ -305,30 +305,30 @@ const AddBot = () => {
 
             {verifiedBot && (
               <div className="mt-6">
-                <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 relative overflow-hidden">
+                <div className="flex items-center gap-4 rounded-xl border border-border bg-accent/20 p-4 relative overflow-hidden">
                   <img
                     src={getBotAvatarUrl(verifiedBot.username)}
                     alt={verifiedBot.username}
-                    className="w-16 h-16 rounded-full object-cover border border-white/10 z-10 bg-white/5"
+                    className="w-16 h-16 rounded-full object-cover border border-border z-10 bg-background"
                     onError={(e) => {
                       e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(verifiedBot.username || "B")}&background=random&color=fff&size=128`;
                     }}
                   />
                   <div className="z-10 flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-bold text-white">
+                      <h3 className="text-lg font-bold text-foreground">
                         {verifiedBot.firstName}
                       </h3>
-                      <ShieldCheck className="w-4 h-4 text-green-400" />
+                      <ShieldCheck className="w-4 h-4 text-green-500" />
                     </div>
-                    <p className="text-sm text-white/60">
+                    <p className="text-sm text-muted-foreground">
                       @{verifiedBot.username}
                     </p>
                   </div>
 
                   {/* Decorative glows */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl -mt-10 -mr-10"></div>
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-pink-500/10 rounded-full blur-2xl -mb-10 -ml-10"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mt-10 -mr-10"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -mb-10 -ml-10"></div>
                 </div>
               </div>
             )}
@@ -337,7 +337,7 @@ const AddBot = () => {
               <div className="mt-6 space-y-5">
                 {/* Short Description */}
                 <div>
-                  <label className="mb-2 block text-sm text-white/60">
+                  <label className="mb-2 block text-sm text-muted-foreground">
                     {ab?.shortDesc}
                   </label>
                   <textarea
@@ -350,25 +350,25 @@ const AddBot = () => {
                     }
                     rows={3}
                     placeholder={ab?.shortDescPlaceholder}
-                    className="w-full resize-none rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm outline-none focus:border-purple-500"
+                    className="w-full resize-none rounded-lg border border-border bg-background px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
                     maxLength={200}
                   />
-                  <p className="mt-1 text-xs text-white/40">
+                  <p className="mt-1 text-xs text-muted-foreground/60">
                     {formData.shortDescription.length}/200
                   </p>
                 </div>
 
                 {/* Category */}
                 <div>
-                  <label className="mb-2 block text-sm text-white/60">
-                    {ab?.category} <span className="text-red-400">*</span>
+                  <label className="mb-2 block text-sm text-muted-foreground">
+                    {ab?.category} <span className="text-destructive">*</span>
                   </label>
                   <select
                     value={formData.category}
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm outline-none focus:border-purple-500"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20 appearance-none"
                     required
                   >
                     <option value="">{ab?.categoryPlaceholder}</option>
@@ -382,15 +382,15 @@ const AddBot = () => {
 
                 {/* Language */}
                 <div>
-                  <label className="mb-2 block text-sm text-white/60">
-                    {ab?.language} <span className="text-red-400">*</span>
+                  <label className="mb-2 block text-sm text-muted-foreground">
+                    {ab?.language} <span className="text-destructive">*</span>
                   </label>
                   <select
                     value={formData.language}
                     onChange={(e) =>
                       setFormData({ ...formData, language: e.target.value })
                     }
-                    className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm outline-none focus:border-purple-500"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20 appearance-none"
                     required
                   >
                     {BOT_LANGUAGES.map((lang) => (
@@ -402,7 +402,7 @@ const AddBot = () => {
                 </div>
 
                 {/* Monetization */}
-                <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                <div className="flex items-start gap-3 rounded-xl border border-border bg-accent/20 p-4">
                   <input
                     type="checkbox"
                     checked={formData.monetized}
@@ -413,7 +413,7 @@ const AddBot = () => {
                   />
                   <div>
                     <p className="text-sm font-medium">{ab?.monetization}</p>
-                    <p className="text-xs text-white/50">
+                    <p className="text-xs text-muted-foreground">
                       {ab?.monetizationDesc}
                     </p>
                   </div>
@@ -421,9 +421,9 @@ const AddBot = () => {
 
                 {/* Integration Mode Selection */}
                 <div className="mt-8">
-                  <label className="mb-4 block text-sm font-medium text-white/60">
+                  <label className="mb-4 block text-sm font-medium text-muted-foreground">
                     {ab?.integrationType}{" "}
-                    <span className="text-red-400">*</span>
+                    <span className="text-destructive">*</span>
                   </label>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {/* MANUAL MODE */}
@@ -431,21 +431,21 @@ const AddBot = () => {
                       onClick={() =>
                         setFormData({ ...formData, integrationMode: "MANUAL" })
                       }
-                      className={`relative cursor-pointer rounded-2xl border p-4 transition-all ${
+                      className={`relative cursor-pointer rounded-2xl border p-4 transition-all shadow-sm ${
                         formData.integrationMode === "MANUAL"
-                          ? "border-purple-500 bg-purple-500/10"
-                          : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                          ? "border-primary bg-primary/10"
+                          : "border-border bg-card hover:border-primary/50"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-white">
+                        <h4 className="font-semibold text-foreground">
                           {ab?.integrationTypeManual}
                         </h4>
                         {formData.integrationMode === "MANUAL" && (
-                          <CheckCircle className="h-5 w-5 text-purple-500" />
+                          <CheckCircle className="h-5 w-5 text-primary" />
                         )}
                       </div>
-                      <p className="text-xs text-white/50 leading-relaxed">
+                      <p className="text-xs text-muted-foreground leading-relaxed">
                         {ab?.integrationTypeManualDesc}
                       </p>
                     </div>
@@ -455,21 +455,21 @@ const AddBot = () => {
                       onClick={() =>
                         setFormData({ ...formData, integrationMode: "AUTO" })
                       }
-                      className={`relative cursor-pointer rounded-2xl border p-4 transition-all ${
+                      className={`relative cursor-pointer rounded-2xl border p-4 transition-all shadow-sm ${
                         formData.integrationMode === "AUTO"
-                          ? "border-purple-500 bg-purple-500/10"
-                          : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                          ? "border-primary bg-primary/10"
+                          : "border-border bg-card hover:border-primary/50"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-white">
+                        <h4 className="font-semibold text-foreground">
                           {ab?.integrationTypeAuto}
                         </h4>
                         {formData.integrationMode === "AUTO" && (
-                          <CheckCircle className="h-5 w-5 text-purple-500" />
+                          <CheckCircle className="h-5 w-5 text-primary" />
                         )}
                       </div>
-                      <p className="text-xs text-white/50 leading-relaxed">
+                      <p className="text-xs text-muted-foreground leading-relaxed">
                         {ab?.integrationTypeAutoDesc}
                       </p>
                     </div>
@@ -482,10 +482,10 @@ const AddBot = () => {
                   disabled={
                     isSubmitting || !formData.category || !formData.language
                   }
-                  className={`mt-4 w-full rounded-lg px-6 py-3 font-medium transition ${
+                  className={`mt-4 w-full rounded-lg px-6 py-3 font-medium transition shadow-lg active:scale-[0.98] ${
                     isSubmitting || !formData.category || !formData.language
-                      ? "cursor-not-allowed bg-purple-400"
-                      : "bg-purple-600 hover:bg-purple-700"
+                      ? "cursor-not-allowed bg-primary/40 text-primary-foreground/60"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90"
                   }`}
                 >
                   {isSubmitting ? (
@@ -502,13 +502,15 @@ const AddBot = () => {
           </div>
 
           {/* RIGHT — Steps */}
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6">
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
             <Steps />
           </div>
         </div>
 
         {/* My Bots */}
-        <Bots />
+        <div className="mt-12">
+          <Bots />
+        </div>
       </section>
     </>
   );

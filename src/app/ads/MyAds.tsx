@@ -719,7 +719,7 @@ const AdCard = ({
             onClick={handleToggleSave}
             className={`p-2.5 rounded-xl transition-all duration-300 transform active:scale-90 ${
               isSaved
-                ? "bg-red-500 text-white shadow-lg shadow-red-500/40 rotate-[360deg]"
+                ? "bg-red-500 text-foreground shadow-lg shadow-red-500/40 rotate-[360deg]"
                 : "bg-card hover:bg-muted border border-border text-muted-foreground hover:text-red-500"
             }`}
             title={
@@ -729,7 +729,7 @@ const AdCard = ({
             }
           >
             <Heart
-              className={`w-5 h-5 transition-all ${isSaved ? "fill-white text-white" : ""}`}
+              className={`w-5 h-5 transition-all ${isSaved ? "fill-white text-foreground" : ""}`}
             />
           </button>
 

@@ -191,153 +191,195 @@ const Wallet = () => {
           {/* Balance Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Available Balance */}
-            <div className="p-6 bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/20 rounded-xl">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-muted-foreground">
-                  {w?.availableBalance}
-                </p>
-                <WalletIcon className="w-4 h-4 text-primary" />
+            <div className="p-8 bg-card border border-primary/20 rounded-3xl shadow-lg shadow-primary/5 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <WalletIcon className="w-24 h-24 text-primary" />
               </div>
-              <h2 className="text-4xl font-bold text-foreground mb-4 tabular-nums">
-                {formatCurrency(walletData?.available || 0)}
-              </h2>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowDepositModal(true)}
-                  className="flex-1 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  {w?.addFunds}
-                </button>
-                <button
-                  onClick={() => setShowWithdrawModal(true)}
-                  className="flex-1 py-3 bg-card hover:bg-muted border border-border text-foreground font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
-                >
-                  <ArrowUpRight className="w-4 h-4" />
-                  {w?.withdrawBtn}
-                </button>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                    {w?.availableBalance}
+                  </p>
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <WalletIcon className="w-5 h-5 text-primary" />
+                  </div>
+                </div>
+                <h2 className="text-5xl font-black text-foreground mb-8 tabular-nums tracking-tight">
+                  {formatCurrency(walletData?.available || 0)}
+                </h2>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => setShowDepositModal(true)}
+                    className="flex-1 py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-2xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    {w?.addFunds}
+                  </button>
+                  <button
+                    onClick={() => setShowWithdrawModal(true)}
+                    className="flex-1 py-4 bg-background hover:bg-muted border border-border text-foreground font-bold rounded-2xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                  >
+                    <ArrowUpRight className="w-5 h-5 text-primary" />
+                    {w?.withdrawBtn}
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Reserved */}
-            <div className="p-6 bg-card border border-border rounded-xl">
+            <div className="p-8 bg-card border border-border rounded-3xl shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-muted-foreground">{w?.reserved}</p>
-                <Clock className="w-4 h-4 text-yellow-500" />
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                  {w?.reserved}
+                </p>
+                <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                </div>
               </div>
-              <h2 className="text-4xl font-bold text-foreground mb-4 tabular-nums">
+              <h2 className="text-5xl font-black text-foreground mb-6 tabular-nums tracking-tight">
                 {formatCurrency(walletData?.reserved || 0)}
               </h2>
-              <p className="text-xs text-muted-foreground">{w?.reservedHint}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed bg-muted/30 p-3 rounded-xl border border-border/50">
+                {w?.reservedHint}
+              </p>
             </div>
 
             {/* Total Deposited */}
-            <div className="p-6 bg-card border border-border rounded-xl">
+            <div className="p-8 bg-card border border-border rounded-3xl shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                   {w?.totalDeposited}
                 </p>
-                <TrendingUp className="w-4 h-4 text-green-500" />
+                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-500" />
+                </div>
               </div>
-              <h2 className="text-4xl font-bold text-foreground mb-4 tabular-nums">
+              <h2 className="text-5xl font-black text-foreground mb-6 tabular-nums tracking-tight">
                 {formatCurrency(walletData?.totalDeposited || 0)}
               </h2>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed bg-muted/30 p-3 rounded-xl border border-border/50">
                 {w?.totalDepositedHint}
               </p>
             </div>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="p-4 bg-card border border-border rounded-xl">
-              <p className="text-xs text-muted-foreground mb-2">
-                {w?.totalSpent}
-              </p>
-              <p className="text-xl font-bold text-orange-500 tabular-nums">
-                {formatCurrency(walletData?.totalSpent || 0)}
-              </p>
-            </div>
-            <div className="p-4 bg-card border border-border rounded-xl">
-              <p className="text-xs text-muted-foreground mb-2">
-                {w?.totalEarned}
-              </p>
-              <p className="text-xl font-bold text-blue-500 tabular-nums">
-                {formatCurrency(walletData?.totalEarned || 0)}
-              </p>
-            </div>
-            <div className="p-4 bg-card border border-border rounded-xl">
-              <p className="text-xs text-muted-foreground mb-2">
-                {w?.withdrawn}
-              </p>
-              <p className="text-xl font-bold text-purple-500 tabular-nums">
-                {formatCurrency(walletData?.totalWithdrawn || 0)}
-              </p>
-            </div>
-            <div className="p-4 bg-card border border-border rounded-xl">
-              <p className="text-xs text-muted-foreground mb-2">{w?.pending}</p>
-              <p className="text-xl font-bold text-yellow-500 tabular-nums">
-                {formatCurrency(walletData?.pending || 0)}
-              </p>
-            </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {[
+              {
+                label: w?.totalSpent,
+                value: walletData?.totalSpent,
+                color: "text-orange-600 dark:text-orange-500",
+                bg: "bg-orange-500/5",
+                border: "border-orange-500/10",
+              },
+              {
+                label: w?.totalEarned,
+                value: walletData?.totalEarned,
+                color: "text-blue-600 dark:text-blue-500",
+                bg: "bg-blue-500/5",
+                border: "border-blue-500/10",
+              },
+              {
+                label: w?.withdrawn,
+                value: walletData?.totalWithdrawn,
+                color: "text-purple-600 dark:text-purple-500",
+                bg: "bg-purple-500/5",
+                border: "border-purple-500/10",
+              },
+              {
+                label: w?.pending,
+                value: walletData?.pending,
+                color: "text-yellow-600 dark:text-yellow-500",
+                bg: "bg-yellow-500/5",
+                border: "border-yellow-500/10",
+              },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className={`p-6 bg-card border border-border rounded-2xl shadow-sm hover:border-primary/20 transition-all`}
+              >
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">
+                  {stat.label}
+                </p>
+                <p className={`text-2xl font-black ${stat.color} tabular-nums`}>
+                  {formatCurrency(stat.value || 0)}
+                </p>
+              </div>
+            ))}
           </div>
 
           {/* Transactions */}
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-border">
-              <h2 className="text-lg font-semibold text-foreground">
+          <div className="bg-card border border-border rounded-3xl shadow-xl overflow-hidden">
+            <div className="px-8 py-6 border-b border-border flex items-center justify-between">
+              <h2 className="text-xl font-bold text-foreground">
                 {w?.recentTransactions}
               </h2>
+              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+                <Clock className="w-5 h-5 text-muted-foreground" />
+              </div>
             </div>
 
             {transactions.length === 0 ? (
-              <div className="p-16 text-center">
-                <WalletIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-muted-foreground">{w?.noTransactions}</p>
-                <p className="text-xs text-muted-foreground mt-2">
+              <div className="p-24 text-center">
+                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
+                  <WalletIcon className="w-10 h-10 text-muted-foreground/30" />
+                </div>
+                <p className="text-foreground font-bold text-lg">
+                  {w?.noTransactions}
+                </p>
+                <p className="text-muted-foreground mt-2 max-w-xs mx-auto text-sm">
                   {w?.noTransactionsHint}
                 </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-muted/30">
+                  <thead className="bg-muted/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">
+                      <th className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">
                         {w?.txTableHeaders.type}
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">
+                      <th className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">
                         {w?.txTableHeaders.description}
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">
+                      <th className="px-8 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-widest">
                         {w?.txTableHeaders.date}
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-semibold text-muted-foreground uppercase">
+                      <th className="px-8 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-widest">
                         {w?.txTableHeaders.amount}
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border">
                     {transactions.map((tx: any) => (
                       <tr
                         key={tx.id}
-                        className="border-t border-border hover:bg-muted/30 transition-colors"
+                        className="group hover:bg-muted/30 transition-colors"
                       >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            {parseFloat(tx.amount) > 0 ? (
-                              <TrendingUp className="w-4 h-4 text-green-500" />
-                            ) : (
-                              <TrendingDown className="w-4 h-4 text-red-500" />
-                            )}
-                            <span className="text-sm font-medium text-foreground">
+                        <td className="px-8 py-5">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${
+                                parseFloat(tx.amount) > 0
+                                  ? "bg-green-500/10"
+                                  : "bg-red-500/10"
+                              }`}
+                            >
+                              {parseFloat(tx.amount) > 0 ? (
+                                <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-500" />
+                              ) : (
+                                <TrendingDown className="w-5 h-5 text-red-600 dark:text-red-500" />
+                              )}
+                            </div>
+                            <span className="text-sm font-bold text-foreground">
                               {(w?.txTypes as any)?.[tx.type] ??
                                 tx.type.toLowerCase().replace(/_/g, " ")}
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-xs text-muted-foreground">
+                        <td className="px-8 py-5">
+                          <span className="text-sm text-foreground/80 font-medium">
                             {formatTxDescription(
                               tx.type,
                               tx.description,
@@ -345,31 +387,36 @@ const Wallet = () => {
                             )}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(tx.createdAt).toLocaleDateString(
-                              locale === "uz"
-                                ? "uz-UZ"
-                                : locale === "ru"
-                                  ? "ru-RU"
-                                  : "en-US",
-                              {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
+                        <td className="px-8 py-5">
+                          <div className="flex flex-col">
+                            <span className="text-sm text-foreground font-medium">
+                              {new Date(tx.createdAt).toLocaleDateString(
+                                locale === "uz"
+                                  ? "uz-UZ"
+                                  : locale === "ru"
+                                    ? "ru-RU"
+                                    : "en-US",
+                                {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(tx.createdAt).toLocaleTimeString([], {
                                 hour: "2-digit",
                                 minute: "2-digit",
-                                second: "2-digit",
-                              },
-                            )}
-                          </span>
+                              })}
+                            </span>
+                          </div>
                         </td>
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-8 py-5 text-right">
                           <span
-                            className={`text-sm font-semibold tabular-nums ${
+                            className={`text-base font-black tabular-nums ${
                               parseFloat(tx.amount) > 0
-                                ? "text-green-500"
-                                : "text-red-500"
+                                ? "text-green-600 dark:text-green-500"
+                                : "text-red-600 dark:text-red-500"
                             }`}
                           >
                             {parseFloat(tx.amount) > 0 ? "+" : ""}
@@ -453,36 +500,53 @@ const DepositModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-card border border-border rounded-2xl w-full max-w-md p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-foreground">{dm?.title}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded-lg">
-            <X className="w-5 h-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+      <div className="bg-card border border-border rounded-[2.5rem] w-full max-w-lg p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Plus className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-2xl font-black text-foreground">{dm?.title}</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-3 hover:bg-muted rounded-2xl transition-colors group"
+          >
+            <X className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
           </button>
         </div>
 
-        <div className="mb-6">
-          <label className="text-sm font-semibold text-foreground mb-2 block">
+        <div className="mb-8">
+          <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-3 block">
             {dm?.amountLabel}
           </label>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder={dm?.amountPlaceholder}
-            className="w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-          />
+          <div className="relative">
+            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl font-black text-primary">
+              $
+            </span>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={dm?.amountPlaceholder ?? "0.00"}
+              className="w-full pl-12 pr-6 py-5 bg-background border-2 border-border rounded-2xl text-2xl font-black text-foreground outline-none focus:border-primary transition-all shadow-inner"
+            />
+          </div>
         </div>
 
-        <div className="mb-6 p-4 border border-border rounded-xl">
-          <div className="flex items-center gap-3">
-            <Bitcoin className="w-5 h-5 text-primary" />
+        <div className="mb-10 p-6 bg-primary/5 border-2 border-primary/10 rounded-3xl group hover:border-primary/20 transition-all">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <Bitcoin className="w-6 h-6 text-primary" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-lg font-bold text-foreground mb-1">
                 {dm?.cryptoTitle}
               </p>
-              <p className="text-xs text-muted-foreground">{dm?.cryptoDesc}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {dm?.cryptoDesc}
+              </p>
             </div>
           </div>
         </div>
@@ -490,16 +554,16 @@ const DepositModal = ({
         <button
           onClick={handleDeposit}
           disabled={!amount || parseFloat(amount) < 5 || isSubmitting}
-          className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-5 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-6 h-6 animate-spin" />
               {dm?.opening}
             </>
           ) : (
             <>
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-6 h-6" />
               {dm?.continue}
             </>
           )}
@@ -570,42 +634,57 @@ const WithdrawModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-card border border-border rounded-2xl w-full max-w-md p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-foreground">{wm?.title}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded-lg">
-            <X className="w-5 h-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+      <div className="bg-card border border-border rounded-[2.5rem] w-full max-w-lg p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <ArrowUpRight className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-2xl font-black text-foreground">{wm?.title}</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-3 hover:bg-muted rounded-2xl transition-colors group"
+          >
+            <X className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
           </button>
         </div>
 
-        <div className="mb-4">
-          <label className="text-sm font-semibold text-foreground mb-2 block">
+        <div className="mb-6">
+          <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-3 block">
             {wm?.amountLabel}
           </label>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder={wm?.amountPlaceholder}
-            className="w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-          />
-          <div className="flex justify-between items-center mt-1 px-1">
-            <span className="text-xs text-muted-foreground">
-              {wm?.available ?? "Available:"} $
-              {parseFloat(String(availableBalance || 0)).toFixed(2)}
+          <div className="relative">
+            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl font-black text-primary">
+              $
+            </span>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={wm?.amountPlaceholder ?? "0.00"}
+              className="w-full pl-12 pr-6 py-5 bg-background border-2 border-border rounded-2xl text-2xl font-black text-foreground outline-none focus:border-primary transition-all shadow-inner"
+            />
+          </div>
+          <div className="flex justify-between items-center mt-3 px-2">
+            <span className="text-xs font-bold text-muted-foreground">
+              {wm?.available ?? "Available:"}
+              <span className="text-foreground ml-1">
+                ${parseFloat(String(availableBalance || 0)).toFixed(2)}
+              </span>
             </span>
             <button
               onClick={() => setAmount(String(availableBalance))}
-              className="text-xs text-primary font-medium hover:underline"
+              className="px-3 py-1 rounded-lg bg-primary/10 text-xs font-black text-primary hover:bg-primary/20 transition-colors"
             >
-              {wm?.max ?? "Max"}
+              {wm?.max ?? "MAX"}
             </button>
           </div>
         </div>
 
-        <div className="mb-6">
-          <label className="text-sm font-semibold text-foreground mb-2 block">
+        <div className="mb-8">
+          <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-3 block">
             {wm?.addressLabel}
           </label>
           <input
@@ -613,18 +692,22 @@ const WithdrawModal = ({
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             placeholder={wm?.addressPlaceholder}
-            className="w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            className="w-full px-6 py-5 bg-background border-2 border-border rounded-2xl text-sm font-bold text-foreground outline-none focus:border-primary placeholder:text-muted-foreground/50 transition-all shadow-inner"
           />
         </div>
 
-        <div className="mb-6 p-4 border border-border rounded-xl">
-          <div className="flex items-center gap-3">
-            <Bitcoin className="w-5 h-5 text-primary" />
+        <div className="mb-10 p-6 bg-primary/5 border-2 border-primary/10 rounded-3xl group hover:border-primary/20 transition-all">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <Bitcoin className="w-6 h-6 text-primary" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-lg font-bold text-foreground mb-1">
                 {wm?.cryptoTitle}
               </p>
-              <p className="text-xs text-muted-foreground">{wm?.cryptoDesc}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {wm?.cryptoDesc}
+              </p>
             </div>
           </div>
         </div>
@@ -638,16 +721,16 @@ const WithdrawModal = ({
             !address ||
             isSubmitting
           }
-          className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-5 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-6 h-6 animate-spin" />
               {wm?.processing}
             </>
           ) : (
             <>
-              <ArrowUpRight className="w-4 h-4" />
+              <ArrowUpRight className="w-6 h-6" />
               {wm?.continue}
             </>
           )}

@@ -17,40 +17,54 @@ const Footer = () => {
   return (
     <footer className="pb-6">
       {/* CARD */}
-      <div className="rounded-2xl border-t border-white/10 px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40 pt-12">
+      <div className="rounded-2xl border-t border-border px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40 pt-12">
         {/* TOP */}
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           {/* BRAND */}
           <div>
-            <h3 className="text-lg font-semibold text-white">Akhmads.net</h3>
-            <p className="mt-3 max-w-xs text-sm text-white/60">
+            <h3 className="text-lg font-semibold text-foreground">
+              Akhmads.net
+            </h3>
+            <p className="mt-3 max-w-xs text-sm text-muted-foreground">
               {f?.brandDesc}
             </p>
           </div>
 
           {/* PLATFORM */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-white/80">
+            <h4 className="mb-4 text-sm font-semibold text-foreground/80">
               {f?.platformTitle}
             </h4>
-            <ul className="space-y-2 text-sm text-white/60">
+            <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <NavLink to={`/${lang}`} className="hover:text-white">
+                <NavLink
+                  to={`/${lang}`}
+                  className="hover:text-foreground transition-colors"
+                >
                   {f?.links.home}
                 </NavLink>
               </li>
               <li>
-                <NavLink to={`/${lang}/launch-ad`} className="hover:text-white">
+                <NavLink
+                  to={`/${lang}/launch-ad`}
+                  className="hover:text-foreground transition-colors"
+                >
                   {f?.links.launchAd}
                 </NavLink>
               </li>
               <li>
-                <NavLink to={`/${lang}/add-bot`} className="hover:text-white">
+                <NavLink
+                  to={`/${lang}/add-bot`}
+                  className="hover:text-foreground transition-colors"
+                >
                   {f?.links.addBot}
                 </NavLink>
               </li>
               <li>
-                <NavLink to={`/${lang}/wallet`} className="hover:text-white">
+                <NavLink
+                  to={`/${lang}/wallet`}
+                  className="hover:text-foreground transition-colors"
+                >
                   {f?.links.wallet}
                 </NavLink>
               </li>
@@ -59,17 +73,23 @@ const Footer = () => {
 
           {/* SUPPORT */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-white/80">
+            <h4 className="mb-4 text-sm font-semibold text-foreground/80">
               {f?.supportTitle}
             </h4>
-            <ul className="space-y-2 text-sm text-white/60">
+            <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <NavLink to={`/${lang}/faq`} className="hover:text-white">
+                <NavLink
+                  to={`/${lang}/faq`}
+                  className="hover:text-foreground transition-colors"
+                >
                   {f?.links.faq}
                 </NavLink>
               </li>
               <li>
-                <NavLink to={`/${lang}/support`} className="hover:text-white">
+                <NavLink
+                  to={`/${lang}/support`}
+                  className="hover:text-foreground transition-colors"
+                >
                   {f?.links.support}
                 </NavLink>
               </li>
@@ -78,10 +98,10 @@ const Footer = () => {
         </div>
 
         {/* DIVIDER */}
-        <div className="my-10 h-px w-full bg-white/10" />
+        <div className="my-10 h-px w-full bg-border" />
 
         {/* BOTTOM */}
-        <div className="pb-6 text-center text-xs text-white/40 space-y-1">
+        <div className="pb-6 text-center text-xs text-muted-foreground/60 space-y-1">
           <p>{f?.copyright}</p>
           <p>{f?.taxNotice}</p>
           <p>{f?.complianceNotice}</p>

@@ -163,45 +163,49 @@ const Login = () => {
           backgroundImage: "url('/src/assets/images/LoginPage.png')",
         }}
       />
-      <div className="absolute inset-0 bg-black/70" />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-sm rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 text-center text-white">
+      <div className="relative z-10 w-full max-w-sm rounded-3xl bg-card border border-border p-8 text-center text-foreground shadow-2xl">
         <>
-          <h1 className="text-xl font-semibold mb-2">{tl?.title}</h1>
+          <h1 className="text-2xl font-bold mb-2">{tl?.title}</h1>
 
-          <p className="text-sm text-white/60 mb-4">
-            <span className="text-purple-400">@{BOT_USERNAME}</span>{" "}
+          <p className="text-sm text-muted-foreground mb-6">
+            <span className="text-primary font-medium">@{BOT_USERNAME}</span>{" "}
             {tl?.subtitle}
           </p>
 
           {code && (
-            <div className="mb-6 p-6 bg-purple-500/10 border-2 border-purple-500/30 rounded-xl">
-              <p className="text-sm text-white/70 mb-3">{tl?.yourCode}</p>
-              <div className="text-4xl font-bold text-purple-300 tracking-widest font-mono">
+            <div className="mb-6 p-6 bg-primary/5 border-2 border-primary/20 rounded-2xl">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                {tl?.yourCode}
+              </p>
+              <div className="text-5xl font-black text-primary tracking-[0.2em] font-mono">
                 {code}
               </div>
-              <p className="text-xs text-white/50 mt-3">{tl?.confirmCode}</p>
+              <p className="text-xs text-muted-foreground mt-4">
+                {tl?.confirmCode}
+              </p>
             </div>
           )}
 
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
-              <p className="text-sm text-red-400">{error}</p>
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-xl">
+              <p className="text-sm text-destructive font-medium">{error}</p>
             </div>
           )}
 
           {isLoading && (
             <div className="mb-6 flex justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-400"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary/30 border-t-primary"></div>
             </div>
           )}
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             <button
               onClick={handleOpenTelegram}
               disabled={isLoading || !deepLink}
-              className="w-full rounded-full bg-purple-600 hover:bg-purple-700 transition text-white py-3 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-2xl bg-primary hover:bg-primary/90 transition-all text-primary-foreground py-4 text-sm font-semibold shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? tl?.loading : tl?.openBot}
             </button>
@@ -209,28 +213,27 @@ const Login = () => {
             {error && (
               <button
                 onClick={handleRefresh}
-                className="w-full rounded-full bg-white/10 hover:bg-white/20 transition text-white py-3 text-sm font-medium"
+                className="w-full rounded-2xl bg-accent hover:bg-accent/80 transition-all text-foreground py-4 text-sm font-semibold"
               >
                 {tl?.retry}
               </button>
             )}
 
-            <p className="text-xs text-white/50">
+            <p className="text-xs text-muted-foreground">
               {tl?.orSearch}{" "}
-              <span className="text-purple-400">@{BOT_USERNAME}</span>{" "}
+              <span className="text-primary font-medium">@{BOT_USERNAME}</span>{" "}
               {tl?.orSearchSuffix}
             </p>
           </div>
 
-          <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
-            <p className="text-xs text-white/60 text-left">
-              <strong className="text-white">{tl?.howTitle}</strong>
-              <br />
-              1. {tl?.howStep1}
-              <br />
-              2. {tl?.howStep2}
-              <br />
-              3. {tl?.howStep3}
+          <div className="mt-8 p-6 bg-accent/30 rounded-2xl border border-border">
+            <p className="text-xs text-muted-foreground text-left space-y-2">
+              <strong className="text-foreground text-sm block mb-2">
+                {tl?.howTitle}
+              </strong>
+              <span className="block">1. {tl?.howStep1}</span>
+              <span className="block">2. {tl?.howStep2}</span>
+              <span className="block">3. {tl?.howStep3}</span>
             </p>
           </div>
         </>

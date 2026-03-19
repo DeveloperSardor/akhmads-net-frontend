@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import {
   Loader2,
   Rocket,
-  Tag,
   Info,
   TrendingUp,
   Zap,
@@ -21,7 +20,6 @@ const BudgetPricing = () => {
   const navigate = useNavigate();
   const {
     formData,
-    updateFormData,
     pricingEstimate,
     isSubmitting,
     createAd,
@@ -78,7 +76,7 @@ const BudgetPricing = () => {
   return (
     <div className="space-y-6">
       {/* Wallet Balance */}
-      <div className="p-5 bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/20 rounded-xl">
+      <div className="p-5 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Wallet className="w-5 h-5 text-primary" />
@@ -99,8 +97,12 @@ const BudgetPricing = () => {
           <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
             <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
             <div className="text-xs text-destructive">
-              <strong>{bp?.insufficientBalanceText1 ?? "Insufficient balance. You need"} </strong> 
-              {formatCurrency(totalCost - walletBalance)} {bp?.insufficientBalanceText2 ?? "more to launch this campaign."}
+              <strong>
+                {bp?.insufficientBalanceText1 ??
+                  "Insufficient balance. You need"}{" "}
+              </strong>
+              {formatCurrency(totalCost - walletBalance)}{" "}
+              {bp?.insufficientBalanceText2 ?? "more to launch this campaign."}
               <button
                 onClick={() => navigate("/wallet")}
                 className="ml-2 underline font-semibold hover:no-underline"
@@ -134,7 +136,8 @@ const BudgetPricing = () => {
                     {bp?.baseCampaign ?? "Base Campaign"}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    ${pricingEstimate.pricing.baseCPM} {bp?.per1k ?? "per 1K impressions"}
+                    ${pricingEstimate.pricing.baseCPM}{" "}
+                    {bp?.per1k ?? "per 1K impressions"}
                   </div>
                 </div>
               </div>
@@ -150,8 +153,8 @@ const BudgetPricing = () => {
             {/* Impressions */}
             <div className="flex items-center justify-between p-4 bg-card border border-border rounded-xl">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-500/10 rounded-lg">
-                  <Zap className="w-4 h-4 text-purple-500" />
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Zap className="w-4 h-4 text-primary" />
                 </div>
                 <div>
                   <div className="text-sm font-medium text-foreground">
@@ -188,7 +191,7 @@ const BudgetPricing = () => {
             </div>
 
             {/* Total */}
-            <div className="p-6 bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/20 rounded-xl">
+            <div className="p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">
@@ -224,22 +227,48 @@ const BudgetPricing = () => {
             </h4>
             <ul className="space-y-1.5 text-xs text-muted-foreground">
               <li>
-                • <span className="font-semibold text-foreground">{bp?.submitWait ? bp.submitWait.split(':')[0] + ':' : 'Submit:'}</span>{" "}
-                {bp?.submitWait ? bp.submitWait.split(':')[1] : 'Your ad goes to moderation'}
-              </li>
-              <li>
-                • <span className="font-semibold text-foreground">{bp?.reviewText ? bp.reviewText.split(':')[0] + ':' : 'Review:'}</span>{" "}
-                {bp?.reviewText ? bp.reviewText.split(':')[1] : 'We check content (usually <24h)'}
+                •{" "}
+                <span className="font-semibold text-foreground">
+                  {bp?.submitWait
+                    ? bp.submitWait.split(":")[0] + ":"
+                    : "Submit:"}
+                </span>{" "}
+                {bp?.submitWait
+                  ? bp.submitWait.split(":")[1]
+                  : "Your ad goes to moderation"}
               </li>
               <li>
                 •{" "}
-                <span className="font-semibold text-foreground">{bp?.approvedText ? bp.approvedText.split(':')[0] + ':' : 'Approved:'}</span>{" "}
-                {bp?.approvedText ? bp.approvedText.split(':')[1] : 'Campaign goes live automatically'}
+                <span className="font-semibold text-foreground">
+                  {bp?.reviewText
+                    ? bp.reviewText.split(":")[0] + ":"
+                    : "Review:"}
+                </span>{" "}
+                {bp?.reviewText
+                  ? bp.reviewText.split(":")[1]
+                  : "We check content (usually <24h)"}
               </li>
               <li>
                 •{" "}
-                <span className="font-semibold text-foreground">{bp?.paymentText ? bp.paymentText.split(':')[0] + ':' : 'Payment:'}</span>{" "}
-                {bp?.paymentText ? bp.paymentText.split(':')[1] : 'Charged only after approval'}
+                <span className="font-semibold text-foreground">
+                  {bp?.approvedText
+                    ? bp.approvedText.split(":")[0] + ":"
+                    : "Approved:"}
+                </span>{" "}
+                {bp?.approvedText
+                  ? bp.approvedText.split(":")[1]
+                  : "Campaign goes live automatically"}
+              </li>
+              <li>
+                •{" "}
+                <span className="font-semibold text-foreground">
+                  {bp?.paymentText
+                    ? bp.paymentText.split(":")[0] + ":"
+                    : "Payment:"}
+                </span>{" "}
+                {bp?.paymentText
+                  ? bp.paymentText.split(":")[1]
+                  : "Charged only after approval"}
               </li>
             </ul>
           </div>
@@ -257,18 +286,27 @@ const BudgetPricing = () => {
         {isSubmitting ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>{editAdId ? (bp?.savingAndResending ?? "Saving and resending...") : (bp?.submitting ?? "Submitting...")}</span>
+            <span>
+              {editAdId
+                ? (bp?.savingAndResending ?? "Saving and resending...")
+                : (bp?.submitting ?? "Submitting...")}
+            </span>
           </>
         ) : (
           <>
             <Rocket className="w-5 h-5" />
-            <span>{editAdId ? (bp?.saveAndResend ?? "Save and resend") : (bp?.submitForReview ?? "Submit for Review")}</span>
+            <span>
+              {editAdId
+                ? (bp?.saveAndResend ?? "Save and resend")
+                : (bp?.submitForReview ?? "Submit for Review")}
+            </span>
           </>
         )}
       </button>
 
       <p className="text-xs text-center text-muted-foreground">
-        {bp?.fundsReservedNote ?? "Funds will be reserved from your wallet. You'll be charged only after approval."}
+        {bp?.fundsReservedNote ??
+          "Funds will be reserved from your wallet. You'll be charged only after approval."}
       </p>
     </div>
   );

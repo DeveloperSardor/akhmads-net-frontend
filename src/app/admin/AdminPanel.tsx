@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Card, Tabs, Button, Input, Select, Modal, message } from "antd";
-import { DownloadOutlined, UserOutlined, SendOutlined, BarChartOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Tag,
+  Card,
+  Tabs,
+  Button,
+  Input,
+  Select,
+  Modal,
+  message,
+} from "antd";
+import {
+  DownloadOutlined,
+  UserOutlined,
+  SendOutlined,
+  BarChartOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
-import { MousePointer2 } from "lucide-react";
+import { MousePointer2, Activity } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useAuthStore } from "../../store/authStore";
+import { io } from "socket.io-client";
 
 dayjs.extend(relativeTime);
 
@@ -13,26 +29,37 @@ const { Search } = Input;
 
 const AdminPanel: React.FC = () => {
   const { accessToken } = useAuthStore();
-  const [activeTab, setActiveTab] = useState("impressions");
+  const [activeTab, setActiveTab] = useState("live");
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background text-foreground pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
               Admin Control Panel
             </h1>
-            <p className="text-white/60">Manage detailed statistics, active users, and message broadcasts.</p>
+            <p className="text-foreground/60">
+              Manage detailed statistics, active users, and message broadcasts.
+            </p>
           </div>
         </header>
 
-        <Card className="bg-white/5 border-white/10 backdrop-blur-xl">
+        <Card className="bg-card/50 border-border backdrop-blur-xl">
           <Tabs
             activeKey={activeTab}
             onChange={setActiveTab}
             className="admin-tabs"
             items={[
+              {
+                key: "live",
+                label: (
+                  <span className="flex items-center gap-2 text-green-400">
+                    <Activity className="w-4 h-4" /> Live Terminal
+                  </span>
+                ),
+                children: <LiveActivityTab token={accessToken!} />,
+              },
               {
                 key: "impressions",
                 label: (
@@ -75,21 +102,162 @@ const AdminPanel: React.FC = () => {
       </div>
 
       <style>{`
-        .admin-tabs .ant-tabs-nav::before { border-bottom-color: rgba(255,255,255,0.1); }
-        .admin-tabs .ant-tabs-tab { color: rgba(255,255,255,0.5); }
+        .admin-tabs .ant-tabs-nav::before { border-bottom-color: var(--border); }
+        .admin-tabs .ant-tabs-tab { color: var(--muted-foreground); }
         .admin-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { color: #8b5cf6 !important; }
         .admin-tabs .ant-tabs-ink-bar { background: #8b5cf6; }
-        .ant-table { background: transparent !important; color: white !important; }
-        .ant-table-thead > tr > th { background: rgba(255,255,255,0.05) !important; color: rgba(255,255,255,0.8) !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; }
-        .ant-table-tbody > tr > td { border-bottom: 1px solid rgba(255,255,255,0.05) !important; }
-        .ant-table-tbody > tr:hover > td { background: rgba(255,255,255,0.02) !important; }
-        .ant-pagination-item { background: transparent !important; border-color: rgba(255,255,255,0.1) !important; }
-        .ant-pagination-item a { color: rgba(255,255,255,0.7) !important; }
+        .ant-table { background: transparent !important; color: var(--foreground) !important; }
+        .ant-table-thead > tr > th { background: var(--secondary) !important; color: var(--foreground) !important; border-bottom: 1px solid var(--border) !important; }
+        .ant-table-tbody > tr > td { border-bottom: 1px solid var(--border) !important; color: var(--foreground) !important; }
+        .ant-table-tbody > tr:hover > td { background: var(--accent) !important; }
+        .ant-pagination-item { background: transparent !important; border-color: var(--border) !important; }
+        .ant-pagination-item a { color: var(--foreground) !important; }
         .ant-pagination-item-active { border-color: #8b5cf6 !important; }
         .ant-pagination-item-active a { color: #8b5cf6 !important; }
-        .ant-select-selector { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.1) !important; color: white !important; }
-        .ant-input { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.1) !important; color: white !important; }
+        .ant-select-selector { background: var(--secondary) !important; border-color: var(--border) !important; color: var(--foreground) !important; }
+        .ant-input { background: var(--secondary) !important; border-color: var(--border) !important; color: var(--foreground) !important; }
       `}</style>
+    </div>
+  );
+};
+
+// --- LIVE ACTIVITY TAB ---
+const LiveActivityTab: React.FC<{ token: string }> = ({ token }) => {
+  const [logs, setLogs] = useState<any[]>([]);
+
+  useEffect(() => {
+    let socketUrl = "";
+    try {
+      socketUrl = new URL(import.meta.env.VITE_API_URL).origin + "/admin";
+    } catch {
+      socketUrl = "http://localhost:5000/admin";
+    }
+
+    const socket = io(socketUrl, {
+      auth: { token },
+      transports: ["websocket"],
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to Live Terminal");
+    });
+
+    socket.on("terminal:log", (data) => {
+      setLogs((prev) => [data, ...prev].slice(0, 100)); // Keep last 100 logs
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [token]);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center bg-card/40 p-5 rounded-2xl border border-border shadow-sm">
+        <div>
+          <h3 className="font-bold text-lg flex items-center gap-2 text-foreground">
+            <Activity className="w-5 h-5 text-green-400 animate-pulse" /> Live
+            Terminal
+          </h3>
+          <p className="text-sm text-foreground/60 mt-1">
+            Real-time overview of bot interactions and system events
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+          </div>
+          <span className="text-sm font-semibold tracking-wide text-green-400 uppercase">
+            Listening
+          </span>
+        </div>
+      </div>
+
+      <div className="bg-[#0f0f11] border border-border/50 rounded-2xl overflow-hidden font-mono text-sm max-h-[600px] flex flex-col shadow-2xl relative">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-indigo-500 to-purple-500 opacity-50"></div>
+        <div className="bg-[#18181b] p-3 text-foreground/50 flex gap-4 text-[11px] font-bold uppercase tracking-wider border-b border-white/5">
+          <div className="w-20">Time</div>
+          <div className="w-24">Type</div>
+          <div className="flex-1">Message</div>
+          <div className="w-36 text-right">Bot</div>
+        </div>
+        <div className="p-4 overflow-y-auto flex-1 space-y-1.5 custom-scrollbar">
+          {logs.length === 0 ? (
+            <div className="text-center text-foreground/30 py-20 flex flex-col items-center gap-3 text-xs w-full justify-center">
+              <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-2">
+                <Activity className="w-6 h-6 opacity-40 animate-pulse" />
+              </div>
+              Waiting for incoming activities...
+            </div>
+          ) : (
+            logs.map((log, i) => (
+              <div
+                key={i}
+                className="flex gap-4 items-start py-3 px-3 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/[0.02] transition-all duration-300 group"
+              >
+                <div className="w-20 text-foreground/40 text-[11px] mt-1 shrink-0 font-medium flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground/20 group-hover:bg-foreground/40 transition-colors"></span>
+                  {dayjs(log.timestamp).format("HH:mm:ss")}
+                </div>
+                <div className="w-24 shrink-0">
+                  <span
+                    className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wide uppercase ${
+                      log.type === "success"
+                        ? "bg-green-500/10 text-green-400"
+                        : log.type === "warning"
+                          ? "bg-orange-500/10 text-orange-400"
+                          : log.type === "error"
+                            ? "bg-red-500/10 text-red-400"
+                            : log.type === "system"
+                              ? "bg-purple-500/10 text-purple-400"
+                              : "bg-blue-500/10 text-blue-400"
+                    }`}
+                  >
+                    {log.type}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div
+                    className={`font-medium ${log.type === "system" ? "text-foreground/70 italic" : "text-foreground/90"}`}
+                  >
+                    {log.message}
+                  </div>
+                  {log.data && log.data.action && (
+                    <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-foreground/50">
+                      {log.data.userId && (
+                        <span className="bg-[#1f1f22] px-2 py-0.5 rounded-md border border-white/5">
+                          ID: {log.data.userId}
+                        </span>
+                      )}
+                      {log.data.action && (
+                        <span className="bg-[#1f1f22] px-2 py-0.5 rounded-md border border-white/5 uppercase tracking-wider">
+                          {log.data.action}
+                        </span>
+                      )}
+                      {log.data.text && (
+                        <span
+                          className="bg-[#1f1f22] px-2 py-0.5 rounded-md border border-white/5 italic truncate max-w-[200px]"
+                          title={log.data.text}
+                        >
+                          "{log.data.text}"
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {log.data && log.data.botUsername && (
+                  <div className="w-36 shrink-0 text-right opacity-80 mt-1">
+                    <span className="text-indigo-300 font-semibold bg-indigo-500/10 px-2 py-1 rounded-md text-[11px] inline-block ml-auto truncate max-w-full border border-indigo-500/20">
+                      @{log.data.botUsername}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -105,10 +273,13 @@ const ImpressionsTab: React.FC<{ token: string }> = ({ token }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/detailed-stats/impressions`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { limit: 10, offset: (page - 1) * 10, search }
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/detailed-stats/impressions`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { limit: 10, offset: (page - 1) * 10, search },
+        },
+      );
       setData(res.data.data);
       setTotal(res.data.pagination.total);
     } catch (err) {
@@ -118,40 +289,82 @@ const ImpressionsTab: React.FC<{ token: string }> = ({ token }) => {
     }
   };
 
-  useEffect(() => { fetchData(); }, [page, search]);
+  useEffect(() => {
+    fetchData();
+  }, [page, search]);
 
   const columns = [
-    { title: "User", key: "user", render: (r: any) => (
-      <div>
-        <div className="font-medium">{r.firstName} {r.lastName}</div>
-        <div className="text-xs text-white/40">@{r.username || r.telegramUserId}</div>
-      </div>
-    )},
-    { title: "Bot", dataIndex: ["bot", "username"], key: "bot", render: (u: string) => <Tag color="blue">@{u}</Tag> },
-    { title: "Country", key: "geo", render: (r: any) => (
-      <span className="text-xs">{r.country || "???"} {r.city && <span className="text-white/30">({r.city})</span>}</span>
-    )},
+    {
+      title: "User",
+      key: "user",
+      render: (r: any) => (
+        <div>
+          <div className="font-medium">
+            {r.firstName} {r.lastName}
+          </div>
+          <div className="text-xs text-foreground/40">
+            @{r.username || r.telegramUserId}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Bot",
+      dataIndex: ["bot", "username"],
+      key: "bot",
+      render: (u: string) => <Tag color="blue">@{u}</Tag>,
+    },
+    {
+      title: "Country",
+      key: "geo",
+      render: (r: any) => (
+        <span className="text-xs">
+          {r.country || "???"}{" "}
+          {r.city && <span className="text-foreground/30">({r.city})</span>}
+        </span>
+      ),
+    },
     { title: "Ad", dataIndex: ["ad", "title"], key: "ad", ellipsis: true },
-    { title: "Revenue", dataIndex: "revenue", key: "revenue", render: (v: any) => `${parseFloat(v).toFixed(4)}$` },
-    { title: "Time", dataIndex: "createdAt", key: "time", render: (v: string) => dayjs(v).format("YYYY-MM-DD HH:mm") },
+    {
+      title: "Revenue",
+      dataIndex: "revenue",
+      key: "revenue",
+      render: (v: any) => `${parseFloat(v).toFixed(4)}$`,
+    },
+    {
+      title: "Time",
+      dataIndex: "createdAt",
+      key: "time",
+      render: (v: string) => dayjs(v).format("YYYY-MM-DD HH:mm"),
+    },
   ];
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between gap-4">
-        <Search placeholder="Search users or TG ID" onSearch={setSearch} style={{ maxWidth: 300 }} allowClear />
-        <Button icon={<DownloadOutlined />} onClick={() => message.info("Exporting...")}>Export All</Button>
+        <Search
+          placeholder="Search users or TG ID"
+          onSearch={setSearch}
+          style={{ maxWidth: 300 }}
+          allowClear
+        />
+        <Button
+          icon={<DownloadOutlined />}
+          onClick={() => message.info("Exporting...")}
+        >
+          Export All
+        </Button>
       </div>
-      <Table 
-        columns={columns} 
-        dataSource={data} 
+      <Table
+        columns={columns}
+        dataSource={data}
         loading={loading}
         rowKey="id"
         pagination={{
-            total,
-            current: page,
-            pageSize: 10,
-            onChange: setPage
+          total,
+          current: page,
+          pageSize: 10,
+          onChange: setPage,
         }}
       />
     </div>
@@ -170,7 +383,7 @@ const UsersTab: React.FC<{ token: string }> = ({ token }) => {
     // Fetch all bots for selection
     const fetchBots = async () => {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/bots`, {
-         headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       setBots(res.data.data);
     };
@@ -180,9 +393,12 @@ const UsersTab: React.FC<{ token: string }> = ({ token }) => {
   const fetchUsers = async (botId: string) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/detailed-stats/bot/${botId}/users`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/detailed-stats/bot/${botId}/users`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setUsers(res.data.data);
       setStats(res.data.stats);
     } catch (err) {
@@ -195,9 +411,12 @@ const UsersTab: React.FC<{ token: string }> = ({ token }) => {
   const exportExcel = async () => {
     if (!selectedBot) return;
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/detailed-stats/bot/${selectedBot}/export`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/detailed-stats/bot/${selectedBot}/export`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       // Simple JSON to CSV/Excel logic or direct download if backend supports it
       message.success("Success! (Downloading...)");
       console.log("Export data:", res.data.data);
@@ -208,16 +427,36 @@ const UsersTab: React.FC<{ token: string }> = ({ token }) => {
 
   const columns = [
     { title: "Telegram ID", dataIndex: "telegramUserId", key: "tgid" },
-    { title: "Name", key: "name", render: (r: any) => `${r.firstName} ${r.lastName || ""}` },
-    { title: "Username", dataIndex: "username", key: "user", render: (u: string) => u ? `@${u}` : "-" },
-    { title: "Geo", key: "geo", render: (r: any) => (
-       <div className="text-xs">
-         <div>{r.country || "Unknown"}</div>
-         <div className="text-white/40 text-[10px]">{r.lastSeenIp || "-"}</div>
-       </div>
-    )},
+    {
+      title: "Name",
+      key: "name",
+      render: (r: any) => `${r.firstName} ${r.lastName || ""}`,
+    },
+    {
+      title: "Username",
+      dataIndex: "username",
+      key: "user",
+      render: (u: string) => (u ? `@${u}` : "-"),
+    },
+    {
+      title: "Geo",
+      key: "geo",
+      render: (r: any) => (
+        <div className="text-xs">
+          <div>{r.country || "Unknown"}</div>
+          <div className="text-foreground/40 text-[10px]">
+            {r.lastSeenIp || "-"}
+          </div>
+        </div>
+      ),
+    },
     { title: "Language", dataIndex: "languageCode", key: "lang" },
-    { title: "Last Seen", dataIndex: "lastSeenAt", key: "seen", render: (v: string) => dayjs(v).fromNow() },
+    {
+      title: "Last Seen",
+      dataIndex: "lastSeenAt",
+      key: "seen",
+      render: (v: string) => dayjs(v).fromNow(),
+    },
   ];
 
   return (
@@ -226,11 +465,21 @@ const UsersTab: React.FC<{ token: string }> = ({ token }) => {
         <Select
           placeholder="Select a Bot to view active users"
           style={{ width: 300 }}
-          onChange={(val) => { setSelectedBot(val); fetchUsers(val); }}
-          options={bots.map((b: any) => ({ label: `@${b.username}`, value: b.id }))}
+          onChange={(val) => {
+            setSelectedBot(val);
+            fetchUsers(val);
+          }}
+          options={bots.map((b: any) => ({
+            label: `@${b.username}`,
+            value: b.id,
+          }))}
         />
         {selectedBot && (
-          <Button icon={<DownloadOutlined />} onClick={exportExcel} type="primary">
+          <Button
+            icon={<DownloadOutlined />}
+            onClick={exportExcel}
+            type="primary"
+          >
             Export to Excel
           </Button>
         )}
@@ -239,21 +488,32 @@ const UsersTab: React.FC<{ token: string }> = ({ token }) => {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="bg-purple-500/10 border-purple-500/20">
-            <div className="text-white/60 text-xs mb-1">Total Unique Users</div>
+            <div className="text-foreground/60 text-xs mb-1">
+              Total Unique Users
+            </div>
             <div className="text-2xl font-bold">{stats.totalUnique}</div>
           </Card>
           <Card className="bg-indigo-500/10 border-indigo-500/20">
-            <div className="text-white/60 text-xs mb-1">Active (Last 3 Days)</div>
+            <div className="text-foreground/60 text-xs mb-1">
+              Active (Last 3 Days)
+            </div>
             <div className="text-2xl font-bold">{stats.active3Days}</div>
           </Card>
           <Card className="bg-blue-500/10 border-blue-500/20">
-            <div className="text-white/60 text-xs mb-1">Active (Last 7 Days)</div>
+            <div className="text-foreground/60 text-xs mb-1">
+              Active (Last 7 Days)
+            </div>
             <div className="text-2xl font-bold">{stats.active7Days}</div>
           </Card>
         </div>
       )}
 
-      <Table columns={columns} dataSource={users} loading={loading} rowKey="id" />
+      <Table
+        columns={columns}
+        dataSource={users}
+        loading={loading}
+        rowKey="id"
+      />
     </div>
   );
 };
@@ -267,9 +527,12 @@ const BroadcastsTab: React.FC<{ token: string }> = ({ token }) => {
   const fetchBroadcasts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/broadcasts`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/broadcasts`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setBroadcasts(res.data.data);
     } catch (err) {
       message.error("Failed to load broadcasts");
@@ -278,38 +541,84 @@ const BroadcastsTab: React.FC<{ token: string }> = ({ token }) => {
     }
   };
 
-  useEffect(() => { fetchBroadcasts(); }, []);
+  useEffect(() => {
+    fetchBroadcasts();
+  }, []);
 
   const columns = [
-    { title: "Bot", dataIndex: ["bot", "username"], key: "bot", render: (u: string) => `@${u}` },
-    { title: "Advertiser", key: "adv", render: (r: any) => r.advertiser.username || r.advertiser.firstName },
-    { title: "Status", dataIndex: "status", key: "status", render: (s: string) => (
-      <Tag color={s === "COMPLETED" ? "green" : s === "RUNNING" ? "blue" : "orange"}>{s}</Tag>
-    )},
-    { title: "Progress", key: "prog", render: (r: any) => `${r.sentCount} / ${r.targetCount}` },
-    { title: "Created", dataIndex: "createdAt", key: "date", render: (v: string) => dayjs(v).format("MM-DD HH:mm") },
+    {
+      title: "Bot",
+      dataIndex: ["bot", "username"],
+      key: "bot",
+      render: (u: string) => `@${u}`,
+    },
+    {
+      title: "Advertiser",
+      key: "adv",
+      render: (r: any) => r.advertiser.username || r.advertiser.firstName,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (s: string) => (
+        <Tag
+          color={
+            s === "COMPLETED" ? "green" : s === "RUNNING" ? "blue" : "orange"
+          }
+        >
+          {s}
+        </Tag>
+      ),
+    },
+    {
+      title: "Progress",
+      key: "prog",
+      render: (r: any) => `${r.sentCount} / ${r.targetCount}`,
+    },
+    {
+      title: "Created",
+      dataIndex: "createdAt",
+      key: "date",
+      render: (v: string) => dayjs(v).format("MM-DD HH:mm"),
+    },
   ];
 
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button type="primary" icon={<SendOutlined />} onClick={() => setIsModalOpen(true)}>New Broadcast</Button>
+        <Button
+          type="primary"
+          icon={<SendOutlined />}
+          onClick={() => setIsModalOpen(true)}
+        >
+          New Broadcast
+        </Button>
       </div>
-      <Table columns={columns} dataSource={broadcasts} loading={loading} rowKey="id" />
-      
-      <Modal 
-        title="Create New Broadcast" 
-        open={isModalOpen} 
+      <Table
+        columns={columns}
+        dataSource={broadcasts}
+        loading={loading}
+        rowKey="id"
+      />
+
+      <Modal
+        title="Create New Broadcast"
+        open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
         className="dark-modal"
       >
-        <p className="text-white/60 mb-4">Launch a message campaign to active bot users.</p>
+        <p className="text-foreground/60 mb-4">
+          Launch a message campaign to active bot users.
+        </p>
         {/* Placeholder for complicated form */}
         <div className="p-8 text-center border-2 border-dashed border-white/10 rounded-xl">
-           <SendOutlined className="text-4xl text-white/20 mb-2" />
-           <p>Broadcast Wizard Coming Soon!</p>
-           <p className="text-xs text-white/40">Advertisers can already launch broadcasts from their dashboard.</p>
+          <SendOutlined className="text-4xl text-foreground/20 mb-2" />
+          <p>Broadcast Wizard Coming Soon!</p>
+          <p className="text-xs text-foreground/40">
+            Advertisers can already launch broadcasts from their dashboard.
+          </p>
         </div>
       </Modal>
     </div>
@@ -327,10 +636,13 @@ const ClicksTab: React.FC<{ token: string }> = ({ token }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/detailed-stats/clicks`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { limit: 10, offset: (page - 1) * 10, search }
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/detailed-stats/clicks`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { limit: 10, offset: (page - 1) * 10, search },
+        },
+      );
       setData(res.data.data);
       setTotal(res.data.pagination.total);
     } catch (err) {
@@ -340,45 +652,95 @@ const ClicksTab: React.FC<{ token: string }> = ({ token }) => {
     }
   };
 
-  useEffect(() => { fetchData(); }, [page, search]);
+  useEffect(() => {
+    fetchData();
+  }, [page, search]);
 
   const columns = [
-    { title: "User", key: "user", render: (r: any) => (
-      <div>
-        <div className="font-medium text-blue-400">{r.firstName} {r.lastName}</div>
-        <div className="text-xs text-white/40">@{r.username || r.telegramUserId}</div>
-      </div>
-    )},
-    { title: "Bot", dataIndex: ["bot", "username"], key: "bot", render: (u: string) => <Tag color="cyan">@{u}</Tag> },
-    { title: "Country", key: "geo", render: (r: any) => (
-      <span className="text-xs font-bold">{r.country || "???"} <span className="text-white/30 font-normal">({r.city || "?"})</span></span>
-    )},
-    { title: "Ad Campaign", dataIndex: ["ad", "title"], key: "ad", ellipsis: true },
-    { title: "Device/IP", key: "device", render: (r: any) => (
-       <div className="text-[10px] text-white/50">
+    {
+      title: "User",
+      key: "user",
+      render: (r: any) => (
+        <div>
+          <div className="font-medium text-blue-400">
+            {r.firstName} {r.lastName}
+          </div>
+          <div className="text-xs text-foreground/40">
+            @{r.username || r.telegramUserId}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Bot",
+      dataIndex: ["bot", "username"],
+      key: "bot",
+      render: (u: string) => <Tag color="cyan">@{u}</Tag>,
+    },
+    {
+      title: "Country",
+      key: "geo",
+      render: (r: any) => (
+        <span className="text-xs font-bold">
+          {r.country || "???"}{" "}
+          <span className="text-foreground/30 font-normal">
+            ({r.city || "?"})
+          </span>
+        </span>
+      ),
+    },
+    {
+      title: "Ad Campaign",
+      dataIndex: ["ad", "title"],
+      key: "ad",
+      ellipsis: true,
+    },
+    {
+      title: "Device/IP",
+      key: "device",
+      render: (r: any) => (
+        <div className="text-[10px] text-foreground/50">
           <div>{r.ipAddress}</div>
-          <div className="truncate max-w-[120px]">{r.userAgent?.split(' ')[0]}</div>
-       </div>
-    )},
-    { title: "Time", dataIndex: "clickedAt", key: "time", render: (v: string) => dayjs(v).format("YYYY-MM-DD HH:mm") },
+          <div className="truncate max-w-[120px]">
+            {r.userAgent?.split(" ")[0]}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Time",
+      dataIndex: "clickedAt",
+      key: "time",
+      render: (v: string) => dayjs(v).format("YYYY-MM-DD HH:mm"),
+    },
   ];
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between gap-4">
-        <Search placeholder="Search users" onSearch={setSearch} style={{ maxWidth: 300 }} allowClear />
-        <Button icon={<DownloadOutlined />} onClick={() => message.info("Exporting...")}>Export Clicks</Button>
+        <Search
+          placeholder="Search users"
+          onSearch={setSearch}
+          style={{ maxWidth: 300 }}
+          allowClear
+        />
+        <Button
+          icon={<DownloadOutlined />}
+          onClick={() => message.info("Exporting...")}
+        >
+          Export Clicks
+        </Button>
       </div>
-      <Table 
-        columns={columns} 
-        dataSource={data} 
+      <Table
+        columns={columns}
+        dataSource={data}
         loading={loading}
         rowKey="id"
         pagination={{
-            total,
-            current: page,
-            pageSize: 10,
-            onChange: setPage
+          total,
+          current: page,
+          pageSize: 10,
+          onChange: setPage,
         }}
       />
     </div>

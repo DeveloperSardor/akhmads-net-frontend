@@ -11,6 +11,7 @@ import { useUserStore } from "../../store/userStore";
 import { useTranslations } from "../../hooks/useTranslations";
 import { BASE_URL } from "../../api/api";
 import walletService from "../../services/wallet.service";
+import { ThemeToggle } from "../ui/ThemeToggle";
 
 const languages = ["uz", "eng", "ru"] as const;
 type Lang = (typeof languages)[number];
@@ -130,8 +131,8 @@ const Navbar = () => {
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
     `relative px-2.5 xl:px-4 py-2 rounded-full transition-all duration-500 whitespace-nowrap text-[12px] xl:text-[13px] 2xl:text-sm font-medium ${
       isActive
-        ? "text-white shadow-[0_0_20px_rgba(168,85,247,0.15)]"
-        : "text-white/60 hover:text-white/90"
+        ? "text-primary-foreground shadow-[0_0_20px_rgba(168,85,247,0.15)]"
+        : "text-foreground/60 hover:text-foreground/90"
     }`;
 
   const isLoginPage = location.pathname.includes("/login");
@@ -157,7 +158,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 w-full z-50 px-4 py-4 sm:px-6">
-        <div className="max-w-[95%] xl:max-w-7xl mx-auto h-[64px] sm:h-[72px] w-full bg-[#0a0a0b]/40 backdrop-blur-[24px] border border-white/5 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+        <div className="max-w-[95%] xl:max-w-7xl mx-auto h-[64px] sm:h-[72px] w-full bg-background/40 backdrop-blur-[24px] border border-border rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.1)]">
           <div className="h-full flex items-center justify-between px-3 sm:px-4 xl:px-8 relative">
             {/* 🔹 Logo */}
             <Link
@@ -230,9 +231,10 @@ const Navbar = () => {
                 className="flex flex-col leading-tight"
                 style={{ animation: "logoFadeIn 3s ease forwards", opacity: 0 }}
               >
-                <span className="hidden sm:block text-sm font-bold text-white tracking-widest uppercase">
+                <span className="hidden sm:block text-sm font-bold text-foreground tracking-widest uppercase">
                   Akhmads
                 </span>
+
                 <span className="hidden 2xl:block text-[9px] text-purple-400 tracking-[0.15em] uppercase">
                   ◆ Digital Advertising
                 </span>
@@ -317,8 +319,12 @@ const Navbar = () => {
             </div>
 
             {/* 🔹 Right side — desktop */}
-            <div className="hidden md:flex items-center gap-1 xl:gap-2 shrink-0 z-20">
+            <div className="hidden md:flex items-center gap-1 xl:gap-3 shrink-0 z-20">
+              {/* 🌓 Theme Toggle */}
+              <ThemeToggle />
+
               {/* 🌍 Language switcher */}
+
               <div ref={desktopLangRef} className="relative">
                 <button
                   onClick={() => setDesktopLangOpen((p) => !p)}
@@ -599,16 +605,17 @@ const Navbar = () => {
 
             {/* 🍔 Mobile right side — lang + hamburger */}
             <div className="flex md:hidden items-center gap-2">
+              <ThemeToggle />
               {/* 🌍 Language switcher - mobile */}
               <div ref={mobileLangRef} className="relative">
                 <button
                   onClick={() => setMobileLangOpen((p) => !p)}
-                  className="text-xs border border-white/10 rounded-full px-3 py-1.5 bg-white/5 text-white/70 hover:text-white transition"
+                  className="text-xs border border-border rounded-full px-3 py-1.5 bg-accent text-muted-foreground hover:text-foreground transition"
                 >
                   {lang.toUpperCase()}
                 </button>
                 {mobileLangOpen && (
-                  <div className="absolute right-0 mt-2 min-w-[70px] rounded-xl bg-[#1a1a1a] border border-white/10 shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 min-w-[70px] rounded-xl bg-card border border-border shadow-lg z-50">
                     {languages
                       .filter((l) => l !== lang)
                       .map((l) => (
@@ -618,7 +625,7 @@ const Navbar = () => {
                             changeLang(l);
                             setMobileLangOpen(false);
                           }}
-                          className="block w-full px-3 py-2 text-left text-xs text-white/70 hover:text-white hover:bg-white/10 transition"
+                          className="block w-full px-3 py-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition"
                         >
                           {l.toUpperCase()}
                         </button>
@@ -631,16 +638,16 @@ const Navbar = () => {
               <button
                 onClick={() => setMobileOpen((p) => !p)}
                 aria-label="Toggle menu"
-                className="w-9 h-9 flex flex-col items-center justify-center gap-[5px] rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition"
+                className="w-9 h-9 flex flex-col items-center justify-center gap-[5px] rounded-lg bg-accent border border-border hover:bg-accent/80 transition"
               >
                 <span
-                  className={`block w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-[7px]" : ""}`}
+                  className={`block w-5 h-0.5 bg-foreground transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-[7px]" : ""}`}
                 />
                 <span
-                  className={`block w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "opacity-0" : ""}`}
+                  className={`block w-5 h-0.5 bg-foreground transition-all duration-300 ${mobileOpen ? "opacity-0" : ""}`}
                 />
                 <span
-                  className={`block w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-[7px]" : ""}`}
+                  className={`block w-5 h-0.5 bg-foreground transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-[7px]" : ""}`}
                 />
               </button>
             </div>
@@ -658,10 +665,10 @@ const Navbar = () => {
 
       {/* 📱 Mobile Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-72 max-w-[85vw] z-50 bg-[#0f0f0f] border-l border-white/10 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 h-full w-72 max-w-[85vw] z-50 bg-background border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Drawer header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 h-[70px]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border h-[70px]">
           <div className="flex items-center gap-2">
             {/* Logo */}
             <div
@@ -726,10 +733,10 @@ const Navbar = () => {
               className="flex flex-col leading-tight"
               style={{ animation: "logoFadeIn 3s ease forwards", opacity: 0 }}
             >
-              <span className="text-white font-bold text-sm tracking-widest uppercase">
+              <span className="text-foreground font-bold text-sm tracking-widest uppercase">
                 Akhmads
               </span>
-              <span className="text-[9px] text-purple-400 tracking-[0.12em] uppercase">
+              <span className="text-[9px] text-primary tracking-[0.12em] uppercase">
                 ◆ Digital Advertising
               </span>
             </div>
@@ -737,7 +744,7 @@ const Navbar = () => {
 
           <button
             onClick={() => setMobileOpen(false)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 transition text-white/60 hover:text-white"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-accent hover:bg-accent/80 transition text-muted-foreground hover:text-foreground"
           >
             <svg
               className="w-4 h-4"
@@ -759,7 +766,7 @@ const Navbar = () => {
         <div className="overflow-y-auto h-[calc(100%-70px)]">
           {/* User info if authenticated */}
           {isAuthenticated && (
-            <div className="px-5 py-4 border-b border-white/10">
+            <div className="px-5 py-4 border-b border-border">
               <div className="flex items-center gap-3">
                 <img
                   src={avatarUrl}
@@ -771,11 +778,11 @@ const Navbar = () => {
                   }}
                 />
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">
+                  <p className="text-sm font-semibold text-foreground truncate">
                     {profile?.firstName || user?.firstName}{" "}
                     {profile?.lastName || user?.lastName}
                   </p>
-                  <p className="text-xs text-white/50 truncate">
+                  <p className="text-xs text-muted-foreground truncate">
                     @{profile?.username || user?.username || user?.email}
                   </p>
                 </div>
@@ -787,10 +794,10 @@ const Navbar = () => {
                     navigate(`/${lang}/wallet`);
                     setMobileOpen(false);
                   }}
-                  className="flex-1 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-3 py-2 text-sm text-white/80 hover:text-white transition"
+                  className="flex-1 flex items-center gap-2 rounded-xl border border-border bg-accent hover:bg-accent/80 px-3 py-2 text-sm text-foreground transition"
                 >
                   <svg
-                    className="w-4 h-4 text-purple-400 shrink-0"
+                    className="w-4 h-4 text-primary shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -803,7 +810,7 @@ const Navbar = () => {
                     />
                   </svg>
                   {walletLoading ? (
-                    <span className="w-14 h-3 bg-white/10 rounded animate-pulse inline-block" />
+                    <span className="w-14 h-3 bg-foreground/10 rounded animate-pulse inline-block" />
                   ) : (
                     <span className="font-medium">
                       $
@@ -817,7 +824,7 @@ const Navbar = () => {
                   onClick={fetchWallet}
                   disabled={walletLoading}
                   title="Reload balance"
-                  className="w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition disabled:opacity-40"
+                  className="w-9 h-9 flex items-center justify-center rounded-xl border border-border bg-accent hover:bg-accent/80 text-muted-foreground hover:text-foreground transition disabled:opacity-40"
                 >
                   <svg
                     className={`w-4 h-4 ${walletLoading ? "animate-spin" : ""}`}
@@ -843,7 +850,7 @@ const Navbar = () => {
               to={`/${lang}`}
               end
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:text-foreground hover:bg-accent"}`
               }
             >
               <svg
@@ -973,13 +980,13 @@ const Navbar = () => {
           </nav>
 
           {/* Bottom actions */}
-          <div className="px-3 py-4 border-t border-white/10 space-y-2">
+          <div className="px-3 py-4 border-t border-border space-y-2">
             {!isLoginPage && (
               <>
                 {!isAuthenticated ? (
                   <button
                     onClick={() => navigate(`/${lang}/login`)}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 text-sm font-medium transition"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-3 text-sm font-medium transition"
                   >
                     <svg
                       className="w-4 h-4"
@@ -1000,7 +1007,7 @@ const Navbar = () => {
                   <>
                     <button
                       onClick={() => navigate(`/${lang}/launch-ad`)}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 text-sm font-medium transition"
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-3 text-sm font-medium transition"
                     >
                       <svg
                         className="w-4 h-4"
@@ -1020,7 +1027,7 @@ const Navbar = () => {
 
                     <button
                       onClick={() => navigate(`/${lang}/profile`)}
-                      className="w-full flex items-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white px-4 py-3 text-sm transition"
+                      className="w-full flex items-center gap-2 rounded-xl bg-accent hover:bg-accent/80 text-muted-foreground hover:text-foreground px-4 py-3 text-sm transition"
                     >
                       <svg
                         className="w-4 h-4"
@@ -1040,7 +1047,7 @@ const Navbar = () => {
 
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 px-4 py-3 text-sm transition"
+                      className="w-full flex items-center gap-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-4 py-3 text-sm transition"
                     >
                       <svg
                         className="w-4 h-4"
