@@ -237,12 +237,12 @@ const Navbar = () => {
 
             {/* 🔹 Center links — desktop only */}
             <div className="hidden lg:flex flex-1 justify-center z-10 mx-1 min-w-0">
-              <div className="bg-background/50 border border-border p-1 rounded-full flex items-center gap-1 backdrop-blur-md shadow-inner overflow-hidden">
+              <div className="bg-background/50 border border-border p-1 rounded-full flex items-center gap-0.5 backdrop-blur-md shadow-inner overflow-hidden">
                 <NavLink
                   to={`/${lang}`}
                   end
                   className={({ isActive }) =>
-                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -269,7 +269,7 @@ const Navbar = () => {
                 <NavLink
                   to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`}
                   className={({ isActive }) =>
-                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -296,7 +296,7 @@ const Navbar = () => {
                 <NavLink
                   to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`}
                   className={({ isActive }) =>
-                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -325,7 +325,7 @@ const Navbar = () => {
                     isAuthenticated ? `/${lang}/moderation` : `/${lang}/login`
                   }
                   className={({ isActive }) =>
-                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -352,7 +352,7 @@ const Navbar = () => {
                 <NavLink
                   to={`/${lang}/wallet`}
                   className={({ isActive }) =>
-                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
@@ -379,7 +379,7 @@ const Navbar = () => {
                 <NavLink
                   to={`/${lang}/faq`}
                   className={({ isActive }) =>
-                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                    `relative px-3.5 xl:px-5 py-2 rounded-full transition-all duration-300 text-[13px] xl:text-sm font-bold flex items-center justify-center whitespace-nowrap ${
                       isActive
                         ? "text-white"
                         : "text-muted-foreground hover:text-foreground"
