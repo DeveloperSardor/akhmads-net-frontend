@@ -189,37 +189,37 @@ const Wallet = () => {
           )}
 
           {/* Balance Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 xl:gap-6 mb-6">
             {/* Available Balance */}
-            <div className="p-8 bg-card border border-primary/20 rounded-3xl shadow-lg shadow-primary/5 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <WalletIcon className="w-24 h-24 text-primary" />
+            <div className="p-5 xl:p-6 bg-card border border-primary/20 rounded-[2rem] shadow-lg shadow-primary/5 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                <WalletIcon className="w-16 h-16 text-primary" />
               </div>
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                     {w?.availableBalance}
                   </p>
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <WalletIcon className="w-5 h-5 text-primary" />
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <WalletIcon className="w-4 h-4 text-primary" />
                   </div>
                 </div>
-                <h2 className="text-5xl font-black text-foreground mb-8 tabular-nums tracking-tight">
+                <h2 className="text-3xl xl:text-4xl font-black text-foreground mb-6 tabular-nums tracking-tight">
                   {formatCurrency(walletData?.available || 0)}
                 </h2>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-2.5">
                   <button
                     onClick={() => setShowDepositModal(true)}
-                    className="flex-1 py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-2xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
+                    className="flex-1 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1.5 text-xs"
                   >
-                    <Plus className="w-5 h-5" />
+                    <Plus className="w-4 h-4" />
                     {w?.addFunds}
                   </button>
                   <button
                     onClick={() => setShowWithdrawModal(true)}
-                    className="flex-1 py-4 bg-background hover:bg-muted border border-border text-foreground font-bold rounded-2xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    className="flex-1 py-2.5 bg-background hover:bg-muted border border-border text-foreground font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 text-xs"
                   >
-                    <ArrowUpRight className="w-5 h-5 text-primary" />
+                    <ArrowUpRight className="w-4 h-4 text-primary" />
                     {w?.withdrawBtn}
                   </button>
                 </div>
@@ -227,44 +227,44 @@ const Wallet = () => {
             </div>
 
             {/* Reserved */}
-            <div className="p-8 bg-card border border-border rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="p-5 xl:p-6 bg-card border border-border rounded-[2rem] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                   {w?.reserved}
                 </p>
-                <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-yellow-600 dark:text-yellow-500" />
                 </div>
               </div>
-              <h2 className="text-5xl font-black text-foreground mb-6 tabular-nums tracking-tight">
+              <h2 className="text-3xl xl:text-4xl font-black text-foreground mb-4 tabular-nums tracking-tight">
                 {formatCurrency(walletData?.reserved || 0)}
               </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed bg-muted/30 p-3 rounded-xl border border-border/50">
+              <p className="text-[11px] text-muted-foreground leading-relaxed bg-muted/40 p-2.5 rounded-xl border border-border/50">
                 {w?.reservedHint}
               </p>
             </div>
 
             {/* Total Deposited */}
-            <div className="p-8 bg-card border border-border rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="p-5 xl:p-6 bg-card border border-border rounded-[2rem] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                   {w?.totalDeposited}
                 </p>
-                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-500" />
+                <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-500" />
                 </div>
               </div>
-              <h2 className="text-5xl font-black text-foreground mb-6 tabular-nums tracking-tight">
+              <h2 className="text-3xl xl:text-4xl font-black text-foreground mb-4 tabular-nums tracking-tight">
                 {formatCurrency(walletData?.totalDeposited || 0)}
               </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed bg-muted/30 p-3 rounded-xl border border-border/50">
+              <p className="text-[11px] text-muted-foreground leading-relaxed bg-muted/40 p-2.5 rounded-xl border border-border/50">
                 {w?.totalDepositedHint}
               </p>
             </div>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6 mb-8">
             {[
               {
                 label: w?.totalSpent,
@@ -297,12 +297,14 @@ const Wallet = () => {
             ].map((stat, i) => (
               <div
                 key={i}
-                className={`p-6 bg-card border border-border rounded-2xl shadow-sm hover:border-primary/20 transition-all`}
+                className={`p-4 xl:p-5 bg-card border border-border rounded-2xl shadow-sm hover:border-primary/20 transition-all`}
               >
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
                   {stat.label}
                 </p>
-                <p className={`text-2xl font-black ${stat.color} tabular-nums`}>
+                <p
+                  className={`text-xl xl:text-2xl font-black ${stat.color} tabular-nums`}
+                >
                   {formatCurrency(stat.value || 0)}
                 </p>
               </div>
