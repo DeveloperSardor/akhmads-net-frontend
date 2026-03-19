@@ -74,28 +74,37 @@ const LivePreview = () => {
       </div>
 
       <div
-        className={`relative ${device === "mobile" ? "max-w-[320px]" : "max-w-full"} mx-auto`}
+        className={`relative ${device === "mobile" ? "max-w-[320px]" : "max-w-full"} mx-auto overflow-hidden rounded-xl border border-border shadow-2xl`}
       >
-        <div className="bg-card rounded-xl p-3 shadow-2xl">
-          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+        <div style={{ backgroundColor: "#ffffff" }} className="p-3">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-100">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0">
               <span className="text-white text-xs font-bold">AD</span>
             </div>
             <div>
-              <div className="text-zinc-950 dark:text-zinc-50 text-sm font-medium">
+              <div
+                style={{ color: "#111827" }}
+                className="text-sm font-semibold tracking-tight"
+              >
                 {lp?.adLabel ?? "Your Advertisement"}
               </div>
-              <div className="text-foreground/50 text-xs">
+              <div
+                style={{ color: "#6B7280" }}
+                className="text-[10px] font-medium uppercase tracking-wider"
+              >
                 {lp?.sponsored ?? "Sponsored"}
               </div>
             </div>
           </div>
 
+          {/* Content */}
           {hasContent ? (
             <div className="space-y-3">
               {formData.text && (
                 <div
-                  className="text-zinc-950 dark:text-zinc-50 text-sm leading-relaxed whitespace-pre-wrap break-words break-all"
+                  style={{ color: "#111827" }}
+                  className="text-sm leading-relaxed whitespace-pre-wrap break-words break-all"
                   dangerouslySetInnerHTML={{
                     __html: formatText(formData.text),
                   }}
@@ -109,7 +118,7 @@ const LivePreview = () => {
                       button.text && (
                         <button
                           key={index}
-                          className="w-full py-2.5 px-4 rounded-lg text-white text-sm font-medium transition-all hover:opacity-90"
+                          className="w-full py-2.5 px-4 rounded-lg text-white text-sm font-bold transition-all hover:opacity-90 shadow-sm"
                           style={{
                             backgroundColor: getButtonColor(button.color),
                           }}
@@ -123,19 +132,26 @@ const LivePreview = () => {
             </div>
           ) : (
             <div className="py-12 text-center">
-              <Eye className="w-10 h-10 text-foreground/20 mx-auto mb-3" />
-              <p className="text-foreground/40 text-sm">
+              <Eye className="w-10 h-10 text-gray-200 mx-auto mb-3" />
+              <p className="text-gray-400 text-sm italic">
                 {lp?.emptyHint ?? "Start creating your ad to see preview"}
               </p>
             </div>
           )}
 
-          <div className="mt-3 pt-3 border-t border-border">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-foreground/40">
+          {/* Footer */}
+          <div className="mt-4 pt-3 border-t border-gray-100">
+            <div className="flex items-center justify-between">
+              <span
+                style={{ color: "#9CA3AF" }}
+                className="text-[10px] font-medium uppercase tracking-widest"
+              >
                 {lp?.telegramAd ?? "Telegram Ad"}
               </span>
-              <span className="text-foreground/40">
+              <span
+                style={{ color: "#9CA3AF" }}
+                className="text-[10px] font-medium tabular-nums"
+              >
                 {new Date().toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",

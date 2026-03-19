@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Check, Users, Target, Globe } from "lucide-react";
-import { Select } from "antd";
 import { useAdStore } from "../../store/adStore";
 import { useTranslations } from "../../hooks/useTranslations";
 import axios from "axios";
@@ -22,17 +21,17 @@ const getLanguages = (t: any) => [
     code: "all",
     name: `🌍 ${t.audienceReach?.allLanguages || "Barcha tillar"}`,
   },
-  { code: "uz", name: "🇺🇿 Uzbek" },
-  { code: "ru", name: "🇷🇺 Russian" },
-  { code: "en", name: "🇺🇸 English" },
-  { code: "tr", name: "🇹🇷 Turkish" },
-  { code: "ar", name: "🇸🇦 Arabic" },
-  { code: "de", name: "🇩🇪 German" },
-  { code: "fr", name: "🇫🇷 French" },
-  { code: "es", name: "🇪🇸 Spanish" },
-  { code: "it", name: "🇮🇹 Italian" },
-  { code: "pt", name: "🇵🇹 Portuguese" },
-  { code: "hi", name: "🇮🇳 Hindi" },
+  { code: "uz", name: "🇺🇿 O'zbekcha" },
+  { code: "ru", name: "🇷🇺 Ruscha" },
+  { code: "en", name: "🇺🇸 Inglizcha" },
+  { code: "tr", name: "🇹🇷 Turkcha" },
+  { code: "ar", name: "🇸🇦 Arabcha" },
+  { code: "de", name: "🇩🇪 Olmoncha" },
+  { code: "fr", name: "🇫🇷 Fransuzcha" },
+  { code: "es", name: "🇪🇸 Ispancha" },
+  { code: "it", name: "🇮🇹 Italyancha" },
+  { code: "pt", name: "🇵🇹 Portugalcha" },
+  { code: "hi", name: "🇮🇳 Hindcha" },
 ];
 
 const AudienceReach = () => {
