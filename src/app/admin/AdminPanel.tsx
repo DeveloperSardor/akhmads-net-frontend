@@ -17,7 +17,15 @@ import {
   BarChartOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { MousePointer2, Activity } from "lucide-react";
+import {
+  MousePointer2,
+  CheckCircle2,
+  AlertTriangle,
+  Info,
+  XCircle,
+  Zap,
+  Radio,
+} from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useAuthStore } from "../../store/authStore";
@@ -54,8 +62,8 @@ const AdminPanel: React.FC = () => {
               {
                 key: "live",
                 label: (
-                  <span className="flex items-center gap-2 text-green-400">
-                    <Activity className="w-4 h-4" /> Live Terminal
+                  <span className="flex items-center gap-2 text-primary">
+                    <Radio className="w-4 h-4" /> Activity Stream
                   </span>
                 ),
                 children: <LiveActivityTab token={accessToken!} />,
@@ -139,7 +147,7 @@ const LiveActivityTab: React.FC<{ token: string }> = ({ token }) => {
     });
 
     socket.on("connect", () => {
-      console.log("Connected to Live Terminal");
+      console.log("Connected to Activity Stream");
     });
 
     socket.on("terminal:log", (data) => {
@@ -151,106 +159,143 @@ const LiveActivityTab: React.FC<{ token: string }> = ({ token }) => {
     };
   }, [token]);
 
+  const getLogIcon = (type: string) => {
+    switch (type) {
+      case "success":
+        return <CheckCircle2 className="w-5 h-5 text-emerald-500" />;
+      case "error":
+        return <XCircle className="w-5 h-5 text-rose-500" />;
+      case "warning":
+        return <AlertTriangle className="w-5 h-5 text-amber-500" />;
+      case "system":
+        return <Zap className="w-5 h-5 text-purple-500" />;
+      case "ad":
+        return <Radio className="w-5 h-5 text-blue-500" />;
+      default:
+        return <Info className="w-5 h-5 text-sky-500" />;
+    }
+  };
+
+  const getLogColor = (type: string) => {
+    switch (type) {
+      case "success":
+        return "bg-emerald-500/10 border-emerald-500/20";
+      case "error":
+        return "bg-rose-500/10 border-rose-500/20";
+      case "warning":
+        return "bg-amber-500/10 border-amber-500/20";
+      case "system":
+        return "bg-purple-500/10 border-purple-500/20";
+      case "ad":
+        return "bg-blue-500/10 border-blue-500/20";
+      default:
+        return "bg-sky-500/10 border-sky-500/20";
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center bg-card/40 p-5 rounded-2xl border border-border shadow-sm">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-card/40 p-5 rounded-2xl border border-border shadow-sm gap-4">
         <div>
-          <h3 className="font-bold text-lg flex items-center gap-2 text-foreground">
-            <Activity className="w-5 h-5 text-green-400 animate-pulse" /> Live
-            Terminal
+          <h3 className="font-bold text-xl flex items-center gap-2 text-foreground">
+            <Radio className="w-6 h-6 text-primary animate-pulse" /> Live
+            Activity Stream
           </h3>
           <p className="text-sm text-foreground/60 mt-1">
-            Real-time overview of bot interactions and system events
+            Real-time feed of all platform operations, ad campaigns, and bot
+            events.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 bg-primary/10 px-4 py-2 rounded-full border border-primary/20">
           <div className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
           </div>
-          <span className="text-sm font-semibold tracking-wide text-green-400 uppercase">
-            Listening
+          <span className="text-sm font-semibold tracking-wide text-primary uppercase">
+            Live Updates Active
           </span>
         </div>
       </div>
 
-      <div className="bg-[#0f0f11] border border-border/50 rounded-2xl overflow-hidden font-mono text-sm max-h-[600px] flex flex-col shadow-2xl relative">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-indigo-500 to-purple-500 opacity-50"></div>
-        <div className="bg-[#18181b] p-3 text-foreground/50 flex gap-4 text-[11px] font-bold uppercase tracking-wider border-b border-white/5">
-          <div className="w-20">Time</div>
-          <div className="w-24">Type</div>
-          <div className="flex-1">Message</div>
-          <div className="w-36 text-right">Bot</div>
-        </div>
-        <div className="p-4 overflow-y-auto flex-1 space-y-1.5 custom-scrollbar">
+      <div className="bg-card/30 border border-border/50 rounded-2xl overflow-hidden shadow-2xl relative min-h-[400px]">
+        <div className="p-4 overflow-y-auto max-h-[650px] space-y-3 custom-scrollbar">
           {logs.length === 0 ? (
-            <div className="text-center text-foreground/30 py-20 flex flex-col items-center gap-3 text-xs w-full justify-center">
-              <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-2">
-                <Activity className="w-6 h-6 opacity-40 animate-pulse" />
+            <div className="text-center text-foreground/40 py-24 flex flex-col items-center gap-4 text-sm w-full justify-center">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-2 border border-primary/20">
+                <Radio className="w-8 h-8 opacity-70 animate-pulse text-primary" />
               </div>
-              Waiting for incoming activities...
+              <p>Waiting for incoming platform activities...</p>
+              <p className="text-xs opacity-60">
+                Events like signups, bot updates, and transactions will appear
+                here instantly.
+              </p>
             </div>
           ) : (
             logs.map((log, i) => (
               <div
                 key={i}
-                className="flex gap-4 items-start py-3 px-3 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/[0.02] transition-all duration-300 group"
+                className={`flex gap-4 items-center p-4 rounded-xl border transition-all duration-300 shadow-sm ${getLogColor(log.type)} hover:brightness-110`}
               >
-                <div className="w-20 text-foreground/40 text-[11px] mt-1 shrink-0 font-medium flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-foreground/20 group-hover:bg-foreground/40 transition-colors"></span>
-                  {dayjs(log.timestamp).format("HH:mm:ss")}
+                <div className="shrink-0 p-2 rounded-full bg-background/50 shadow-sm">
+                  {getLogIcon(log.type)}
                 </div>
-                <div className="w-24 shrink-0">
-                  <span
-                    className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wide uppercase ${
-                      log.type === "success"
-                        ? "bg-green-500/10 text-green-400"
-                        : log.type === "warning"
-                          ? "bg-orange-500/10 text-orange-400"
-                          : log.type === "error"
-                            ? "bg-red-500/10 text-red-400"
-                            : log.type === "system"
-                              ? "bg-purple-500/10 text-purple-400"
-                              : "bg-blue-500/10 text-blue-400"
-                    }`}
-                  >
-                    {log.type}
-                  </span>
-                </div>
+
                 <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-semibold text-foreground/50 bg-background/50 px-2 py-0.5 rounded-md">
+                      {dayjs(log.timestamp).format("DD MMM, HH:mm:ss")}
+                    </span>
+                    {log.data?.action && (
+                      <span className="text-[10px] uppercase font-bold tracking-wider opacity-70">
+                        {log.data.action.replace(/_/g, " ")}
+                      </span>
+                    )}
+                  </div>
+
                   <div
-                    className={`font-medium ${log.type === "system" ? "text-foreground/70 italic" : "text-foreground/90"}`}
+                    className={`text-base font-medium ${log.type === "error" ? "text-rose-400" : log.type === "success" ? "text-emerald-400" : "text-foreground/90"}`}
                   >
                     {log.message}
                   </div>
-                  {log.data && log.data.action && (
-                    <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-foreground/50">
-                      {log.data.userId && (
-                        <span className="bg-[#1f1f22] px-2 py-0.5 rounded-md border border-white/5">
-                          ID: {log.data.userId}
-                        </span>
-                      )}
-                      {log.data.action && (
-                        <span className="bg-[#1f1f22] px-2 py-0.5 rounded-md border border-white/5 uppercase tracking-wider">
-                          {log.data.action}
-                        </span>
-                      )}
-                      {log.data.text && (
-                        <span
-                          className="bg-[#1f1f22] px-2 py-0.5 rounded-md border border-white/5 italic truncate max-w-[200px]"
-                          title={log.data.text}
-                        >
-                          "{log.data.text}"
-                        </span>
-                      )}
-                    </div>
-                  )}
+
+                  {log.data &&
+                    (log.data.userId || log.data.text || log.data.amount) && (
+                      <div className="mt-2 flex flex-wrap gap-2 text-xs text-foreground/70">
+                        {log.data.userId && (
+                          <span className="bg-background/40 px-2 py-1 rounded-md border border-white/5 flex items-center gap-1">
+                            <span className="opacity-50">User:</span>{" "}
+                            {log.data.userId}
+                          </span>
+                        )}
+                        {log.data.amount && (
+                          <span className="bg-background/40 px-2 py-1 rounded-md border border-white/5 flex items-center gap-1">
+                            <span className="opacity-50">Amount:</span> $
+                            {typeof log.data.amount === "number"
+                              ? log.data.amount.toFixed(2)
+                              : log.data.amount}
+                          </span>
+                        )}
+                        {log.data.text && (
+                          <span className="bg-background/40 px-2 py-1 rounded-md border border-white/5 italic truncate max-w-[300px]">
+                            "{log.data.text}"
+                          </span>
+                        )}
+                      </div>
+                    )}
                 </div>
+
                 {log.data && log.data.botUsername && (
-                  <div className="w-36 shrink-0 text-right opacity-80 mt-1">
-                    <span className="text-indigo-300 font-semibold bg-indigo-500/10 px-2 py-1 rounded-md text-[11px] inline-block ml-auto truncate max-w-full border border-indigo-500/20">
-                      @{log.data.botUsername}
-                    </span>
+                  <div className="shrink-0 ml-4 hidden md:block">
+                    <a
+                      href={`https://t.me/${log.data.botUsername}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-2 text-primary bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors"
+                    >
+                      <span className="text-sm font-semibold">
+                        @{log.data.botUsername}
+                      </span>
+                    </a>
                   </div>
                 )}
               </div>
