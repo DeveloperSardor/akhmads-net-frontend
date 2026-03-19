@@ -171,6 +171,10 @@ const LiveActivityTab: React.FC<{ token: string }> = ({ token }) => {
         return <Zap className="w-5 h-5 text-purple-500" />;
       case "ad":
         return <Radio className="w-5 h-5 text-blue-500" />;
+      case "broadcast":
+        return <Radio className="w-5 h-5 text-indigo-500" />;
+      case "bot":
+        return <Info className="w-5 h-5 text-teal-500" />;
       default:
         return <Info className="w-5 h-5 text-sky-500" />;
     }
@@ -188,6 +192,10 @@ const LiveActivityTab: React.FC<{ token: string }> = ({ token }) => {
         return "bg-purple-500/10 border-purple-500/20";
       case "ad":
         return "bg-blue-500/10 border-blue-500/20";
+      case "broadcast":
+        return "bg-indigo-500/10 border-indigo-500/20";
+      case "bot":
+        return "bg-teal-500/10 border-teal-500/20";
       default:
         return "bg-sky-500/10 border-sky-500/20";
     }
@@ -259,25 +267,34 @@ const LiveActivityTab: React.FC<{ token: string }> = ({ token }) => {
                   </div>
 
                   {log.data &&
-                    (log.data.userId || log.data.text || log.data.amount) && (
+                    (log.data.userId ||
+                      log.data.username ||
+                      log.data.amount ||
+                      log.data.lang) && (
                       <div className="mt-2 flex flex-wrap gap-2 text-xs text-foreground/70">
-                        {log.data.userId && (
-                          <span className="bg-background/40 px-2 py-1 rounded-md border border-white/5 flex items-center gap-1">
-                            <span className="opacity-50">User:</span>{" "}
+                        {log.data.username && (
+                          <span className="bg-background/40 px-2 py-1 rounded-md border border-border/50 flex items-center gap-1">
+                            <span className="opacity-50">@</span>
+                            {log.data.username}
+                          </span>
+                        )}
+                        {!log.data.username && log.data.userId && (
+                          <span className="bg-background/40 px-2 py-1 rounded-md border border-border/50 flex items-center gap-1">
+                            <span className="opacity-50">ID:</span>
                             {log.data.userId}
                           </span>
                         )}
+                        {log.data.lang && (
+                          <span className="bg-background/40 px-2 py-1 rounded-md border border-border/50 flex items-center gap-1">
+                            🌐 {log.data.lang.toUpperCase()}
+                          </span>
+                        )}
                         {log.data.amount && (
-                          <span className="bg-background/40 px-2 py-1 rounded-md border border-white/5 flex items-center gap-1">
-                            <span className="opacity-50">Amount:</span> $
+                          <span className="bg-background/40 px-2 py-1 rounded-md border border-border/50 flex items-center gap-1">
+                            <span className="opacity-50">$</span>
                             {typeof log.data.amount === "number"
                               ? log.data.amount.toFixed(2)
                               : log.data.amount}
-                          </span>
-                        )}
-                        {log.data.text && (
-                          <span className="bg-background/40 px-2 py-1 rounded-md border border-white/5 italic truncate max-w-[300px]">
-                            "{log.data.text}"
                           </span>
                         )}
                       </div>
