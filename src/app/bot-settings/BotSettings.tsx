@@ -1056,16 +1056,16 @@ async Task<bool> ShowAd(long chatId) {
                   <div className="space-y-3">
                     {audienceStats && (
                       <div className="grid grid-cols-2 gap-3 mb-4">
-                        <div className="bg-[#111] border border-[#222] p-3 rounded-xl">
-                          <div className="text-[10px] text-gray-500 uppercase font-black">
+                        <div className="bg-background border border-border p-3 rounded-xl">
+                          <div className="text-[10px] text-muted-foreground uppercase font-black">
                             {bs?.active3Days}
                           </div>
                           <div className="text-lg font-bold">
                             {audienceStats.active3Days || 0}
                           </div>
                         </div>
-                        <div className="bg-[#111] border border-[#222] p-3 rounded-xl">
-                          <div className="text-[10px] text-gray-500 uppercase font-black">
+                        <div className="bg-background border border-border p-3 rounded-xl">
+                          <div className="text-[10px] text-muted-foreground uppercase font-black">
                             {bs?.active7Days}
                           </div>
                           <div className="text-lg font-bold">
@@ -1079,10 +1079,10 @@ async Task<bool> ShowAd(long chatId) {
                       audience.map((u: any) => (
                         <div
                           key={u.id}
-                          className="bg-card border border-[#222] rounded-xl p-3 flex items-center justify-between group"
+                          className="bg-card border border-border rounded-xl p-3 flex items-center justify-between group"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-xs font-bold border border-white/5">
+                            <div className="w-10 h-10 rounded-full bg-accent text-foreground flex items-center justify-center text-xs font-bold border border-border">
                               {u.username
                                 ? u.username[0].toUpperCase()
                                 : u.firstName?.[0]?.toUpperCase() || "U"}

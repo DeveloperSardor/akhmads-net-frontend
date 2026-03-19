@@ -243,7 +243,7 @@ const Navbar = () => {
 
             {/* 🔹 Center links — desktop only */}
             <div className="hidden lg:flex flex-1 justify-center z-10 mx-1 min-w-0">
-              <div className="bg-white/[0.03] border border-white/10 p-1 rounded-full flex items-center gap-0 backdrop-blur-md shadow-inner overflow-hidden">
+              <div className="bg-background/50 border border-border p-1 rounded-full flex items-center gap-0 backdrop-blur-md shadow-inner overflow-hidden">
                 <NavLink to={`/${lang}`} end className={navItemClass}>
                   {({ isActive }) => (
                     <>
@@ -330,16 +330,13 @@ const Navbar = () => {
                   onClick={() => setDesktopLangOpen((p) => !p)}
                   aria-haspopup="listbox"
                   aria-expanded={desktopLangOpen}
-                  className="text-xs xl:text-sm border border-white/10 rounded-full px-2.5 xl:px-4 py-2 bg-white/5 text-white/70 hover:text-white transition uppercase font-medium"
+                  className="text-xs xl:text-sm border border-border rounded-full px-2.5 xl:px-4 py-2 bg-accent text-foreground/70 hover:text-foreground transition uppercase font-medium"
                 >
                   {lang.toUpperCase()}
                 </button>
 
                 {desktopLangOpen && (
-                  <div
-                    role="listbox"
-                    className="absolute right-0 mt-2 min-w-[80px] rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg z-50"
-                  >
+                  <div className="absolute right-0 mt-2 min-w-[80px] rounded-xl bg-popover backdrop-blur-xl border border-border shadow-lg z-50">
                     {languages
                       .filter((l) => l !== lang)
                       .map((l) => (
@@ -350,7 +347,7 @@ const Navbar = () => {
                             changeLang(l);
                             setDesktopLangOpen(false);
                           }}
-                          className="block w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/10 transition"
+                          className="block w-full px-4 py-2 text-left text-sm text-popover-foreground hover:bg-accent transition"
                         >
                           {l.toUpperCase()}
                         </button>
@@ -365,7 +362,7 @@ const Navbar = () => {
                   {!isAuthenticated ? (
                     <button
                       onClick={() => navigate(`/${lang}/login`)}
-                      className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-5 xl:px-7 py-2.5 text-[13px] xl:text-sm font-semibold transition-all duration-300 active:scale-95 shadow-[0_4px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.5)]"
+                      className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-500 text-primary-foreground px-5 xl:px-7 py-2.5 text-[13px] xl:text-sm font-semibold transition-all duration-300 active:scale-95 shadow-[0_4px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.5)]"
                     >
                       <svg
                         className="w-4 h-4"
@@ -388,7 +385,7 @@ const Navbar = () => {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => navigate(`/${lang}/wallet`)}
-                          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 px-2.5 xl:px-4 py-2 text-[13px] xl:text-sm text-white/90 hover:text-white transition-all duration-300 active:scale-95 group"
+                          className="flex items-center gap-2 rounded-full border border-border bg-accent/50 hover:bg-accent px-2.5 xl:px-4 py-2 text-[13px] xl:text-sm text-foreground/90 hover:text-foreground transition-all duration-300 active:scale-95 group"
                         >
                           <svg
                             className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform"
@@ -404,7 +401,7 @@ const Navbar = () => {
                             />
                           </svg>
                           {walletLoading ? (
-                            <span className="w-12 h-3 bg-white/10 rounded animate-pulse inline-block" />
+                            <span className="w-12 h-3 bg-foreground/10 rounded animate-pulse inline-block" />
                           ) : (
                             <span className="font-semibold tracking-tight">
                               $
@@ -418,7 +415,7 @@ const Navbar = () => {
                           onClick={fetchWallet}
                           disabled={walletLoading}
                           title="Reload balance"
-                          className="w-8 h-8 flex items-center justify-center rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition disabled:opacity-40"
+                          className="w-8 h-8 flex items-center justify-center rounded-full border border-border bg-accent/50 hover:bg-accent text-foreground/50 hover:text-foreground transition disabled:opacity-40"
                         >
                           <svg
                             className={`w-3.5 h-3.5 ${walletLoading ? "animate-spin" : ""}`}
@@ -440,7 +437,7 @@ const Navbar = () => {
                       {isAuthenticated && (
                         <button
                           onClick={() => navigate(`/${lang}/launch-ad`)}
-                          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-4 xl:px-7 py-2.5 text-[13px] xl:text-sm font-semibold transition-all duration-300 active:scale-95 shadow-[0_4px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.5)]"
+                          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-500 text-primary-foreground px-4 xl:px-7 py-2.5 text-[13px] xl:text-sm font-semibold transition-all duration-300 active:scale-95 shadow-[0_4px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.5)]"
                         >
                           <svg
                             className="w-4 h-4"
@@ -465,7 +462,7 @@ const Navbar = () => {
                       <div ref={profileDropdownRef} className="relative">
                         <button
                           onClick={() => setProfileOpen((p) => !p)}
-                          className="w-10 h-10 rounded-full overflow-hidden border border-white/10 hover:border-white/30 transition"
+                          className="w-10 h-10 rounded-full overflow-hidden border border-border hover:border-primary/50 transition"
                           title={nav?.profile ?? "Profile"}
                         >
                           <img
@@ -474,36 +471,24 @@ const Navbar = () => {
                               profile?.firstName || user?.firstName || "User"
                             }
                             className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const name =
-                                profile?.firstName || user?.firstName || "U";
-                              e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b5cf6&color=fff&size=128&bold=true`;
-                            }}
                           />
                         </button>
 
                         {profileOpen && (
-                          <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#1a1a1a] border border-white/10 shadow-2xl py-2">
-                            <div className="px-4 py-2 border-b border-white/10">
+                          <div className="absolute right-0 mt-2 w-48 rounded-xl bg-popover border border-border shadow-2xl py-2 z-50">
+                            <div className="px-4 py-2 border-b border-border">
                               <div className="flex items-center gap-2 mb-1">
                                 <img
                                   src={avatarUrl}
                                   alt={profile?.firstName || user?.firstName}
                                   className="w-8 h-8 rounded-full"
-                                  onError={(e) => {
-                                    const name =
-                                      profile?.firstName ||
-                                      user?.firstName ||
-                                      "U";
-                                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b5cf6&color=fff&size=64&bold=true`;
-                                  }}
                                 />
                                 <div>
-                                  <p className="text-sm font-semibold text-white">
+                                  <p className="text-sm font-semibold text-popover-foreground">
                                     {profile?.firstName || user?.firstName}{" "}
                                     {profile?.lastName || user?.lastName}
                                   </p>
-                                  <p className="text-xs text-white/50">
+                                  <p className="text-xs text-muted-foreground">
                                     @
                                     {profile?.username ||
                                       user?.username ||
@@ -515,7 +500,7 @@ const Navbar = () => {
 
                             <button
                               onClick={() => navigate(`/${lang}/profile`)}
-                              className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/10 transition flex items-center gap-2"
+                              className="w-full px-4 py-2 text-left text-sm text-popover-foreground hover:bg-accent transition flex items-center gap-2"
                             >
                               <svg
                                 className="w-4 h-4"
@@ -535,7 +520,7 @@ const Navbar = () => {
 
                             <button
                               onClick={() => navigate(`/${lang}/my-ads`)}
-                              className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/10 transition flex items-center gap-2"
+                              className="w-full px-4 py-2 text-left text-sm text-popover-foreground hover:bg-accent transition flex items-center gap-2"
                             >
                               <svg
                                 className="w-4 h-4"
@@ -555,7 +540,7 @@ const Navbar = () => {
 
                             <button
                               onClick={() => navigate(`/${lang}/wallet`)}
-                              className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/10 transition flex items-center gap-2"
+                              className="w-full px-4 py-2 text-left text-sm text-popover-foreground hover:bg-accent transition flex items-center gap-2"
                             >
                               <svg
                                 className="w-4 h-4"
@@ -573,10 +558,10 @@ const Navbar = () => {
                               {nav?.wallet ?? "Wallet"}
                             </button>
 
-                            <div className="border-t border-white/10 mt-2 pt-2">
+                            <div className="border-t border-border mt-2 pt-2">
                               <button
                                 onClick={handleLogout}
-                                className="w-full px-4 py-2 text-left text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition flex items-center gap-2"
+                                className="w-full px-4 py-2 text-left text-sm text-destructive hover:bg-destructive/10 transition flex items-center gap-2"
                               >
                                 <svg
                                   className="w-4 h-4"
@@ -872,7 +857,7 @@ const Navbar = () => {
             <NavLink
               to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-accent text-foreground font-semibold" : "text-foreground/70 hover:text-foreground hover:bg-accent/50"}`
               }
             >
               <svg
@@ -893,7 +878,7 @@ const Navbar = () => {
             <NavLink
               to={isAuthenticated ? `/${lang}/moderation` : `/${lang}/login`}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-accent text-foreground font-semibold" : "text-foreground/70 hover:text-foreground hover:bg-accent/50"}`
               }
             >
               <svg
@@ -915,7 +900,7 @@ const Navbar = () => {
             <NavLink
               to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-accent text-foreground font-semibold" : "text-foreground/70 hover:text-foreground hover:bg-accent/50"}`
               }
             >
               <svg
@@ -937,7 +922,7 @@ const Navbar = () => {
             <NavLink
               to={`/${lang}/wallet`}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-accent text-foreground font-semibold" : "text-foreground/70 hover:text-foreground hover:bg-accent/50"}`
               }
             >
               <svg
@@ -959,7 +944,7 @@ const Navbar = () => {
             <NavLink
               to={`/${lang}/faq`}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white hover:bg-white/5"}`
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${isActive ? "bg-accent text-foreground font-semibold" : "text-foreground/70 hover:text-foreground hover:bg-accent/50"}`
               }
             >
               <svg

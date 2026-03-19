@@ -66,8 +66,8 @@ const LivePreview = () => {
       </div>
 
       <div className={`relative ${device === 'mobile' ? 'max-w-[320px]' : 'max-w-full'} mx-auto`}>
-        <div className="bg-[#0e1621] rounded-xl p-3 shadow-2xl">
-          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/10">
+        <div className="bg-card rounded-xl p-3 shadow-2xl">
+          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
               <span className="text-white text-xs font-bold">AD</span>
             </div>
@@ -75,7 +75,7 @@ const LivePreview = () => {
               <div className="text-white text-sm font-medium">
                 {lp?.adLabel ?? 'Your Advertisement'}
               </div>
-              <div className="text-white/50 text-xs">
+              <div className="text-foreground/50 text-xs">
                 {lp?.sponsored ?? 'Sponsored'}
               </div>
             </div>
@@ -108,17 +108,17 @@ const LivePreview = () => {
             </div>
           ) : (
             <div className="py-12 text-center">
-              <Eye className="w-10 h-10 text-white/20 mx-auto mb-3" />
-              <p className="text-white/40 text-sm">
+              <Eye className="w-10 h-10 text-foreground/20 mx-auto mb-3" />
+              <p className="text-foreground/40 text-sm">
                 {lp?.emptyHint ?? 'Start creating your ad to see preview'}
               </p>
             </div>
           )}
 
-          <div className="mt-3 pt-3 border-t border-white/10">
+          <div className="mt-3 pt-3 border-t border-border">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-white/40">{lp?.telegramAd ?? 'Telegram Ad'}</span>
-              <span className="text-white/40">
+              <span className="text-foreground/40">{lp?.telegramAd ?? 'Telegram Ad'}</span>
+              <span className="text-foreground/40">
                 {new Date().toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric'

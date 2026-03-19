@@ -165,7 +165,7 @@ const Profile = () => {
       case "COMPLETED":
         return "bg-purple-500/10 text-purple-400 border border-purple-500/20";
       case "ARCHIVED":
-        return "bg-foreground/5 text-foreground/40 border border-white/10";
+        return "bg-foreground/5 text-foreground/40 border border-border";
       case "SCHEDULED":
         return "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20";
       default:
@@ -472,7 +472,7 @@ const Profile = () => {
         </div>
 
         {/* Information Table */}
-        <div className="bg-card border border-white/10 rounded-lg p-4">
+        <div className="bg-card border border-border rounded-lg p-4">
           {/* Tab header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <h3 className="text-sm font-semibold">{p?.information}</h3>
@@ -499,7 +499,7 @@ const Profile = () => {
               <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10">
+                    <tr className="border-b border-border">
                       <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.adsTableHeaders.title}
                       </th>
@@ -537,7 +537,7 @@ const Profile = () => {
                       ads.map((ad) => (
                         <tr
                           key={ad.id}
-                          className="border-b border-white/5 hover:bg-foreground/[0.02] transition"
+                          className="border-b border-border/50 hover:bg-foreground/[0.02] transition"
                         >
                           <td className="py-3 px-3 max-w-[160px] truncate">
                             <div className="flex items-center gap-2">
@@ -605,7 +605,7 @@ const Profile = () => {
                   ads.map((ad) => (
                     <div
                       key={ad.id}
-                      className="bg-foreground/[0.03] border border-white/10 rounded-xl p-3"
+                      className="bg-foreground/[0.03] border border-border rounded-xl p-3"
                     >
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <p className="text-sm font-medium truncate">
@@ -678,7 +678,7 @@ const Profile = () => {
               <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10">
+                    <tr className="border-b border-border">
                       <th className="text-left py-3 px-3 font-medium text-foreground/60 text-xs">
                         {p?.botsTableHeaders.name}
                       </th>
@@ -713,7 +713,7 @@ const Profile = () => {
                       bots.map((bot) => (
                         <tr
                           key={bot.id}
-                          className="border-b border-white/5 hover:bg-foreground/[0.02] transition"
+                          className="border-b border-border/50 hover:bg-foreground/[0.02] transition"
                         >
                           <td className="py-3 px-3">@{bot.username}</td>
                           <td className="py-3 px-3">
@@ -769,7 +769,7 @@ const Profile = () => {
                   bots.map((bot) => (
                     <div
                       key={bot.id}
-                      className="bg-foreground/[0.03] border border-white/10 rounded-xl p-3"
+                      className="bg-foreground/[0.03] border border-border rounded-xl p-3"
                     >
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <p className="text-sm font-medium">@{bot.username}</p>
@@ -834,7 +834,7 @@ const Profile = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-card border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-md">
+          <div className="bg-card border border-border rounded-xl p-5 sm:p-6 w-full max-w-md">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold">{p?.editModal.title}</h2>
               <button
@@ -856,7 +856,7 @@ const Profile = () => {
                   onChange={(e) =>
                     setEditForm({ ...editForm, firstName: e.target.value })
                   }
-                  className="w-full px-3.5 py-2.5 bg-foreground/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
+                  className="w-full px-3.5 py-2.5 bg-foreground/5 border border-border rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
                   placeholder="Ahmad"
                   required
                 />
@@ -872,7 +872,7 @@ const Profile = () => {
                   onChange={(e) =>
                     setEditForm({ ...editForm, lastName: e.target.value })
                   }
-                  className="w-full px-3.5 py-2.5 bg-foreground/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
+                  className="w-full px-3.5 py-2.5 bg-foreground/5 border border-border rounded-lg focus:outline-none focus:border-purple-500 transition text-sm"
                   placeholder="Karimov"
                 />
               </div>
@@ -881,7 +881,7 @@ const Profile = () => {
             <div className="flex items-center gap-2.5 mt-6">
               <button
                 onClick={() => setShowEditModal(false)}
-                className="flex-1 px-4 py-2.5 bg-foreground/5 hover:bg-foreground/10 border border-white/10 rounded-lg transition font-medium text-sm"
+                className="flex-1 px-4 py-2.5 bg-foreground/5 hover:bg-foreground/10 border border-border rounded-lg transition font-medium text-sm"
               >
                 {p?.editModal.cancel}
               </button>
@@ -946,7 +946,7 @@ const AdDetailModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto">
-      <div className="bg-card border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
+      <div className="bg-card border border-border rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">
             {p?.information} - {p?.myAds}
@@ -964,7 +964,7 @@ const AdDetailModal = ({
             <label className="block text-[10px] text-foreground/40 mb-1.5 uppercase tracking-wider">
               {p?.adsTableHeaders.title}
             </label>
-            <p className="text-sm font-medium leading-relaxed bg-foreground/5 p-3 rounded-lg border border-white/5 whitespace-pre-wrap max-h-[150px] overflow-y-auto">
+            <p className="text-sm font-medium leading-relaxed bg-foreground/5 p-3 rounded-lg border border-border/50 whitespace-pre-wrap max-h-[150px] overflow-y-auto">
               {ad.title || ad.text}
             </p>
 
@@ -983,7 +983,7 @@ const AdDetailModal = ({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-border rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Eye className="w-3.5 h-3.5 text-purple-400" />
                 <span className="text-[10px] text-foreground/40 uppercase font-medium">
@@ -995,7 +995,7 @@ const AdDetailModal = ({
               </p>
             </div>
 
-            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-border rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <MousePointerClick className="w-3.5 h-3.5 text-purple-400" />
                 <span className="text-[10px] text-foreground/40 uppercase font-medium">
@@ -1005,7 +1005,7 @@ const AdDetailModal = ({
               <p className="text-lg font-bold">{formatPercent(ad.ctr)}</p>
             </div>
 
-            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-border rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
                 <span className="text-[10px] text-foreground/40 uppercase font-medium">
@@ -1017,7 +1017,7 @@ const AdDetailModal = ({
               </p>
             </div>
 
-            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-border rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <DollarSign className="w-3.5 h-3.5 text-red-400" />
                 <span className="text-[10px] text-foreground/40 uppercase font-medium">
@@ -1051,7 +1051,7 @@ const AdDetailModal = ({
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-6">
+        <div className="mt-8 border-t border-border pt-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold flex items-center gap-2">
               <Eye className="w-4 h-4 text-purple-400" />
@@ -1061,7 +1061,7 @@ const AdDetailModal = ({
           <DetailedImpressionsList adId={ad.id} p={p} />
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-6">
+        <div className="mt-8 border-t border-border pt-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold flex items-center gap-2">
               <MousePointer2 className="w-4 h-4 text-blue-400" />
@@ -1071,7 +1071,7 @@ const AdDetailModal = ({
           <DetailedClicksList adId={ad.id} p={p} />
         </div>
 
-        <div className="mt-8 pt-5 border-t border-white/5 flex justify-end">
+        <div className="mt-8 pt-5 border-t border-border/50 flex justify-end">
           <button
             onClick={onClose}
             className="px-8 py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg transition font-bold text-sm"
@@ -1126,14 +1126,14 @@ const DetailedImpressionsList = ({ adId, p }: { adId: string; p: any }) => {
     <div className="overflow-x-auto">
       <table className="w-full text-[11px] text-foreground/70">
         <thead>
-          <tr className="border-b border-white/5 text-left">
+          <tr className="border-b border-border/50 text-left">
             <th>{p?.tableUser ?? "User"}</th>
             <th>{p?.tableCountry ?? "Country"}</th>
             <th>{p?.tableBot ?? "Bot"}</th>
             <th>{p?.tableTime ?? "Time"}</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className="divide-y divide-border/50">
           {data.map((imp: any) => (
             <tr key={imp.id}>
               <td className="py-2">
@@ -1208,14 +1208,14 @@ const DetailedClicksList = ({ adId, p }: { adId: string; p: any }) => {
     <div className="overflow-x-auto">
       <table className="w-full text-[11px] text-foreground/70">
         <thead>
-          <tr className="border-b border-white/5 text-left">
+          <tr className="border-b border-border/50 text-left">
             <th>{p?.tableUser ?? "User"}</th>
             <th>{p?.tableCountry ?? "Country"}</th>
             <th>{p?.tableDevice ?? "Device/IP"}</th>
             <th>{p?.tableTime ?? "Time"}</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className="divide-y divide-border/50">
           {data.map((click: any) => (
             <tr key={click.id}>
               <td className="py-2">
@@ -1270,7 +1270,7 @@ const BotDetailModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto">
-      <div className="bg-card border border-white/10 rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
+      <div className="bg-card border border-border rounded-xl p-5 sm:p-6 w-full max-w-2xl my-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">
             {p?.information} - {p?.myBots}
@@ -1285,7 +1285,7 @@ const BotDetailModal = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4 bg-foreground/5 p-4 rounded-xl border border-white/5">
+            <div className="flex items-center gap-4 bg-foreground/5 p-4 rounded-xl border border-border/50">
               <div className="w-14 h-14 bg-purple-600/20 text-purple-400 rounded-full flex items-center justify-center text-xl font-bold border border-purple-500/20">
                 {bot.username?.[0]?.toUpperCase() || "B"}
               </div>
@@ -1297,7 +1297,7 @@ const BotDetailModal = ({
               </div>
             </div>
 
-            <div className="bg-foreground/5 p-4 rounded-xl border border-white/5">
+            <div className="bg-foreground/5 p-4 rounded-xl border border-border/50">
               <label className="block text-[10px] text-foreground/40 mb-2 uppercase tracking-wider">
                 {p?.botsTableHeaders.status}
               </label>
@@ -1310,7 +1310,7 @@ const BotDetailModal = ({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-border rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Users className="w-3.5 h-3.5 text-purple-400" />
                 <span className="text-[10px] text-foreground/40 uppercase font-medium">
@@ -1322,7 +1322,7 @@ const BotDetailModal = ({
               </p>
             </div>
 
-            <div className="bg-foreground/5 border border-white/10 rounded-lg p-3">
+            <div className="bg-foreground/5 border border-border rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Eye className="w-3.5 h-3.5 text-purple-400" />
                 <span className="text-[10px] text-foreground/40 uppercase font-medium">
@@ -1355,7 +1355,7 @@ const BotDetailModal = ({
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-6">
+        <div className="mt-8 border-t border-border pt-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold flex items-center gap-2">
               <Users className="w-4 h-4 text-purple-400" />
@@ -1366,7 +1366,7 @@ const BotDetailModal = ({
           <ActiveUsersList botId={bot.id} p={p} />
         </div>
 
-        <div className="mt-8 pt-5 border-t border-white/5 flex justify-end">
+        <div className="mt-8 pt-5 border-t border-border/50 flex justify-end">
           <button
             onClick={onClose}
             className="px-8 py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg transition font-bold text-sm"
@@ -1420,14 +1420,14 @@ const ActiveUsersList = ({ botId, p }: { botId: string; p: any }) => {
     <div className="overflow-x-auto">
       <table className="w-full text-[11px] text-foreground/70">
         <thead>
-          <tr className="border-b border-white/5 text-left text-foreground/40">
+          <tr className="border-b border-border/50 text-left text-foreground/40">
             <th>{p?.tableUser ?? "User"}</th>
             <th>{p?.tableLanguage ?? "Language"}</th>
             <th>{p?.tableCountry ?? "Country"}</th>
             <th>{p?.tableLastSeen ?? "Last seen"}</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className="divide-y divide-border/50">
           {data.map((user: any) => (
             <tr key={user.id}>
               <td className="py-2 text-foreground/90">
@@ -1506,7 +1506,7 @@ const BotUsersExport = ({ botId, p }: { botId: string; p: any }) => {
     <button
       onClick={handleExport}
       disabled={exporting}
-      className="px-3 py-1 bg-foreground/5 hover:bg-foreground/10 border border-white/10 rounded-lg text-[10px] font-bold transition flex items-center gap-1.5 disabled:opacity-50"
+      className="px-3 py-1 bg-foreground/5 hover:bg-foreground/10 border border-border rounded-lg text-[10px] font-bold transition flex items-center gap-1.5 disabled:opacity-50"
     >
       <TrendingUp className="w-3 h-3" />
       {exporting
