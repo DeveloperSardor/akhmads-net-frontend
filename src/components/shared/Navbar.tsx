@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 import {
   Link,
   NavLink,
@@ -128,13 +129,6 @@ const Navbar = () => {
     navigate(`/${lang}/login`);
   };
 
-  const navItemClass = ({ isActive }: { isActive: boolean }) =>
-    `relative px-2.5 xl:px-4 py-2 rounded-full transition-all duration-500 whitespace-nowrap text-[12px] xl:text-[13px] 2xl:text-sm font-medium ${
-      isActive
-        ? "text-primary-foreground shadow-[0_0_20px_rgba(168,85,247,0.15)]"
-        : "text-foreground/60 hover:text-foreground/90"
-    }`;
-
   const isLoginPage = location.pathname.includes("/login");
 
   // ✅ Avatar URL - Priority: profile > user > fallback
@@ -243,12 +237,30 @@ const Navbar = () => {
 
             {/* 🔹 Center links — desktop only */}
             <div className="hidden lg:flex flex-1 justify-center z-10 mx-1 min-w-0">
-              <div className="bg-background/50 border border-border p-1 rounded-full flex items-center gap-0 backdrop-blur-md shadow-inner overflow-hidden">
-                <NavLink to={`/${lang}`} end className={navItemClass}>
+              <div className="bg-background/50 border border-border p-1 rounded-full flex items-center gap-1 backdrop-blur-md shadow-inner overflow-hidden">
+                <NavLink
+                  to={`/${lang}`}
+                  end
+                  className={({ isActive }) =>
+                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                      isActive
+                        ? "text-white"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  }
+                >
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        <motion.div
+                          layoutId="active-nav"
+                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30,
+                          }}
+                        />
                       )}
                       {nav?.home ?? "Home"}
                     </>
@@ -256,12 +268,26 @@ const Navbar = () => {
                 </NavLink>
                 <NavLink
                   to={isAuthenticated ? `/${lang}/my-ads` : `/${lang}/login`}
-                  className={navItemClass}
+                  className={({ isActive }) =>
+                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                      isActive
+                        ? "text-white"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  }
                 >
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        <motion.div
+                          layoutId="active-nav"
+                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30,
+                          }}
+                        />
                       )}
                       {nav?.myAds ?? "My Ads"}
                     </>
@@ -269,12 +295,26 @@ const Navbar = () => {
                 </NavLink>
                 <NavLink
                   to={isAuthenticated ? `/${lang}/add-bot` : `/${lang}/login`}
-                  className={navItemClass}
+                  className={({ isActive }) =>
+                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                      isActive
+                        ? "text-white"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  }
                 >
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        <motion.div
+                          layoutId="active-nav"
+                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30,
+                          }}
+                        />
                       )}
                       {nav?.addBot ?? "Add bot"}
                     </>
@@ -284,32 +324,80 @@ const Navbar = () => {
                   to={
                     isAuthenticated ? `/${lang}/moderation` : `/${lang}/login`
                   }
-                  className={navItemClass}
+                  className={({ isActive }) =>
+                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                      isActive
+                        ? "text-white"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  }
                 >
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        <motion.div
+                          layoutId="active-nav"
+                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30,
+                          }}
+                        />
                       )}
                       {nav?.moderation ?? "Moderation"}
                     </>
                   )}
                 </NavLink>
-                <NavLink to={`/${lang}/wallet`} className={navItemClass}>
+                <NavLink
+                  to={`/${lang}/wallet`}
+                  className={({ isActive }) =>
+                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                      isActive
+                        ? "text-white"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  }
+                >
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        <motion.div
+                          layoutId="active-nav"
+                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30,
+                          }}
+                        />
                       )}
                       {nav?.wallet ?? "Wallet"}
                     </>
                   )}
                 </NavLink>
-                <NavLink to={`/${lang}/faq`} className={navItemClass}>
+                <NavLink
+                  to={`/${lang}/faq`}
+                  className={({ isActive }) =>
+                    `relative px-4 py-2 rounded-full transition-all duration-300 text-sm font-bold flex items-center justify-center min-w-[80px] ${
+                      isActive
+                        ? "text-white"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`
+                  }
+                >
                   {({ isActive }) => (
                     <>
                       {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full border border-white/10 -z-10 animate-in fade-in zoom-in duration-500" />
+                        <motion.div
+                          layoutId="active-nav"
+                          className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.3)] -z-10"
+                          transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30,
+                          }}
+                        />
                       )}
                       {nav?.faq ?? "FAQ"}
                     </>
