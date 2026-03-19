@@ -471,6 +471,11 @@ const Navbar = () => {
                               profile?.firstName || user?.firstName || "User"
                             }
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const name =
+                                profile?.firstName || user?.firstName || "U";
+                              e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b5cf6&color=fff&size=128&bold=true`;
+                            }}
                           />
                         </button>
 
@@ -482,6 +487,13 @@ const Navbar = () => {
                                   src={avatarUrl}
                                   alt={profile?.firstName || user?.firstName}
                                   className="w-8 h-8 rounded-full"
+                                  onError={(e) => {
+                                    const name =
+                                      profile?.firstName ||
+                                      user?.firstName ||
+                                      "U";
+                                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8b5cf6&color=fff&size=64&bold=true`;
+                                  }}
                                 />
                                 <div>
                                   <p className="text-sm font-semibold text-popover-foreground">
