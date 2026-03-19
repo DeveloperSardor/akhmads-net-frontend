@@ -120,7 +120,7 @@ const Header = () => {
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      className="max-h-8 md:max-h-10 max-w-full w-auto object-contain opacity-60 dark:opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 select-none grayscale dark:invert"
+                      className="max-h-8 md:max-h-10 max-w-full w-auto object-contain opacity-100 group-hover:scale-110 transition-all duration-500 select-none"
                       draggable={false}
                     />
                   </div>
@@ -137,7 +137,7 @@ const Header = () => {
                     <img
                       src={icon.src}
                       alt={icon.alt}
-                      className="max-h-8 md:max-h-10 max-w-full w-auto object-contain opacity-60 dark:opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 select-none grayscale dark:invert"
+                      className="max-h-8 md:max-h-10 max-w-full w-auto object-contain opacity-100 group-hover:scale-110 transition-all duration-500 select-none"
                       draggable={false}
                     />
                   </div>
